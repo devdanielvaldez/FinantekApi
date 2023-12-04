@@ -1,0 +1,4712 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"RegistrarEmpresaResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"error": {}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FieldErrors": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": {
+					"properties": {
+						"value": {},
+						"message": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"message"
+					],
+					"type": "object"
+				}
+			},
+			"ValidateError": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"stack": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"fields": {
+						"$ref": "#/components/schemas/FieldErrors"
+					}
+				},
+				"required": [
+					"name",
+					"message",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreatedEmpResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InternalServerError": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"error": {},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"error",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Persona": {
+				"properties": {
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nombre": {
+						"type": "string"
+					},
+					"segundo_nombre": {
+						"type": "string"
+					},
+					"primer_apellido": {
+						"type": "string"
+					},
+					"segundo_apellido": {
+						"type": "string"
+					},
+					"fecha_nacimiento": {
+						"type": "string"
+					},
+					"sexo": {
+						"type": "string"
+					},
+					"estado": {
+						"type": "string"
+					},
+					"direccion_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"cedula": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nombre",
+					"primer_apellido",
+					"fecha_nacimiento",
+					"sexo",
+					"cedula"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Direccion": {
+				"properties": {
+					"direccion_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"provincia_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"municipio_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"direccion": {
+						"type": "string"
+					},
+					"codigo_postal": {
+						"type": "string"
+					},
+					"referencia": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"provincia_id",
+					"municipio_id",
+					"direccion",
+					"referencia"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Contactos": {
+				"properties": {
+					"contacto_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"telefono": {
+						"type": "string"
+					},
+					"movil": {
+						"type": "string"
+					},
+					"telefono_oficina": {
+						"type": "string"
+					},
+					"correo_electronico": {
+						"type": "string"
+					},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PersonaEmpresa": {
+				"properties": {
+					"persona": {
+						"$ref": "#/components/schemas/Persona"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"persona",
+					"direccion",
+					"contactos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarEmpresa": {
+				"properties": {
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nombre_completo": {
+						"type": "string"
+					},
+					"nombre_corto": {
+						"type": "string"
+					},
+					"rnc": {
+						"type": "string"
+					},
+					"website": {
+						"type": "string"
+					},
+					"persona": {
+						"$ref": "#/components/schemas/PersonaEmpresa"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"nombre_completo",
+					"rnc",
+					"persona",
+					"direccion",
+					"contactos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsultaEmpresasResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NotFoundItems": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"QuerysEmpresasFind": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"rnc": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ActualizarEmpresaResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"error": {}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ActualizarEmpresa": {
+				"properties": {
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nombre_completo": {
+						"type": "string"
+					},
+					"nombre_corto": {
+						"type": "string"
+					},
+					"rnc": {
+						"type": "string"
+					},
+					"website": {
+						"type": "string"
+					},
+					"persona": {
+						"$ref": "#/components/schemas/PersonaEmpresa"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"nombre_completo",
+					"rnc",
+					"persona",
+					"direccion",
+					"contactos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarPersonaResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"error": {}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreatedPersonaResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarPersona": {
+				"properties": {
+					"persona": {
+						"$ref": "#/components/schemas/Persona"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					}
+				},
+				"required": [
+					"persona",
+					"contactos",
+					"direccion"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ActualizarPersonaResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PersonaInterface": {
+				"properties": {
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nombre": {
+						"type": "string"
+					},
+					"segundo_nombre": {
+						"type": "string"
+					},
+					"primer_apellido": {
+						"type": "string"
+					},
+					"segundo_apellido": {
+						"type": "string"
+					},
+					"fecha_nacimiento": {
+						"type": "string"
+					},
+					"sexo": {
+						"type": "string"
+					},
+					"estado": {
+						"type": "string"
+					},
+					"direccion_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"cedula": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nombre",
+					"primer_apellido",
+					"fecha_nacimiento",
+					"sexo",
+					"cedula"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ActualizarPersonaBody": {
+				"properties": {
+					"personaId": {
+						"type": "number",
+						"format": "double"
+					},
+					"persona": {
+						"$ref": "#/components/schemas/PersonaInterface"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"personaId",
+					"persona",
+					"direccion",
+					"contactos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsultarPersonasResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"QuerysPersonasFind": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"cedula": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreatedEmpleadoResponse": {
+				"properties": {
+					"msg": {
+						"type": "string"
+					},
+					"ok": {
+						"type": "boolean"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"msg",
+					"ok",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Empleado": {
+				"properties": {
+					"empleado_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"cargo": {
+						"type": "string"
+					},
+					"salario": {
+						"type": "number",
+						"format": "double"
+					},
+					"fecha_inicio_contrato": {
+						"type": "string"
+					},
+					"supervisor_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"fecha_creacion": {
+						"type": "string"
+					},
+					"fecha_actualizacion": {
+						"type": "string"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"empleado_id",
+					"persona_id",
+					"cargo",
+					"salario",
+					"fecha_inicio_contrato",
+					"supervisor_id",
+					"fecha_creacion",
+					"fecha_actualizacion",
+					"empresa_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterEmpleado": {
+				"properties": {
+					"persona": {
+						"$ref": "#/components/schemas/Persona"
+					},
+					"empleado": {
+						"$ref": "#/components/schemas/Empleado"
+					},
+					"contactos": {
+						"items": {
+							"$ref": "#/components/schemas/Contactos"
+						},
+						"type": "array"
+					},
+					"direccion": {
+						"$ref": "#/components/schemas/Direccion"
+					},
+					"rol": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"persona",
+					"empleado",
+					"contactos",
+					"direccion",
+					"rol"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetAllEmp": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {},
+					"error": {},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateEmpResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateEmployeeData": {
+				"properties": {
+					"cargo": {
+						"type": "string"
+					},
+					"salario": {
+						"type": "number",
+						"format": "double"
+					},
+					"supervisor_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"estado": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarNoticiaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarNoticiaRequest": {
+				"properties": {
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"titulo": {
+						"type": "string"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"fecha_publicacion": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"fecha_vencimiento": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"empresa_id",
+					"titulo",
+					"descripcion",
+					"persona_id",
+					"fecha_publicacion",
+					"fecha_vencimiento"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Noticia": {
+				"properties": {
+					"noticia_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"titulo": {
+						"type": "string"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"fecha_publicacion": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"fecha_vencimiento": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"fecha_creacion": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"fecha_actualizacion": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"empresa_id",
+					"titulo",
+					"descripcion",
+					"persona_id",
+					"fecha_publicacion",
+					"fecha_vencimiento"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetAllNoticiasResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/Noticia"
+						},
+						"type": "array"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateNoticiaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateNoticiaData": {
+				"properties": {
+					"titulo": {
+						"type": "string"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"fecha_vencimiento": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DeleteNoticiaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateTareaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateTareaData": {
+				"properties": {
+					"empleado_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"supervisor_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"fecha": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"prioridad": {
+						"type": "string",
+						"enum": [
+							"alta",
+							"media",
+							"baja"
+						]
+					},
+					"estado": {
+						"type": "string",
+						"enum": [
+							"en",
+							"pe",
+							"de",
+							"co",
+							"su",
+							"ca"
+						]
+					}
+				},
+				"required": [
+					"empleado_id",
+					"descripcion",
+					"fecha",
+					"prioridad",
+					"estado"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateTareaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateTareaData": {
+				"properties": {
+					"descripcion": {
+						"type": "string"
+					},
+					"fecha": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"prioridad": {
+						"type": "string",
+						"enum": [
+							"alta",
+							"media",
+							"baja"
+						]
+					},
+					"estado": {
+						"type": "string",
+						"enum": [
+							"en",
+							"pe",
+							"de",
+							"co",
+							"su",
+							"ca"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DeleteTareaResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TareaWithRelations": {
+				"properties": {
+					"tarea_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"fecha": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"prioridad": {
+						"type": "string",
+						"enum": [
+							"alta",
+							"media",
+							"baja"
+						]
+					},
+					"estado": {
+						"type": "string",
+						"enum": [
+							"en",
+							"pe",
+							"de",
+							"co",
+							"su",
+							"ca"
+						]
+					},
+					"empleado": {
+						"$ref": "#/components/schemas/Empleado"
+					},
+					"supervisor": {
+						"$ref": "#/components/schemas/Empleado"
+					}
+				},
+				"required": [
+					"tarea_id",
+					"descripcion",
+					"fecha",
+					"prioridad",
+					"estado",
+					"empleado",
+					"supervisor"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetTareasResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/TareaWithRelations"
+						},
+						"type": "array"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BancoResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BancoData": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"telefono": {
+						"type": "string"
+					},
+					"codigo": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nombre",
+					"codigo"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BancoWithRelations": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"banco_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nombre": {
+						"type": "string"
+					},
+					"telefono": {
+						"type": "string"
+					},
+					"codigo": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"banco_id",
+					"nombre",
+					"codigo"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetBancosResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/BancoWithRelations"
+						},
+						"type": "array"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateBancoResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateBancoData": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"telefono": {
+						"type": "string"
+					},
+					"codigo": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseRegisterClient": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DatosLaborales": {
+				"properties": {
+					"dlab_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"dlabNombreEmpresa": {
+						"type": "string"
+					},
+					"dlabDepartamento": {
+						"type": "string"
+					},
+					"dlabPosicion": {
+						"type": "string"
+					},
+					"dlabHorarioEntrada": {
+						"type": "string"
+					},
+					"dlabHorarioSalida": {
+						"type": "string"
+					},
+					"dlabNombreSupervisor": {
+						"type": "string"
+					},
+					"dlabIdProvincia": {
+						"type": "number",
+						"format": "double"
+					},
+					"dlabIdMunicipio": {
+						"type": "number",
+						"format": "double"
+					},
+					"dlabCalle": {
+						"type": "string"
+					},
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"salario": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dlabNombreEmpresa",
+					"dlabDepartamento",
+					"dlabPosicion",
+					"dlabHorarioEntrada",
+					"dlabHorarioSalida",
+					"dlabNombreSupervisor",
+					"dlabIdProvincia",
+					"dlabIdMunicipio",
+					"dlabCalle",
+					"salario"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DatosBancarios": {
+				"properties": {
+					"datos_bancarios_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"banco_codigo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"n_cuenta": {
+						"type": "string"
+					},
+					"cuenta_default": {
+						"type": "boolean"
+					},
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"banco_codigo_id",
+					"n_cuenta",
+					"cuenta_default"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarCliente": {
+				"properties": {
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"datos_laborales": {
+						"items": {
+							"$ref": "#/components/schemas/DatosLaborales"
+						},
+						"type": "array"
+					},
+					"datos_bancarios": {
+						"items": {
+							"$ref": "#/components/schemas/DatosBancarios"
+						},
+						"type": "array"
+					},
+					"referencias": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"conyuge_id": {
+						"type": "string"
+					},
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"persona_id",
+					"datos_laborales",
+					"datos_bancarios",
+					"referencias",
+					"conyuge_id",
+					"emp_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseUpdateClient": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateClientBody": {
+				"properties": {
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"conyuge_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"datos_bancarios": {
+						"items": {
+							"$ref": "#/components/schemas/DatosBancarios"
+						},
+						"type": "array"
+					},
+					"datos_laborales": {
+						"items": {
+							"$ref": "#/components/schemas/DatosLaborales"
+						},
+						"type": "array"
+					},
+					"referencias": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"cliente_id",
+					"conyuge_id",
+					"datos_bancarios",
+					"datos_laborales",
+					"referencias"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseFindClients": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseUpdateClientStatus": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateClientState": {
+				"properties": {
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nuevo_estado": {
+						"type": "string",
+						"enum": [
+							"a",
+							"n",
+							"g",
+							"d",
+							"m"
+						]
+					}
+				},
+				"required": [
+					"cliente_id",
+					"nuevo_estado"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseRegisterLoanType": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoanType": {
+				"properties": {
+					"nombre_tipo": {
+						"type": "string"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"tasa_interes": {
+						"type": "number",
+						"format": "double"
+					},
+					"plazo_maximo_meses": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_minimo": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_maximo": {
+						"type": "number",
+						"format": "double"
+					},
+					"gastos_legales": {
+						"type": "number",
+						"format": "double"
+					},
+					"porcentaje_mora": {
+						"type": "number",
+						"format": "double"
+					},
+					"dias_gracia": {
+						"type": "number",
+						"format": "double"
+					},
+					"requisitos": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nombre_tipo",
+					"descripcion",
+					"tasa_interes",
+					"plazo_maximo_meses",
+					"monto_minimo",
+					"monto_maximo",
+					"gastos_legales",
+					"porcentaje_mora",
+					"dias_gracia",
+					"requisitos",
+					"empresa_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseFindLoanTypes": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {},
+						"type": "array"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"data",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseUpdateLoanType": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdatedLoanType": {
+				"properties": {
+					"nombre_tipo": {
+						"type": "string"
+					},
+					"descripcion": {
+						"type": "string"
+					},
+					"tasa_interes": {
+						"type": "string"
+					},
+					"plazo_maximo_meses": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_minimo": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_maximo": {
+						"type": "number",
+						"format": "double"
+					},
+					"gastos_legales": {
+						"type": "number",
+						"format": "double"
+					},
+					"porcentaje_mora": {
+						"type": "number",
+						"format": "double"
+					},
+					"dias_gracia": {
+						"type": "number",
+						"format": "double"
+					},
+					"requisitos": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tipo_prestamo_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nombre_tipo",
+					"descripcion",
+					"tasa_interes",
+					"plazo_maximo_meses",
+					"monto_minimo",
+					"monto_maximo",
+					"gastos_legales",
+					"porcentaje_mora",
+					"dias_gracia",
+					"requisitos",
+					"empresa_id",
+					"tipo_prestamo_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseCreateLoanRequest": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoanRequestDocument": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"enlace": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nombre",
+					"enlace"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoanRequest": {
+				"properties": {
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tipo_prestamo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_solicitado": {
+						"type": "number",
+						"format": "double"
+					},
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"documentos": {
+						"items": {
+							"$ref": "#/components/schemas/LoanRequestDocument"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"cliente_id",
+					"tipo_prestamo_id",
+					"empresa_id",
+					"monto_solicitado",
+					"emp_id",
+					"documentos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_LoanRequest_": {
+				"properties": {
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tipo_prestamo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"monto_solicitado": {
+						"type": "number",
+						"format": "double"
+					},
+					"emp_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"documentos": {
+						"items": {
+							"$ref": "#/components/schemas/LoanRequestDocument"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"CampoPlantillaCSV": {
+				"properties": {
+					"campo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"plantilla_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"titulo_campo": {
+						"type": "string"
+					},
+					"identificador_campo": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"campo_id",
+					"plantilla_id",
+					"titulo_campo",
+					"identificador_campo"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PlantillaCSV": {
+				"properties": {
+					"plantilla_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"banco_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"empresa_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"titulo_plantilla": {
+						"type": "string"
+					},
+					"campos": {
+						"items": {
+							"$ref": "#/components/schemas/CampoPlantillaCSV"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"plantilla_id",
+					"banco_id",
+					"empresa_id",
+					"titulo_plantilla",
+					"campos"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "finantek_api",
+		"version": "0.0.1",
+		"description": "API fir finantek",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Daniel Valdez | hello@daniel-valdez.com | https://daniel-valdez.com"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/api/empresas/registrar": {
+			"post": {
+				"operationId": "RegistrarEmpresas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RegistrarEmpresaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ValidateError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Empresa Existe",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "La empresa que desea registrar ya se encuentra en el sistema",
+											"status": 400,
+											"name": "ErrorExistEmp"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empresas"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegistrarEmpresa"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/empresas/all": {
+			"get": {
+				"operationId": "ConsultarEmpresas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ConsultaEmpresasResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ValidateError"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No se encontraron empresas",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontraron empresas con los parametros compartidos",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empresas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nombre",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "rnc",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/empresas/actualizar": {
+			"put": {
+				"operationId": "ActualizarEmpresa",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ActualizarEmpresaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/ValidateError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No se encontro la empresa",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontro la empresa con los parametros compartidos",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empresas"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ActualizarEmpresa"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/personas/registrar": {
+			"post": {
+				"operationId": "RegistrarPersona",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RegistrarPersonaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Persona Existe",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "La persona que desea registrar ya se encuentra en el sistema",
+											"status": 400,
+											"name": "ErrorExistPer"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Personas"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegistrarPersona"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/personas/actualizar": {
+			"post": {
+				"operationId": "ActualizarPersonaExistente",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ActualizarPersonaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Persona no Existe",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"message": "La persona que desea registrar no se encuentra en el sistema",
+											"status": 400,
+											"name": "ErrorExistPer"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Personas"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ActualizarPersonaBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/personas/all": {
+			"get": {
+				"operationId": "GetPersonas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ConsultarPersonasResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No se encontraron personas",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontraron personas con los parametros compartidos",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Personas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nombre",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "cedula",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/personas/persona-por-id/{id}": {
+			"get": {
+				"operationId": "GetPersonaById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ConsultarPersonasResponse"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No se encontro la persona",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontro la persona con los parametros compartidos",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Personas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/empleados/registrar": {
+			"post": {
+				"operationId": "RegistrarEmpleado",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/CreatedEmpleadoResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empleados"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterEmpleado"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/empleados/search": {
+			"get": {
+				"operationId": "GetAllEmployeesByQuery",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/GetAllEmp"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empleados"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "emp_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nombre",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "apellido",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "cargo",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/empleados/update/{empleadoId}": {
+			"put": {
+				"operationId": "UpdateEmployee",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UpdateEmpResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No se encontró el empleado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontró el empleado con el ID proporcionado",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Empleados"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empleadoId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEmployeeData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/noticias/registrar": {
+			"post": {
+				"operationId": "RegistrarNoticia",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RegistrarNoticiaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Noticias"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegistrarNoticiaRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/noticias/empresa/{empresa_id}": {
+			"get": {
+				"operationId": "GetNoticiasByEmpresa",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/GetAllNoticiasResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Noticias"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/noticias/update/{noticia_id}": {
+			"put": {
+				"operationId": "UpdateNoticia",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UpdateNoticiaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Noticias"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "noticia_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateNoticiaData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/noticias/delete/{noticia_id}": {
+			"delete": {
+				"operationId": "DeleteNoticia",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/DeleteNoticiaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Noticias"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "noticia_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/tareas/crear": {
+			"post": {
+				"operationId": "CrearTarea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/CreateTareaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tareas"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateTareaData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tareas/update/{tarea_id}": {
+			"put": {
+				"operationId": "ActualizarTarea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UpdateTareaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tareas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tarea_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateTareaData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tareas/delete/{tarea_id}": {
+			"delete": {
+				"operationId": "EliminarTarea",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/DeleteTareaResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tareas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "tarea_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/tareas/mis-tareas": {
+			"get": {
+				"operationId": "ObtenerMisTareas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/GetTareasResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tareas"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "empleado_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "supervisor_id",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/bancos/registrar": {
+			"post": {
+				"operationId": "RegistrarBanco",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/BancoResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Banco Existe",
+						"content": {
+							"application/json": {
+								"schema": {},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "El banco que desea ingresar ya existe en el sistema."
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Bancos"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BancoData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/bancos/ver-todos": {
+			"get": {
+				"operationId": "VerTodosLosBancos",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/GetBancosResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Bancos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/bancos/ver/{banco_id}": {
+			"get": {
+				"operationId": "VerBanco",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Bancos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "banco_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/bancos/actualizar/{banco_id}": {
+			"put": {
+				"operationId": "ActualizarBanco",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/UpdateBancoResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Bancos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "banco_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateBancoData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/bancos/eliminar/{banco_id}": {
+			"delete": {
+				"operationId": "EliminarBanco",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Bancos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "banco_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/clientes/registrar": {
+			"post": {
+				"operationId": "RegisterClients",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseRegisterClient"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegistrarCliente"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/clientes/actualizar": {
+			"put": {
+				"operationId": "UpdateClient",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseUpdateClient"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateClientBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/clientes/all/{emp_id}": {
+			"get": {
+				"operationId": "GetAllClients",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SuccessResponseFindClients"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "emp_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/clientes/actualizar-estado-cliente": {
+			"put": {
+				"operationId": "UpdateClientStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseUpdateClientStatus"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateClientState"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tipos-prestamos/registrar": {
+			"post": {
+				"operationId": "RegisterLoanType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseRegisterLoanType"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tipos de Préstamos"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoanType"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/tipos-prestamos/por-empresa/{empresa_id}": {
+			"get": {
+				"operationId": "GetLoanTypesByCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SuccessResponseFindLoanTypes"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found Items",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NotFoundItems"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "No se encontraron tipos de préstamos para esta empresa",
+											"status": 404
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tipos de Préstamos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/tipos-prestamos/actualizar": {
+			"put": {
+				"operationId": "UpdateLoanType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseUpdateLoanType"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tipos de Préstamos"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdatedLoanType"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/solicitudes-prestamo/registrar": {
+			"post": {
+				"operationId": "CreateLoanRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponseCreateLoanRequest"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoanRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{empresa_id}": {
+			"get": {
+				"operationId": "GetAllLoanRequestsByCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"items": {
+												"$ref": "#/components/schemas/LoanRequest"
+											},
+											"type": "array"
+										},
+										{}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}": {
+			"get": {
+				"operationId": "GetLoanRequestByIdAndCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/LoanRequest"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}/editar": {
+			"put": {
+				"operationId": "UpdateLoanRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										},
+										{}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_LoanRequest_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}/eliminar": {
+			"delete": {
+				"operationId": "DeleteLoanRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										},
+										{}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{solicitud_id}/actualizar-estado": {
+			"put": {
+				"operationId": "UpdateLoanRequestStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "solicitud_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"empleado_id": {
+										"type": "number",
+										"format": "double"
+									},
+									"mensaje": {
+										"type": "string"
+									},
+									"nuevo_estado": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"empleado_id",
+									"mensaje",
+									"nuevo_estado"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/plantillas/plantillas-csv": {
+			"post": {
+				"operationId": "CrearPlantillaCSV",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"campos": {
+										"items": {
+											"properties": {
+												"identificador_campo": {
+													"type": "string"
+												},
+												"titulo_campo": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"identificador_campo",
+												"titulo_campo"
+											],
+											"type": "object"
+										},
+										"type": "array"
+									},
+									"titulo_plantilla": {
+										"type": "string"
+									},
+									"empresa_id": {
+										"type": "number",
+										"format": "double"
+									},
+									"banco_id": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"campos",
+									"titulo_plantilla",
+									"empresa_id",
+									"banco_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/plantillas/plantillas-csv/{plantilla_id}": {
+			"delete": {
+				"operationId": "EliminarPlantillaCSV",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plantilla_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "ActualizarPlantillaCSV",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plantilla_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"campos": {
+										"items": {
+											"properties": {
+												"identificador_campo": {
+													"type": "string"
+												},
+												"titulo_campo": {
+													"type": "string"
+												},
+												"campo_id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"identificador_campo",
+												"titulo_campo",
+												"campo_id"
+											],
+											"type": "object"
+										},
+										"type": "array"
+									},
+									"titulo_plantilla": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"campos",
+									"titulo_plantilla"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ObtenerPlantillaCSV",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/PlantillaCSV"
+										},
+										{
+											"$ref": "#/components/schemas/NotFoundItems"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plantilla_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/plantillas/plantillas-csv/empresa/{empresa_id}": {
+			"get": {
+				"operationId": "ObtenerTodasPlantillasEmpresa",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"items": {
+												"$ref": "#/components/schemas/PlantillaCSV"
+											},
+											"type": "array"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "empresa_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
