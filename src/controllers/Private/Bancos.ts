@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Delete, Body, Response, Route, Tags, Query, Get } from 'tsoa';
+import { Controller, Post, Put, Delete, Body, Response, Route, Tags, Query, Get, Header } from 'tsoa';
 import { execute } from '../../api/utils/mysql.connector'; // Reemplaza esto con la forma en que realizas consultas a la base de datos
 import { InternalServerError } from '../../interfaces/Errors';
 
@@ -62,7 +62,7 @@ export default class BancosController {
         ok: false,
         msg: "El banco que desea ingresar ya existe en el sistema."
     })
-    public async registrarBanco(@Body() bancoData: BancoData): Promise<BancoResponse | InternalServerError | any> {
+    public async registrarBanco(@Body() bancoData: BancoData, @Header() token: any): Promise<BancoResponse | InternalServerError | any> {
         try {
             const { nombre, telefono, codigo } = bancoData;
 
@@ -76,11 +76,11 @@ export default class BancosController {
             }
 
             const insertQuery = `
-                INSERT INTO bancos (nombre, telefono, codigo)
-                VALUES (?, ?, ?)
+                INSERT INTO bancos (nombre, telefono, codigo, emp_id)
+                VALUES (?, ?, ?, ?)
             `;
 
-            await execute(insertQuery, [nombre, telefono, codigo]);
+            await execute(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id]);
 
             return {
                 ok: true,

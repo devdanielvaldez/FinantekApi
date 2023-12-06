@@ -7,3 +7,12 @@ export interface Direccion {
     referencia: string;       // varchar(150)
 }
   
+
+export interface DireccionRegistro {
+    provincia_id: number;     // int
+    municipio_id: number;     // int
+    direccion: string;        // varchar(150)
+    codigo_postal?: string;    // varchar(6)
+    referencia: string;       // varchar(150)
+}
+  

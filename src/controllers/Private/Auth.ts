@@ -1,7 +1,7 @@
 import { Body, Post, Response, Route, Tags } from "tsoa";
 import { InternalServerError } from "../../interfaces/Errors";
 import { execute } from '../../api/utils/mysql.connector'; // Reemplaza esto con la forma en que realizas consultas a la base de datos
-import { verifyPassword } from "../../api/utils/helpers";
+import { hashPassword, verifyPassword } from "../../api/utils/helpers";
 import jwt from 'jsonwebtoken';
 
 interface SuccessLogin {
@@ -23,6 +23,24 @@ interface FailedLogin {
     msg: string;
     status: number;
 }
+
+interface SuccessResponse {
+    ok: boolean;           // Indica si la respuesta es exitosa
+    msg: string;           // Mensaje descriptivo
+    status: number;        // Código de estado HTTP
+}
+
+interface FailedResponse {
+    ok: boolean;           // Indica si la respuesta es un fracaso
+    msg: string;           // Mensaje descriptivo del error
+    status: number;        // Código de estado HTTP
+    error?: any;           // Detalles adicionales del error, opcional
+}
+
+interface ChangePassBody {
+    userId: string, oldPassword: string, newPassword: string
+}
+
 
 @Route('api/auth')
 @Tags('Autenticacion')
@@ -73,7 +91,7 @@ export default class AuthController {
                     const empresa = await execute('SELECT empresa_id from empleados WHERE empleado_id = ?', [existUser[0].empleado_id])
                     
                     const firstLogin = existUser[0].first_login === 1;
-                    const token = jwt.sign({ user: existUser[0].user_id, emp_id: empresa }, 'shhhhh');
+                    const token = jwt.sign({ user: existUser[0].user_id, emp_id: empresa[0] }, 'token');
 
                     return {
                         ok: true,
@@ -96,6 +114,54 @@ export default class AuthController {
                 error: err,
                 status: 500,
             };
+        }
+    }
+
+    @Post('/cambiar-contrasena')
+    @Response<SuccessResponse>(200, 'Cambio de contraseña exitoso', {
+        ok: true,
+        msg: 'Cambio de contraseña exitoso',
+        status: 200,
+    })
+    @Response<InternalServerError>(500, 'Internal Server Error', {
+        ok: false,
+        msg: 'Error interno del sistema, por favor contacte al administrador del sistema',
+        error: {},
+        status: 500,
+    })
+    @Response<FailedResponse>(400, 'Cambio de contraseña fallido', {
+        ok: false,
+        msg: 'Cambio de contraseña fallido',
+        status: 400,
+    })
+    public async cambiarContrasena(@Body() body:ChangePassBody): Promise<SuccessResponse | InternalServerError | FailedResponse> {
+        try {
+            const { userId, oldPassword, newPassword } = body;
+
+            const user = await execute('SELECT pwd, first_login FROM users WHERE user_id = ?', [userId]);
+
+            if (user.length === 0) {
+                return { ok: false, msg: 'Usuario no encontrado', status: 400 };
+            }
+
+            if (user[0].first_login !== 1) {
+                return { ok: false, msg: 'Cambio de contraseña no permitido', status: 400 };
+            }
+
+            const validPassword = await verifyPassword(oldPassword, user[0].pwd);
+
+            if (!validPassword) {
+                return { ok: false, msg: 'Contraseña actual incorrecta', status: 400 };
+            }
+
+            const hashedNewPassword = await hashPassword(newPassword);
+            await execute('UPDATE users SET pwd = ?, first_login = 0 WHERE user_id = ?', [hashedNewPassword, userId]);
+
+            return { ok: true, msg: 'Cambio de contraseña exitoso', status: 200 };
+
+        } catch (err) {
+            console.error(err);
+            return { ok: false, msg: 'Error interno del sistema', error: err, status: 500 };
         }
     }
 }

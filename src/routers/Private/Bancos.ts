@@ -1,11 +1,12 @@
 import express from "express";
 import BancosController from "../../controllers/Private/Bancos";
+import validateToken from "../../api/middlewares/decodedToken";
 
 const router = express.Router();
 const controller = new BancosController();
 
-router.post("/registrar", async (_req: any, res) => {
-  const response: any = await controller.registrarBanco(_req.body);
+router.post("/registrar", validateToken, async (_req: any, res) => {
+  const response: any = await controller.registrarBanco(_req.body, _req);
   return res.status(response.status).json(response);
 });
 

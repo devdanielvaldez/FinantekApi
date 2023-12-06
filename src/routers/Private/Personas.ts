@@ -1,10 +1,11 @@
 import express from "express";
 import PersonasController from "../../controllers/Private/Personas";
+import validateToken from "../../api/middlewares/decodedToken";
 
 const router = express.Router();
 const controller = new PersonasController();
 
-router.post("/registrar", async (_req: any, res) => {
+router.post("/registrar", validateToken, async (_req: any, res) => {
   const response: any = await controller.registrarPersona(_req.body);
   return res.status(response.status).json(response);
 });

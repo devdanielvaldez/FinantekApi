@@ -423,19 +423,100 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PersonaRegistro": {
+				"properties": {
+					"nombre": {
+						"type": "string"
+					},
+					"segundo_nombre": {
+						"type": "string"
+					},
+					"primer_apellido": {
+						"type": "string"
+					},
+					"segundo_apellido": {
+						"type": "string"
+					},
+					"fecha_nacimiento": {
+						"type": "string"
+					},
+					"sexo": {
+						"type": "string"
+					},
+					"cedula": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"nombre",
+					"primer_apellido",
+					"fecha_nacimiento",
+					"sexo",
+					"cedula"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ContactosRegistro": {
+				"properties": {
+					"telefono": {
+						"type": "string"
+					},
+					"movil": {
+						"type": "string"
+					},
+					"telefono_oficina": {
+						"type": "string"
+					},
+					"correo_electronico": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DireccionRegistro": {
+				"properties": {
+					"provincia_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"municipio_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"direccion": {
+						"type": "string"
+					},
+					"codigo_postal": {
+						"type": "string"
+					},
+					"referencia": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"provincia_id",
+					"municipio_id",
+					"direccion",
+					"referencia"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"RegistrarPersona": {
 				"properties": {
 					"persona": {
-						"$ref": "#/components/schemas/Persona"
+						"$ref": "#/components/schemas/PersonaRegistro"
 					},
 					"contactos": {
 						"items": {
-							"$ref": "#/components/schemas/Contactos"
+							"$ref": "#/components/schemas/ContactosRegistro"
 						},
 						"type": "array"
 					},
 					"direccion": {
-						"$ref": "#/components/schemas/Direccion"
+						"$ref": "#/components/schemas/DireccionRegistro"
 					}
 				},
 				"required": [
@@ -1288,6 +1369,167 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DatosLaboralesRegister": {
+				"properties": {
+					"dlabNombreEmpresa": {
+						"type": "string"
+					},
+					"dlabDepartamento": {
+						"type": "string"
+					},
+					"dlabPosicion": {
+						"type": "string"
+					},
+					"dlabHorarioEntrada": {
+						"type": "string"
+					},
+					"dlabHorarioSalida": {
+						"type": "string"
+					},
+					"dlabNombreSupervisor": {
+						"type": "string"
+					},
+					"dlabIdProvincia": {
+						"type": "number",
+						"format": "double"
+					},
+					"dlabIdMunicipio": {
+						"type": "number",
+						"format": "double"
+					},
+					"dlabCalle": {
+						"type": "string"
+					},
+					"salario": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"dlabNombreEmpresa",
+					"dlabDepartamento",
+					"dlabPosicion",
+					"dlabHorarioEntrada",
+					"dlabHorarioSalida",
+					"dlabNombreSupervisor",
+					"dlabIdProvincia",
+					"dlabIdMunicipio",
+					"dlabCalle",
+					"salario"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DatosBancariosRegister": {
+				"properties": {
+					"banco_codigo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"n_cuenta": {
+						"type": "string"
+					},
+					"cuenta_default": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"banco_codigo_id",
+					"n_cuenta",
+					"cuenta_default"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistrarCliente": {
+				"properties": {
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"datos_laborales": {
+						"items": {
+							"$ref": "#/components/schemas/DatosLaboralesRegister"
+						},
+						"type": "array"
+					},
+					"datos_bancarios": {
+						"items": {
+							"$ref": "#/components/schemas/DatosBancariosRegister"
+						},
+						"type": "array"
+					},
+					"referencias": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"conyuge_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"persona_id",
+					"datos_laborales",
+					"datos_bancarios",
+					"referencias",
+					"conyuge_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseUpdateClient": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DatosBancarios": {
+				"properties": {
+					"datos_bancarios_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"banco_codigo_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"n_cuenta": {
+						"type": "string"
+					},
+					"cuenta_default": {
+						"type": "boolean"
+					},
+					"cliente_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"banco_codigo_id",
+					"n_cuenta",
+					"cuenta_default"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"DatosLaborales": {
 				"properties": {
 					"dlab_id": {
@@ -1342,100 +1584,6 @@
 					"dlabIdMunicipio",
 					"dlabCalle",
 					"salario"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DatosBancarios": {
-				"properties": {
-					"datos_bancarios_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"banco_codigo_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"n_cuenta": {
-						"type": "string"
-					},
-					"cuenta_default": {
-						"type": "boolean"
-					},
-					"cliente_id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"banco_codigo_id",
-					"n_cuenta",
-					"cuenta_default"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"RegistrarCliente": {
-				"properties": {
-					"persona_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"datos_laborales": {
-						"items": {
-							"$ref": "#/components/schemas/DatosLaborales"
-						},
-						"type": "array"
-					},
-					"datos_bancarios": {
-						"items": {
-							"$ref": "#/components/schemas/DatosBancarios"
-						},
-						"type": "array"
-					},
-					"referencias": {
-						"items": {
-							"type": "number",
-							"format": "double"
-						},
-						"type": "array"
-					},
-					"conyuge_id": {
-						"type": "string"
-					},
-					"emp_id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"persona_id",
-					"datos_laborales",
-					"datos_bancarios",
-					"referencias",
-					"conyuge_id",
-					"emp_id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponseUpdateClient": {
-				"properties": {
-					"ok": {
-						"type": "boolean"
-					},
-					"msg": {
-						"type": "string"
-					},
-					"status": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"ok",
-					"msg",
-					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1996,6 +2144,48 @@
 				"required": [
 					"username",
 					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FailedResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"error": {}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChangePassBody": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"oldPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"oldPassword",
+					"newPassword"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3384,7 +3574,16 @@
 					"Bancos"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3674,8 +3873,21 @@
 				"tags": [
 					"Clientes"
 				],
-				"security": [],
-				"parameters": [],
+				"security": [
+					{
+						"token": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3734,7 +3946,16 @@
 					"Clientes"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3747,7 +3968,7 @@
 				}
 			}
 		},
-		"/api/clientes/all/{emp_id}": {
+		"/api/clientes/all": {
 			"get": {
 				"operationId": "GetAllClients",
 				"responses": {
@@ -3795,12 +4016,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "emp_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]
@@ -4827,6 +5047,87 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/LoginBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/auth/cambiar-contrasena": {
+			"post": {
+				"operationId": "CambiarContrasena",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/FailedResponse"
+										}
+									]
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Cambio de contraseña fallido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailedResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Cambio de contraseña fallido",
+											"status": 400
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Autenticacion"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePassBody"
 							}
 						}
 					}

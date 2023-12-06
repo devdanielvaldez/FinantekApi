@@ -4,5 +4,15 @@
     "spec": {
       "outputDirectory": "public",
       "specVersion": 3
-    }
+    },
+    "swagger": {
+      "securityDefinitions": {
+        "Authorization": {
+          "type": "apiKey",
+          "name": "token",
+          "in": "header",
+          "description": "Authentication token"
+        }
+      }
+  }
   }

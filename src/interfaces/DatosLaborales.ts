@@ -12,3 +12,16 @@ export interface DatosLaborales {
     cliente_id?: number;
     salario: string;
 }
+
+export interface DatosLaboralesRegister {
+    dlabNombreEmpresa: string;
+    dlabDepartamento: string;
+    dlabPosicion: string;
+    dlabHorarioEntrada: string;
+    dlabHorarioSalida: string;
+    dlabNombreSupervisor: string;
+    dlabIdProvincia: number;
+    dlabIdMunicipio: number;
+    dlabCalle: string;
+    salario: string;
+}

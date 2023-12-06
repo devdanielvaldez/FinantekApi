@@ -1,4 +1,4 @@
-import { Body, Get, Post, Put, Res, Response, Route, Tags } from "tsoa";
+import { Body, Get, Head, Header, Post, Put, Request, Res, Response, Route, Security, Tags } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import {
   RegistrarCliente,
@@ -35,6 +35,7 @@ interface SuccessResponseUpdateClientStatus {
 @Tags("Clientes")
 export default class Clientes {
   @Post("/registrar")
+  @Security('token')
   @Response<InternalServerError>(500, "Internal Server Error", {
     ok: false,
     msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -51,7 +52,8 @@ export default class Clientes {
     }
   )
   public async registerClients(
-    @Body() body: RegistrarCliente
+    @Body() body: RegistrarCliente,
+    @Header() token: any,
   ): Promise<InternalServerError | SuccessResponseRegisterClient> {
     try {
       const {
@@ -60,7 +62,6 @@ export default class Clientes {
         datos_laborales,
         persona_id,
         referencias,
-        emp_id,
       } = body;
 
       const insertConyuge = await execute(
@@ -70,13 +71,13 @@ export default class Clientes {
 
       const insertClient = await execute(
         "INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)",
-        [insertConyuge.insertId, "a", persona_id, emp_id]
+        [insertConyuge.insertId, "a", persona_id, token.dataUsuario.emp_id.empresa_id]
       );
 
       // insert data banks
       for (const db of datos_bancarios) {
         await execute(
-          "INSERT INTO datos_bancarios (banco_codigo_id, n_cuenta, cuenta_default, cliente_id",
+          "INSERT INTO datos_bancarios (banco_codigo_id, n_cuenta, cuenta_default, cliente_id) VALUES (?, ?, ?, ?)",
           [
             db.banco_codigo_id,
             db.n_cuenta,
@@ -146,7 +147,8 @@ export default class Clientes {
     }
   )
   public async updateClient(
-    @Body() body: UpdateClientBody
+    @Body() body: UpdateClientBody,
+    @Header() token: any
   ): Promise<InternalServerError | SuccessResponseUpdateClient> {
     try {
       const {
@@ -227,7 +229,7 @@ export default class Clientes {
     }
   }
 
-  @Get("/all/{emp_id}")
+  @Get("/all")
   @Response<SuccessResponseFindClients>(
     200,
     "Consulta satisfactoria de clientes",
@@ -244,25 +246,41 @@ export default class Clientes {
     status: 500,
   })
   public async getAllClients(
-    emp_id: number
+   @Header() token: any
   ): Promise<SuccessResponseFindClients | InternalServerError> {
     try {
       const findClientsByEmp = await execute(
         `
-            SELECT
-            c.cliente_id,
-            c.estado,
-            p.nombre,
-            p.primer_apellido,
-            dl.salario
-            FROM
-                clientes c
-            LEFT JOIN
-                persona p ON c.persona_id = p.persona_id
-            LEFT JOIN
-            datos_laborales dl ON c.cliente_id = dl.cliente_id
-            WHERE emp_id = ?`,
-        [emp_id]
+        SELECT
+        c.cliente_id,
+        c.estado,
+        p.*,
+        dl.*,
+        db.*,
+        ct.*,
+        dr.*,
+        cy.*,
+        cp.*
+    FROM
+        clientes c
+    LEFT JOIN
+        persona p ON c.persona_id = p.persona_id
+    LEFT JOIN
+        datos_laborales dl ON c.cliente_id = dl.cliente_id
+    LEFT JOIN
+        datos_bancarios db ON c.cliente_id = db.cliente_id
+    LEFT JOIN
+        contactos ct ON p.persona_id = ct.persona_id
+    LEFT JOIN
+        direcciones dr ON p.direccion_id = dr.direccion_id
+    LEFT JOIN
+        conyuge cy ON c.conyuge_id = cy.conyuge_id
+    LEFT JOIN
+        persona cp ON cy.persona_id = cp.persona_id
+    WHERE
+        c.emp_id = ?;
+    `,
+        [token.dataUsuario.emp_id.empresa_id]
       );
 
       return {

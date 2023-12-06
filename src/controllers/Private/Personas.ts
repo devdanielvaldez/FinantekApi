@@ -5,6 +5,7 @@ import {
   Queries,
   Response,
   Route,
+  Security,
   Tags,
 } from "tsoa";
 import { RegistrarPersona, Persona as PersonaInterface } from "../../interfaces/Persona";
@@ -67,7 +68,7 @@ export default class Persona {
     status: 500,
   })
   public async registrarPersona(
-    @Body() body: RegistrarPersona
+    @Body() body: RegistrarPersona,
   ): Promise<RegistrarPersonaResponse | InternalServerError> {
     try {
       const { persona, contactos, direccion } = body;
@@ -104,7 +105,7 @@ export default class Persona {
             persona.segundo_apellido,
             persona.fecha_nacimiento,
             persona.sexo,
-            persona.estado,
+            'a',
             personaId,
           ]
         );
@@ -155,7 +156,7 @@ export default class Persona {
             persona.segundo_apellido,
             persona.fecha_nacimiento,
             persona.sexo,
-            persona.estado,
+            'a',
             direccionInsert.insertId,
             persona.cedula,
           ]
