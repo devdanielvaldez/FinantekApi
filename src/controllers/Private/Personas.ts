@@ -6,10 +6,9 @@ import {
   Response,
   Route,
   Tags,
-  ValidateError,
 } from "tsoa";
 import { RegistrarPersona, Persona as PersonaInterface } from "../../interfaces/Persona";
-import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
+import { InternalServerError, NotFoundItems, ValidateError } from "../../interfaces/Errors";
 import { execute } from "../../api/utils/mysql.connector";
 import { QuerysPersonasFind } from "../../interfaces/Querys";
 import { Direccion } from "../../interfaces/Direccion";
