@@ -4,7 +4,7 @@ import swaggerUi from "swagger-ui-express";
 import * as MySQLConnector from './api/utils/mysql.connector';
 import compression from "compression";
 import router from './routers/index.routers';
-
+import cors from 'cors';
 const PORT = process.env.PORT || 8000;
 
 const app: Application = express();
@@ -12,6 +12,7 @@ const app: Application = express();
 MySQLConnector.init();
 
 app.use(compression());
+app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(express.static("public"));
