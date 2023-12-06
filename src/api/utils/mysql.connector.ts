@@ -12,11 +12,11 @@ export const init = async () => {
   try {
     pool = await createConnection({
       connectionLimit: 4,
-      host: 'localhost',
-      user: 'root',
-      password: 'Prueba01*',
-      database: 'finantek_dev',
-      port: 3306
+      host: process.env.MY_SQL_DB_HOST,
+      user: process.env.MY_SQL_DB_USER,
+      password: process.env.MY_SQL_DB_PASSWORD,
+      database: process.env.MY_SQL_DB_DATABASE,
+      port: 25060
     });
 
     console.debug('MySql Adapter Pool generated successfully');
