@@ -1,4 +1,5 @@
-import { Get, Route, Post, Body, SuccessResponse, Response, ValidateError, Queries, Tags, Put } from "tsoa";
+import { ValidateError } from './../../interfaces/Errors';
+import { Get, Route, Post, Body, SuccessResponse, Response, Queries, Tags, Put } from "tsoa";
 import { ActualizarEmpresa, RegistrarEmpresa } from "../../interfaces/Empresas";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";

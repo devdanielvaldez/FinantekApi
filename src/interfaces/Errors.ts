@@ -10,3 +10,9 @@ export interface NotFoundItems {
     ok: boolean;
     status: number;
 }
+
+export interface ValidateError {
+    message: string;
+    status: number;
+    name: string;
+}
