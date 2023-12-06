@@ -12,10 +12,10 @@ export const init = async () => {
   try {
     pool = await createConnection({
       connectionLimit: 4,
-      host: process.env.MY_SQL_DB_HOST,
-      user: process.env.MY_SQL_DB_USER,
-      password: process.env.MY_SQL_DB_PASSWORD,
-      database: process.env.MY_SQL_DB_DATABASE,
+      host: 'finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com',
+      user: 'dev',
+      password: 'AVNS_1GCHLZawTjjpEwKiUdX',
+      database: 'finantek',
       port: 25060
     });
 
