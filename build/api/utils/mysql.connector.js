@@ -21,11 +21,11 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         pool = yield (0, promise_1.createConnection)({
             connectionLimit: 4,
-            host: 'localhost',
-            user: 'root',
-            password: 'Prueba01*',
-            database: 'finantek_dev',
-            port: 3306
+            host: 'finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com',
+            user: 'dev',
+            password: 'AVNS_1GCHLZawTjjpEwKiUdX',
+            database: 'finantek',
+            port: 25060
         });
         console.debug('MySql Adapter Pool generated successfully');
     }
