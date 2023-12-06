@@ -9,9 +9,11 @@ import Clientes from "./Private/Clientes";
 import TiposPrestamos from "./Private/TiposPrestamos";
 import SolicitudesPrestamos from "./Private/Solicitudes";
 import Plantillas from "./Private/PlantillasCSV";
+import Auth from "./Private/Auth";
 
 const router = express.Router();
 
+router.use('/auth', Auth);
 router.use('/empresas', Empresas);
 router.use('/personas', Personas);
 router.use('/empleados', Empleados);

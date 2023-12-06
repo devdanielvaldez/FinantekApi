@@ -111,11 +111,12 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado): Promise<CreatedE
             const hash_pwd = await bcrypt.hash(raw_pwd, 10);
             console.log('password generate --->', raw_pwd, hash_pwd);
       
-            await execute('INSERT INTO users (username, pwd, persona_id, roll_id) VALUES (?, ?, ?, ?)', [
+            await execute('INSERT INTO users (username, pwd, persona_id, roll_id, empleado_id) VALUES (?, ?, ?, ?, ?)', [
               persona.cedula,
               hash_pwd,
               personaId,
-              rol
+              rol,
+              empleadoId
             ])
 
             return {

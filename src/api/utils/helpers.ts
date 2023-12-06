@@ -22,3 +22,9 @@ export const hashPassword = async (password: string) => {
   
     return hash;
 }
+
+export const verifyPassword = async(hashPassword: string, textPlainPassword: string) => {
+  const passValidation = await bcrypt.compare(textPlainPassword, hashPassword);
+
+  return passValidation;
+}
