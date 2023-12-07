@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import moment from 'moment';
 
 export const generatePassword = () => {
   // Definir el tamaño del password en bytes (8 caracteres * 2 bytes por caracter hexadecimal)
@@ -27,4 +28,13 @@ export const verifyPassword = async(hashPassword: string, textPlainPassword: str
   const passValidation = await bcrypt.compare(textPlainPassword, hashPassword);
 
   return passValidation;
+}
+
+export const formatDate = (date: string, format: string) => {
+  switch(format) {
+    case 'n':
+      return moment(date).locale('es-Do').format('L');
+    case 's':
+      return moment(date).locale('es-Do').format('lll');
+  }
 }

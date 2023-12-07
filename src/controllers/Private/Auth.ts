@@ -148,7 +148,7 @@ export default class AuthController {
                 return { ok: false, msg: 'Cambio de contraseña no permitido', status: 400 };
             }
 
-            const validPassword = await verifyPassword(oldPassword, user[0].pwd);
+            const validPassword = await verifyPassword(user[0].pwd, oldPassword);
 
             if (!validPassword) {
                 return { ok: false, msg: 'Contraseña actual incorrecta', status: 400 };

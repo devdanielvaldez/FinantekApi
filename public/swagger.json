@@ -825,10 +825,6 @@
 			},
 			"RegistrarNoticiaRequest": {
 				"properties": {
-					"empresa_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"titulo": {
 						"type": "string"
 					},
@@ -839,21 +835,14 @@
 						"type": "number",
 						"format": "double"
 					},
-					"fecha_publicacion": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"fecha_vencimiento": {
-						"type": "string",
-						"format": "date-time"
+						"type": "string"
 					}
 				},
 				"required": [
-					"empresa_id",
 					"titulo",
 					"descripcion",
 					"persona_id",
-					"fecha_publicacion",
 					"fecha_vencimiento"
 				],
 				"type": "object",
@@ -3100,7 +3089,16 @@
 					"Noticias"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3113,7 +3111,7 @@
 				}
 			}
 		},
-		"/api/noticias/empresa/{empresa_id}": {
+		"/api/noticias/empresa": {
 			"get": {
 				"operationId": "GetNoticiasByEmpresa",
 				"responses": {
@@ -3161,12 +3159,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]

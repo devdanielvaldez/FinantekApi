@@ -1,15 +1,14 @@
-import { Controller, Post, Body, Response, Route, Tags, Get, Put, Delete } from 'tsoa';
+import { Controller, Post, Body, Response, Route, Tags, Get, Put, Delete, Header } from 'tsoa';
 import { execute } from '../../api/utils/mysql.connector'; // Reemplaza esto con la forma en que realizas consultas a la base de datos
 import { InternalServerError } from '../../interfaces/Errors';
 import { Noticia } from '../../interfaces/Noticias';
+import { formatDate } from '../../api/utils/helpers';
 
 interface RegistrarNoticiaRequest {
-    empresa_id: number;
     titulo: string;
     descripcion: string;
     persona_id: number;
-    fecha_publicacion: Date;
-    fecha_vencimiento: Date;
+    fecha_vencimiento: String;
 }
 
 interface RegistrarNoticiaResponse {
@@ -59,26 +58,26 @@ export default class NoticiasController {
         error: {},
         status: 500,
     })
-    public async registrarNoticia(@Body() body: RegistrarNoticiaRequest): Promise<RegistrarNoticiaResponse | InternalServerError> {
+    public async registrarNoticia(@Body() body: RegistrarNoticiaRequest, @Header() token: any): Promise<RegistrarNoticiaResponse | InternalServerError> {
         try {
             const {
-                empresa_id,
                 titulo,
                 descripcion,
                 persona_id,
-                fecha_publicacion,
                 fecha_vencimiento,
             } = body;
+
+            const empId = token.dataUsuario.emp_id.empresa_id
 
             // Realiza validaciones si es necesario
 
             // Inserta la noticia en la base de datos
             await execute('INSERT INTO noticias (empresa_id, titulo, descripcion, persona_id, fecha_publicacion, fecha_vencimiento) VALUES (?, ?, ?, ?, ?, ?)', [
-                empresa_id,
+                empId,
                 titulo,
                 descripcion,
                 persona_id,
-                fecha_publicacion,
+                formatDate(String(new Date()), 'n'),
                 fecha_vencimiento,
             ]);
 
@@ -97,7 +96,7 @@ export default class NoticiasController {
         }
     }
 
-    @Get('/empresa/{empresa_id}')
+    @Get('/empresa')
     @Response<GetAllNoticiasResponse>(200, 'Noticias de la empresa', {
         ok: true,
         data: [],
@@ -109,8 +108,9 @@ export default class NoticiasController {
         error: {},
         status: 500,
     })
-    public async getNoticiasByEmpresa(empresa_id: number): Promise<GetAllNoticiasResponse | InternalServerError> {
+    public async getNoticiasByEmpresa(@Header() token: any): Promise<GetAllNoticiasResponse | InternalServerError> {
         try {
+            const empId = token.dataUsuario.emp_id.empresa_id;
             const noticias = await execute(`SELECT
                 n.noticia_id,
                 n.empresa_id,
@@ -126,7 +126,7 @@ export default class NoticiasController {
             FROM noticias n
             JOIN persona p ON n.persona_id = p.persona_id
             WHERE n.empresa_id = ?`, [
-                empresa_id
+                empId
             ]);
 
             const data: Noticia[] = noticias.map((n: any) => ({
