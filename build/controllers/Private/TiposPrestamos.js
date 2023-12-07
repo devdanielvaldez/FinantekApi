@@ -24,11 +24,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
 let LoanTypes = class LoanTypes {
-    registerLoanType(body) {
+    registerLoanType(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id // Agregado el campo empresa_id
-                 } = body;
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos } = body;
                 // Realizar la inserción en la base de datos con la información proporcionada
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO tipos_prestamos 
         (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id) 
@@ -43,7 +43,7 @@ let LoanTypes = class LoanTypes {
                     porcentaje_mora,
                     dias_gracia,
                     requisitos,
-                    empresa_id
+                    empId
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {
@@ -72,12 +72,12 @@ let LoanTypes = class LoanTypes {
             }
         });
     }
-    getLoanTypesByCompany(empresa_id) {
+    getLoanTypesByCompany(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // Lógica para obtener todos los tipos de préstamos asociados a una empresa específica según el 'empresa_id'
                 const loanTypes = yield (0, mysql_connector_1.execute)("SELECT * FROM tipos_prestamos WHERE empresa_id = ?", [
-                    empresa_id,
+                    token.dataUsuario.emp_id.empresa_id,
                 ]);
                 if (loanTypes && loanTypes.length > 0) {
                     return {
@@ -104,16 +104,15 @@ let LoanTypes = class LoanTypes {
             }
         });
     }
-    updateLoanType(body) {
+    updateLoanType(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { tipo_prestamo_id, nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id // Agregado el campo empresa_id
-                 } = body;
+                const { tipo_prestamo_id, nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos } = body;
                 // Lógica para actualizar un tipo de préstamo existente en la base de datos
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE tipos_prestamos 
          SET nombre_tipo = ?, descripcion = ?, tasa_interes = ?, plazo_maximo_meses = ?, 
              monto_minimo = ?, monto_maximo = ?, gastos_legales = ?, porcentaje_mora = ?, 
-             dias_gracia = ?, requisitos = ?, empresa_id = ?
+             dias_gracia = ?, requisitos = ?
          WHERE tipo_prestamo_id = ?`, [
                     nombre_tipo,
                     descripcion,
@@ -125,7 +124,6 @@ let LoanTypes = class LoanTypes {
                     porcentaje_mora,
                     dias_gracia,
                     requisitos,
-                    empresa_id,
                     tipo_prestamo_id
                 ]);
                 // Verificar si la actualización fue exitosa
@@ -170,12 +168,13 @@ __decorate([
         status: 200,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], LoanTypes.prototype, "registerLoanType", null);
 __decorate([
-    (0, tsoa_1.Get)("/por-empresa/{empresa_id}"),
+    (0, tsoa_1.Get)("/por-empresa"),
     (0, tsoa_1.Response)(200, "Consulta satisfactoria de tipos de préstamos por empresa", {
         ok: true,
         data: [],
@@ -192,9 +191,9 @@ __decorate([
         msg: "No se encontraron tipos de préstamos para esta empresa",
         status: 404
     }),
-    __param(0, (0, tsoa_1.Path)()),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], LoanTypes.prototype, "getLoanTypesByCompany", null);
 __decorate([
@@ -211,8 +210,9 @@ __decorate([
         status: 200,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], LoanTypes.prototype, "updateLoanType", null);
 LoanTypes = __decorate([

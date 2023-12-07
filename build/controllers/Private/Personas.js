@@ -49,7 +49,7 @@ let Persona = class Persona {
                         persona.segundo_apellido,
                         persona.fecha_nacimiento,
                         persona.sexo,
-                        persona.estado,
+                        'a',
                         personaId,
                     ]);
                     // Eliminar los contactos existentes de la persona
@@ -88,7 +88,7 @@ let Persona = class Persona {
                         persona.segundo_apellido,
                         persona.fecha_nacimiento,
                         persona.sexo,
-                        persona.estado,
+                        'a',
                         direccionInsert.insertId,
                         persona.cedula,
                     ]);

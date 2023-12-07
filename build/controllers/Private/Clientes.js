@@ -24,15 +24,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
 let Clientes = class Clientes {
-    registerClients(body) {
+    registerClients(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { conyuge_id, datos_bancarios, datos_laborales, persona_id, referencias, emp_id, } = body;
+                const { conyuge_id, datos_bancarios, datos_laborales, persona_id, referencias, } = body;
                 const insertConyuge = yield (0, mysql_connector_1.execute)("INSERT INTO conyuge (persona_id) VALUES (?)", [conyuge_id]);
-                const insertClient = yield (0, mysql_connector_1.execute)("INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)", [insertConyuge.insertId, "a", persona_id, emp_id]);
+                const insertClient = yield (0, mysql_connector_1.execute)("INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)", [insertConyuge.insertId, "a", persona_id, token.dataUsuario.emp_id.empresa_id]);
                 // insert data banks
                 for (const db of datos_bancarios) {
-                    yield (0, mysql_connector_1.execute)("INSERT INTO datos_bancarios (banco_codigo_id, n_cuenta, cuenta_default, cliente_id", [
+                    yield (0, mysql_connector_1.execute)("INSERT INTO datos_bancarios (banco_codigo_id, n_cuenta, cuenta_default, cliente_id) VALUES (?, ?, ?, ?)", [
                         db.banco_codigo_id,
                         db.n_cuenta,
                         db.cuenta_default,
@@ -75,7 +75,7 @@ let Clientes = class Clientes {
             }
         });
     }
-    updateClient(body) {
+    updateClient(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { cliente_id, conyuge_id, datos_bancarios, datos_laborales, referencias, } = body;
@@ -133,23 +133,39 @@ let Clientes = class Clientes {
             }
         });
     }
-    getAllClients(emp_id) {
+    getAllClients(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const findClientsByEmp = yield (0, mysql_connector_1.execute)(`
-            SELECT
-            c.cliente_id,
-            c.estado,
-            p.nombre,
-            p.primer_apellido,
-            dl.salario
-            FROM
-                clientes c
-            LEFT JOIN
-                persona p ON c.persona_id = p.persona_id
-            LEFT JOIN
-            datos_laborales dl ON c.cliente_id = dl.cliente_id
-            WHERE emp_id = ?`, [emp_id]);
+        SELECT
+        c.cliente_id,
+        c.estado,
+        p.*,
+        dl.*,
+        db.*,
+        ct.*,
+        dr.*,
+        cy.*,
+        cp.*
+    FROM
+        clientes c
+    LEFT JOIN
+        persona p ON c.persona_id = p.persona_id
+    LEFT JOIN
+        datos_laborales dl ON c.cliente_id = dl.cliente_id
+    LEFT JOIN
+        datos_bancarios db ON c.cliente_id = db.cliente_id
+    LEFT JOIN
+        contactos ct ON p.persona_id = ct.persona_id
+    LEFT JOIN
+        direcciones dr ON p.direccion_id = dr.direccion_id
+    LEFT JOIN
+        conyuge cy ON c.conyuge_id = cy.conyuge_id
+    LEFT JOIN
+        persona cp ON cy.persona_id = cp.persona_id
+    WHERE
+        c.emp_id = ?;
+    `, [token.dataUsuario.emp_id.empresa_id]);
                 return {
                     ok: true,
                     data: findClientsByEmp,
@@ -202,6 +218,7 @@ let Clientes = class Clientes {
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
+    (0, tsoa_1.Security)('token'),
     (0, tsoa_1.Response)(500, "Internal Server Error", {
         ok: false,
         msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -214,8 +231,9 @@ __decorate([
         status: 200,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], Clientes.prototype, "registerClients", null);
 __decorate([
@@ -232,12 +250,13 @@ __decorate([
         status: 200,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], Clientes.prototype, "updateClient", null);
 __decorate([
-    (0, tsoa_1.Get)("/all/{emp_id}"),
+    (0, tsoa_1.Get)("/all"),
     (0, tsoa_1.Response)(200, "Consulta satisfactoria de clientes", {
         ok: true,
         data: [],
@@ -249,8 +268,9 @@ __decorate([
         error: {},
         status: 500,
     }),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], Clientes.prototype, "getAllClients", null);
 __decorate([

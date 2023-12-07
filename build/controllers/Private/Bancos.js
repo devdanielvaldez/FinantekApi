@@ -24,7 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector"); // Reemplaza esto con la forma en que realizas consultas a la base de datos
 let BancosController = class BancosController {
-    registrarBanco(bancoData) {
+    registrarBanco(bancoData, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { nombre, telefono, codigo } = bancoData;
@@ -37,10 +37,10 @@ let BancosController = class BancosController {
                         msg: "El banco que desea ingresar ya existe en el sistema"
                     };
                 const insertQuery = `
-                INSERT INTO bancos (nombre, telefono, codigo)
-                VALUES (?, ?, ?)
+                INSERT INTO bancos (nombre, telefono, codigo, emp_id)
+                VALUES (?, ?, ?, ?)
             `;
-                yield (0, mysql_connector_1.execute)(insertQuery, [nombre, telefono, codigo]);
+                yield (0, mysql_connector_1.execute)(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id]);
                 return {
                     ok: true,
                     msg: 'Banco registrado exitosamente',
@@ -57,11 +57,12 @@ let BancosController = class BancosController {
             }
         });
     }
-    verTodosLosBancos() {
+    verTodosLosBancos(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const query = `SELECT * FROM bancos`;
-                const result = yield (0, mysql_connector_1.execute)(query);
+                const query = `SELECT * FROM bancos WHERE emp_id = ?`;
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const result = yield (0, mysql_connector_1.execute)(query, [empId]);
                 const bancos = result.map((row) => {
                     return {
                         banco_id: row.banco_id,
@@ -189,8 +190,9 @@ __decorate([
         msg: "El banco que desea ingresar ya existe en el sistema."
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], BancosController.prototype, "registrarBanco", null);
 __decorate([
@@ -206,8 +208,9 @@ __decorate([
         error: {},
         status: 500,
     }),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], BancosController.prototype, "verTodosLosBancos", null);
 __decorate([

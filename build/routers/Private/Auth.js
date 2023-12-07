@@ -13,24 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Tareas_1 = __importDefault(require("../../controllers/Private/Tareas")); // Asegúrate de importar el controlador correcto
-const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
+const Auth_1 = __importDefault(require("../../controllers/Private/Auth"));
 const router = express_1.default.Router();
-const controller = new Tareas_1.default();
-router.post("/crear", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.crearTarea(req.body, req);
+const controller = new Auth_1.default();
+router.post("/login", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.login(_req.body);
     return res.status(response.status).json(response);
 }));
-router.put("/update/:tarea_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarTarea(req.params.tarea_id, req.body);
-    return res.status(response.status).json(response);
-}));
-router.delete("/delete/:tarea_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.eliminarTarea(req.params.tarea_id);
-    return res.status(response.status).json(response);
-}));
-router.get('/mis-tareas', decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.obtenerMisTareas(req);
+router.post("/cambiar-contrasena", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.cambiarContrasena(_req.body);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

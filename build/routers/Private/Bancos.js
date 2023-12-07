@@ -14,25 +14,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Bancos_1 = __importDefault(require("../../controllers/Private/Bancos"));
+const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
 const controller = new Bancos_1.default();
-router.post("/registrar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registrarBanco(_req.body);
+router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.registrarBanco(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.get("/ver-todos", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.verTodosLosBancos();
+router.get("/ver-todos", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.verTodosLosBancos(_req);
     return res.status(response.status).json(response);
 }));
-router.get("/ver/:banco_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/ver/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.verBanco(req.params.banco_id);
     return res.status(response.status).json(response);
 }));
-router.put("/actualizar/:banco_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/actualizar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.actualizarBanco(req.params.banco_id, req.body);
     return res.status(response.status).json(response);
 }));
-router.delete("/eliminar/:banco_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/eliminar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.eliminarBanco(req.params.banco_id);
     return res.status(response.status).json(response);
 }));

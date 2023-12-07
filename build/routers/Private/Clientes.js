@@ -14,21 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Clientes_1 = __importDefault(require("../../controllers/Private/Clientes"));
+const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
 const controller = new Clientes_1.default();
-router.post("/registrar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registerClients(_req.body);
+router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.registerClients(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.get('/all/:emp_id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getAllClients(_req.params.emp_id);
+router.get('/all', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getAllClients(_req);
     return res.status(response.status).json(response);
 }));
-router.put('/update', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.updateClient(_req.body);
-    return res.status(response.status).json(response);
-}));
-router.put('/actualizar-estado-cliente', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/actualizar-estado-cliente', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.updateClientStatus(_req.body);
     return res.status(response.status).json(response);
 }));

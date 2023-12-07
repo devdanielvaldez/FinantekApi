@@ -24,15 +24,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
 let TareasController = class TareasController {
-    crearTarea(tareaData) {
+    crearTarea(tareaData, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { empleado_id, supervisor_id, descripcion, fecha, prioridad, estado } = tareaData;
+                const { empleado_id, descripcion, fecha, prioridad } = tareaData;
+                const userId = token.dataUsuario.user;
                 const insertQuery = `
                 INSERT INTO tareas (empleado_id, supervisor_id, descripcion, fecha, prioridad, estado)
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
-                yield (0, mysql_connector_1.execute)(insertQuery, [empleado_id, supervisor_id, descripcion, fecha, prioridad, estado]);
+                yield (0, mysql_connector_1.execute)(insertQuery, [empleado_id, userId, descripcion, fecha, prioridad, 'pe']);
                 return {
                     ok: true,
                     msg: 'Tarea creada exitosamente',
@@ -100,9 +101,10 @@ let TareasController = class TareasController {
             }
         });
     }
-    obtenerMisTareas(empleado_id, supervisor_id) {
+    obtenerMisTareas(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const user = token.dataUsuario.user;
                 const query = `
                 SELECT t.*, e1.*, e2.*
                 FROM tareas t
@@ -110,7 +112,7 @@ let TareasController = class TareasController {
                 LEFT JOIN empleados e2 ON t.supervisor_id = e2.empleado_id
                 WHERE t.empleado_id = ? OR t.supervisor_id = ?
             `;
-                const result = yield (0, mysql_connector_1.execute)(query, [empleado_id, supervisor_id]);
+                const result = yield (0, mysql_connector_1.execute)(query, [user, user]);
                 const tareas = result.map((row) => {
                     return {
                         tarea_id: row.tarea_id,
@@ -159,8 +161,9 @@ __decorate([
         status: 500,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], TareasController.prototype, "crearTarea", null);
 __decorate([
@@ -215,10 +218,9 @@ __decorate([
         error: {},
         status: 500,
     }),
-    __param(0, (0, tsoa_1.Query)('empleado_id')),
-    __param(1, (0, tsoa_1.Query)('supervisor_id')),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TareasController.prototype, "obtenerMisTareas", null);
 TareasController = __decorate([

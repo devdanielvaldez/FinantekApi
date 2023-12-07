@@ -14,18 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const TiposPrestamos_1 = __importDefault(require("../../controllers/Private/TiposPrestamos"));
+const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
 const controller = new TiposPrestamos_1.default();
-router.post("/registrar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registerLoanType(_req.body);
+router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.registerLoanType(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.get('/por-empresa/:empresa_id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getLoanTypesByCompany(_req.body);
+router.get('/por-empresa', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getLoanTypesByCompany(_req);
     return res.status(response.status).json(response);
 }));
-router.put('/actualizar', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.updateLoanType(_req.body);
+router.put('/actualizar', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.updateLoanType(_req.body, _req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

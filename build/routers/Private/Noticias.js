@@ -14,21 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Noticias_1 = __importDefault(require("../../controllers/Private/Noticias"));
+const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
 const controller = new Noticias_1.default();
-router.post("/registrar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registrarNoticia(_req.body);
+router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.registrarNoticia(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.get('/empresa/:empresa_id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getNoticiasByEmpresa(_req.params.empresa_id);
+router.get('/empresa', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getNoticiasByEmpresa(_req);
     return res.status(response.status).json(response);
 }));
-router.put('/update/:noticia_id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/update/:noticia_id', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.updateNoticia(_req.params.noticia_id, _req.body);
     return res.status(response.status).json(response);
 }));
-router.delete('/delete/:noticia_id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete('/delete/:noticia_id', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.deleteNoticia(_req.params.noticia_id);
     return res.status(response.status).json(response);
 }));

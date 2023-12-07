@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hashPassword = exports.generatePassword = void 0;
+exports.formatDate = exports.verifyPassword = exports.hashPassword = exports.generatePassword = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const moment_1 = __importDefault(require("moment"));
 const generatePassword = () => {
     // Definir el tamaño del password en bytes (8 caracteres * 2 bytes por caracter hexadecimal)
     const tamañoPassword = 8;
@@ -32,3 +33,17 @@ const hashPassword = (password) => __awaiter(void 0, void 0, void 0, function* (
     return hash;
 });
 exports.hashPassword = hashPassword;
+const verifyPassword = (hashPassword, textPlainPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    const passValidation = yield bcrypt_1.default.compare(textPlainPassword, hashPassword);
+    return passValidation;
+});
+exports.verifyPassword = verifyPassword;
+const formatDate = (date, format) => {
+    switch (format) {
+        case 'n':
+            return (0, moment_1.default)(date).locale('es-Do').format('L');
+        case 's':
+            return (0, moment_1.default)(date).locale('es-Do').format('lll');
+    }
+};
+exports.formatDate = formatDate;

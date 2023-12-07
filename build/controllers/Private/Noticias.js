@@ -23,19 +23,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector"); // Reemplaza esto con la forma en que realizas consultas a la base de datos
+const helpers_1 = require("../../api/utils/helpers");
 let NoticiasController = class NoticiasController {
-    registrarNoticia(body) {
+    registrarNoticia(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { empresa_id, titulo, descripcion, persona_id, fecha_publicacion, fecha_vencimiento, } = body;
+                const { titulo, descripcion, persona_id, fecha_vencimiento, } = body;
+                const empId = token.dataUsuario.emp_id.empresa_id;
                 // Realiza validaciones si es necesario
                 // Inserta la noticia en la base de datos
                 yield (0, mysql_connector_1.execute)('INSERT INTO noticias (empresa_id, titulo, descripcion, persona_id, fecha_publicacion, fecha_vencimiento) VALUES (?, ?, ?, ?, ?, ?)', [
-                    empresa_id,
+                    empId,
                     titulo,
                     descripcion,
                     persona_id,
-                    fecha_publicacion,
+                    (0, helpers_1.formatDate)(String(new Date()), 'n'),
                     fecha_vencimiento,
                 ]);
                 return {
@@ -54,9 +56,10 @@ let NoticiasController = class NoticiasController {
             }
         });
     }
-    getNoticiasByEmpresa(empresa_id) {
+    getNoticiasByEmpresa(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
                 const noticias = yield (0, mysql_connector_1.execute)(`SELECT
                 n.noticia_id,
                 n.empresa_id,
@@ -72,7 +75,7 @@ let NoticiasController = class NoticiasController {
             FROM noticias n
             JOIN persona p ON n.persona_id = p.persona_id
             WHERE n.empresa_id = ?`, [
-                    empresa_id
+                    empId
                 ]);
                 const data = noticias.map((n) => ({
                     noticia_id: n.noticia_id,
@@ -170,12 +173,13 @@ __decorate([
         status: 500,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], NoticiasController.prototype, "registrarNoticia", null);
 __decorate([
-    (0, tsoa_1.Get)('/empresa/{empresa_id}'),
+    (0, tsoa_1.Get)('/empresa'),
     (0, tsoa_1.Response)(200, 'Noticias de la empresa', {
         ok: true,
         data: [],
@@ -187,8 +191,9 @@ __decorate([
         error: {},
         status: 500,
     }),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NoticiasController.prototype, "getNoticiasByEmpresa", null);
 __decorate([

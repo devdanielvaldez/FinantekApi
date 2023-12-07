@@ -30,7 +30,7 @@ const helpers_1 = require("../../api/utils/helpers");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 // pws = 22cd813e
 let Empleados = class Empleados {
-    registrarEmpleado(body) {
+    registrarEmpleado(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             const { persona, empleado, contactos, direccion, rol } = body;
             try {
@@ -51,7 +51,7 @@ let Empleados = class Empleados {
                     persona.segundo_apellido,
                     persona.fecha_nacimiento,
                     persona.sexo,
-                    persona.estado,
+                    'a',
                     direccionId,
                     persona.cedula
                 ]);
@@ -62,7 +62,7 @@ let Empleados = class Empleados {
                     empleado.cargo,
                     empleado.salario,
                     empleado.fecha_inicio_contrato,
-                    empleado.empresa_id
+                    token.dataUsuario.emp_id.empresa_id
                 ]);
                 const empleadoId = empleadoInsert.insertId;
                 // Registrar los contactos de la persona
@@ -78,11 +78,12 @@ let Empleados = class Empleados {
                 const raw_pwd = (0, helpers_1.generatePassword)();
                 const hash_pwd = yield bcrypt_1.default.hash(raw_pwd, 10);
                 console.log('password generate --->', raw_pwd, hash_pwd);
-                yield (0, mysql_connector_1.execute)('INSERT INTO users (username, pwd, persona_id, roll_id) VALUES (?, ?, ?, ?)', [
+                yield (0, mysql_connector_1.execute)('INSERT INTO users (username, pwd, persona_id, roll_id, empleado_id) VALUES (?, ?, ?, ?, ?)', [
                     persona.cedula,
                     hash_pwd,
                     personaId,
-                    rol
+                    rol,
+                    empleadoId
                 ]);
                 return {
                     ok: true,
@@ -101,7 +102,7 @@ let Empleados = class Empleados {
             }
         });
     }
-    getAllEmployeesByQuery(emp_id, nombre, apellido, cargo) {
+    getAllEmployeesByQuery(token, nombre, apellido, cargo) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let query = `
@@ -123,7 +124,7 @@ let Empleados = class Empleados {
             FROM empleados e
             JOIN persona p ON e.persona_id = p.persona_id
             WHERE empresa_id = ?`;
-                const empId = emp_id; // Obtén el emp_id de la empresa de alguna manera
+                const empId = token.dataUsuario.emp_id.empresa_id; // Obtén el emp_id de la empresa de alguna manera
                 const conditions = [];
                 if (nombre) {
                     conditions.push(`p.nombre LIKE '%${nombre}%'`);
@@ -226,8 +227,9 @@ __decorate([
         status: 500
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], Empleados.prototype, "registrarEmpleado", null);
 __decorate([
@@ -243,12 +245,12 @@ __decorate([
         error: {},
         status: 500
     }),
-    __param(0, (0, tsoa_1.Query)('emp_id')),
+    __param(0, (0, tsoa_1.Header)()),
     __param(1, (0, tsoa_1.Query)('nombre')),
     __param(2, (0, tsoa_1.Query)('apellido')),
     __param(3, (0, tsoa_1.Query)('cargo')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", Promise)
 ], Empleados.prototype, "getAllEmployeesByQuery", null);
 __decorate([
