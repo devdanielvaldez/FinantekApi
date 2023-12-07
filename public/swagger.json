@@ -1005,10 +1005,6 @@
 						"type": "number",
 						"format": "double"
 					},
-					"supervisor_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"descripcion": {
 						"type": "string"
 					},
@@ -1023,25 +1019,13 @@
 							"media",
 							"baja"
 						]
-					},
-					"estado": {
-						"type": "string",
-						"enum": [
-							"en",
-							"pe",
-							"de",
-							"co",
-							"su",
-							"ca"
-						]
 					}
 				},
 				"required": [
 					"empleado_id",
 					"descripcion",
 					"fecha",
-					"prioridad",
-					"estado"
+					"prioridad"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3333,7 +3317,16 @@
 					"Tareas"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3522,21 +3515,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "empleado_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "supervisor_id",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]

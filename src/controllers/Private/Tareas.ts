@@ -1,4 +1,4 @@
-import { Post, Put, Delete, Body, Response, Route, Tags, Query, Get } from 'tsoa';
+import { Post, Put, Delete, Body, Response, Route, Tags, Query, Get, Header } from 'tsoa';
 import { execute } from '../../api/utils/mysql.connector';
 import { InternalServerError } from '../../interfaces/Errors';
 import { Empleado } from '../../interfaces/Empleados';
@@ -6,11 +6,10 @@ import { Empleado } from '../../interfaces/Empleados';
 // Interfaces defining data structures
 interface CreateTareaData {
     empleado_id: number;
-    supervisor_id?: number;
     descripcion: string;
     fecha: Date;
     prioridad: 'alta' | 'media' | 'baja';
-    estado: 'en' | 'pe' | 'de' | 'co' | 'su' | 'ca';
+    // estado: 'en' | 'pe' | 'de' | 'co' | 'su' | 'ca';
 }
 
 interface CreateTareaResponse {
@@ -72,16 +71,16 @@ export default class TareasController {
         error: {},
         status: 500,
     })
-    public async crearTarea(@Body() tareaData: CreateTareaData): Promise<CreateTareaResponse | InternalServerError> {
+    public async crearTarea(@Body() tareaData: CreateTareaData, @Header() token: any): Promise<CreateTareaResponse | InternalServerError> {
         try {
-            const { empleado_id, supervisor_id, descripcion, fecha, prioridad, estado } = tareaData;
-
+            const { empleado_id, descripcion, fecha, prioridad } = tareaData;
+            const userId = token.dataUsuario.user
             const insertQuery = `
                 INSERT INTO tareas (empleado_id, supervisor_id, descripcion, fecha, prioridad, estado)
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
 
-            await execute(insertQuery, [empleado_id, supervisor_id, descripcion, fecha, prioridad, estado]);
+            await execute(insertQuery, [empleado_id, userId, descripcion, fecha, prioridad, 'pe']);
 
             return {
                 ok: true,
@@ -190,8 +189,9 @@ export default class TareasController {
         error: {},
         status: 500,
     })
-    public async obtenerMisTareas(@Query('empleado_id') empleado_id: number, @Query('supervisor_id') supervisor_id?: number): Promise<GetTareasResponse | InternalServerError> {
+    public async obtenerMisTareas(@Header() token: any): Promise<GetTareasResponse | InternalServerError> {
         try {
+            const user = token.dataUsuario.user;
             const query = `
                 SELECT t.*, e1.*, e2.*
                 FROM tareas t
@@ -200,7 +200,7 @@ export default class TareasController {
                 WHERE t.empleado_id = ? OR t.supervisor_id = ?
             `;
 
-            const result = await execute(query, [empleado_id, supervisor_id]);
+            const result = await execute(query, [user, user]);
 
             const tareas: TareaWithRelations[] = result.map((row: any) => {
                 return {
