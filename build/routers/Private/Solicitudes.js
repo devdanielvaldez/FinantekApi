@@ -22,7 +22,7 @@ router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 
     return res.status(response.status).json(response);
 }));
 router.get("/solicitudes", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getAllLoanRequestsByCompany(_req.params.empresa_id);
+    const response = yield controller.getAllLoanRequestsByCompany(_req);
     return res.status(response.status).json(response);
 }));
 router.get("/solicitudes/:empresa_id/:id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {

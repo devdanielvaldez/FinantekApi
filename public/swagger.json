@@ -5167,6 +5167,65 @@
 					}
 				}
 			}
+		},
+		"/api/prestamos/generar": {
+			"post": {
+				"operationId": "GenerarPrestamo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										},
+										{}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"numeroDeMeses": {},
+									"frecuencia_pago": {},
+									"cuota_seguro": {
+										"type": "number",
+										"format": "double"
+									},
+									"tasa_interes": {},
+									"monto_aprobado": {},
+									"fecha_inicial": {}
+								},
+								"required": [
+									"numeroDeMeses",
+									"frecuencia_pago",
+									"cuota_seguro",
+									"tasa_interes",
+									"monto_aprobado",
+									"fecha_inicial"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"servers": [

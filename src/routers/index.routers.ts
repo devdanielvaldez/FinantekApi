@@ -10,6 +10,7 @@ import TiposPrestamos from "./Private/TiposPrestamos";
 import SolicitudesPrestamos from "./Private/Solicitudes";
 import Plantillas from "./Private/PlantillasCSV";
 import Auth from "./Private/Auth";
+import Prestamos from "./Private/Prestamos";
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use('/clientes', Clientes);
 router.use('/tipos-prestamos', TiposPrestamos);
 router.use('/solicitudes-prestamo', SolicitudesPrestamos);
 router.use('/api/plantillas', Plantillas);
+router.use('/prestamos', Prestamos);
 
 export default router;

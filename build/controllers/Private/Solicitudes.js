@@ -83,9 +83,14 @@ let LoanRequests = class LoanRequests {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const loanRequests = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`, [empId]);
-                return loanRequests;
+                return {
+                    ok: true,
+                    data: loanRequests,
+                    status: 200
+                };
             }
             catch (err) {
+                console.log(err);
                 return {
                     ok: false,
                     msg: "Error interno del sistema al obtener las solicitudes por empresa",

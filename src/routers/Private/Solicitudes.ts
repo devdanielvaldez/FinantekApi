@@ -11,7 +11,7 @@ router.post("/registrar", validateToken, async (_req: any, res) => {
 });
 
 router.get("/solicitudes", validateToken, async (_req: any, res) => {
-  const response: any = await controller.getAllLoanRequestsByCompany(_req.params.empresa_id);
+  const response: any = await controller.getAllLoanRequestsByCompany(_req);
   return res.status(response.status).json(response);
 });
 
