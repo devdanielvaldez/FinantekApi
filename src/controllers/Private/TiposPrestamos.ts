@@ -1,4 +1,4 @@
-import { Body, Get, Post, Put, Route, Tags, Path, Response } from "tsoa";
+import { Body, Get, Post, Put, Route, Tags, Path, Response, Header } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
 import { LoanType, UpdatedLoanType } from "../../interfaces/TiposPrestamos";
@@ -41,9 +41,11 @@ export default class LoanTypes {
     }
   )
   public async registerLoanType(
-    @Body() body: LoanType
+    @Body() body: LoanType,
+    @Header() token: any
   ): Promise<InternalServerError | SuccessResponseRegisterLoanType> {
     try {
+      const empId = token.dataUsuario.emp_id.empresa_id
       const {
         nombre_tipo,
         descripcion,
@@ -54,8 +56,7 @@ export default class LoanTypes {
         gastos_legales,
         porcentaje_mora,
         dias_gracia,
-        requisitos,
-        empresa_id // Agregado el campo empresa_id
+        requisitos
       } = body;
   
       // Realizar la inserción en la base de datos con la información proporcionada
@@ -74,7 +75,7 @@ export default class LoanTypes {
           porcentaje_mora,
           dias_gracia,
           requisitos,
-          empresa_id
+          empId
         ]
       );
   
@@ -103,7 +104,7 @@ export default class LoanTypes {
     }
   }  
 
-  @Get("/por-empresa/{empresa_id}")
+  @Get("/por-empresa")
   @Response<SuccessResponseFindLoanTypes>(
     200,
     "Consulta satisfactoria de tipos de préstamos por empresa",
@@ -125,12 +126,12 @@ export default class LoanTypes {
     status: 404
   })
   public async getLoanTypesByCompany(
-    @Path() empresa_id: number
+    @Header() token: any
   ): Promise<SuccessResponseFindLoanTypes | InternalServerError | NotFoundItems> {
     try {
       // Lógica para obtener todos los tipos de préstamos asociados a una empresa específica según el 'empresa_id'
       const loanTypes = await execute("SELECT * FROM tipos_prestamos WHERE empresa_id = ?", [
-        empresa_id,
+        token.dataUsuario.emp_id.empresa_id,
       ]);
   
       if (loanTypes && loanTypes.length > 0) {
@@ -174,7 +175,7 @@ export default class LoanTypes {
     }
   )
   public async updateLoanType(
-    @Body() body: UpdatedLoanType
+    @Body() body: UpdatedLoanType, @Header() token: any
   ): Promise<InternalServerError | SuccessResponseUpdateLoanType> {
     try {
       const {
@@ -188,8 +189,7 @@ export default class LoanTypes {
         gastos_legales,
         porcentaje_mora,
         dias_gracia,
-        requisitos,
-        empresa_id // Agregado el campo empresa_id
+        requisitos
       } = body;
   
       // Lógica para actualizar un tipo de préstamo existente en la base de datos
@@ -197,7 +197,7 @@ export default class LoanTypes {
         `UPDATE tipos_prestamos 
          SET nombre_tipo = ?, descripcion = ?, tasa_interes = ?, plazo_maximo_meses = ?, 
              monto_minimo = ?, monto_maximo = ?, gastos_legales = ?, porcentaje_mora = ?, 
-             dias_gracia = ?, requisitos = ?, empresa_id = ?
+             dias_gracia = ?, requisitos = ?
          WHERE tipo_prestamo_id = ?`,
         [
           nombre_tipo,
@@ -210,7 +210,6 @@ export default class LoanTypes {
           porcentaje_mora,
           dias_gracia,
           requisitos,
-          empresa_id,
           tipo_prestamo_id
         ]
       );

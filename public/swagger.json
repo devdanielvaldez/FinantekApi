@@ -1778,10 +1778,6 @@
 							"type": "string"
 						},
 						"type": "array"
-					},
-					"empresa_id": {
-						"type": "number",
-						"format": "double"
 					}
 				},
 				"required": [
@@ -1794,8 +1790,7 @@
 					"gastos_legales",
 					"porcentaje_mora",
 					"dias_gracia",
-					"requisitos",
-					"empresa_id"
+					"requisitos"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1884,10 +1879,6 @@
 						},
 						"type": "array"
 					},
-					"empresa_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"tipo_prestamo_id": {
 						"type": "number",
 						"format": "double"
@@ -1904,7 +1895,6 @@
 					"porcentaje_mora",
 					"dias_gracia",
 					"requisitos",
-					"empresa_id",
 					"tipo_prestamo_id"
 				],
 				"type": "object",
@@ -4172,7 +4162,16 @@
 					"Tipos de Préstamos"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -4185,7 +4184,7 @@
 				}
 			}
 		},
-		"/api/tipos-prestamos/por-empresa/{empresa_id}": {
+		"/api/tipos-prestamos/por-empresa": {
 			"get": {
 				"operationId": "GetLoanTypesByCompany",
 				"responses": {
@@ -4255,12 +4254,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]
@@ -4312,7 +4310,16 @@
 					"Tipos de Préstamos"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {

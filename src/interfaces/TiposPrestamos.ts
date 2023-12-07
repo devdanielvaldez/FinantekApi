@@ -9,7 +9,6 @@ export interface LoanType {
     porcentaje_mora: number;
     dias_gracia: number;
     requisitos: string[];
-    empresa_id: number;
 }
 
 export interface UpdatedLoanType {
@@ -23,6 +22,5 @@ export interface UpdatedLoanType {
     porcentaje_mora: number
     dias_gracia: number;
     requisitos: string[];
-    empresa_id: number;
     tipo_prestamo_id: number;
 }
