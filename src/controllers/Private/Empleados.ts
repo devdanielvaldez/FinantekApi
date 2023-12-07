@@ -1,4 +1,4 @@
-import { Body, Get, Post, Put, Query, Response, Route, Tags } from "tsoa";
+import { Body, Get, Header, Post, Put, Query, Response, Route, Tags } from "tsoa";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
 import { RegisterEmpleado } from "../../interfaces/Empleados";
 import { execute } from "../../api/utils/mysql.connector";
@@ -148,7 +148,7 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado): Promise<CreatedE
     status: 500
 })
 public async getAllEmployeesByQuery(
-    @Query('emp_id') emp_id: string,
+    @Header() token: any,
     @Query('nombre') nombre?: string,
     @Query('apellido') apellido?: string,
     @Query('cargo') cargo?: string
@@ -174,7 +174,7 @@ public async getAllEmployeesByQuery(
             JOIN persona p ON e.persona_id = p.persona_id
             WHERE empresa_id = ?`;
         
-        const empId = emp_id // Obtén el emp_id de la empresa de alguna manera
+        const empId = token.dataUsuario.emp_id.empresa_id; // Obtén el emp_id de la empresa de alguna manera
 
         const conditions = [];
 

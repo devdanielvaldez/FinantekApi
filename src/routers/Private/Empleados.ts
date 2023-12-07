@@ -1,5 +1,6 @@
 import express from "express";
 import EmpleadosController from "../../controllers/Private/Empleados";
+import validateToken from "../../api/middlewares/decodedToken";
 
 const router = express.Router();
 const controller = new EmpleadosController();
@@ -9,8 +10,8 @@ router.post("/registrar", async (_req: any, res) => {
   return res.status(response.status).json(response);
 });
 
-router.get('/search', async(_req: any, res) => {
-  const response: any = await controller.getAllEmployeesByQuery(_req.query.emp_id, _req.query.nombre, _req.query.apellido, _req.query.cargo);
+router.get('/search', validateToken, async(_req: any, res) => {
+  const response: any = await controller.getAllEmployeesByQuery(_req.query.nombre, _req.query.apellido, _req.query.cargo);
   return res.status(response.status).json(response);
 });
 

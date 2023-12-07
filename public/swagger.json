@@ -2885,8 +2885,8 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "emp_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
 							"type": "string"
