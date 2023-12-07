@@ -30,7 +30,7 @@ export const verifyPassword = async(hashPassword: string, textPlainPassword: str
   return passValidation;
 }
 
-export const formatDate = (date: string, format: string) => {
+export const formatDate = (date: any, format: string) => {
   switch(format) {
     case 'n':
       return moment(date).locale('es-Do').format('L');

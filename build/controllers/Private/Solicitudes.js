@@ -78,10 +78,11 @@ let LoanRequests = class LoanRequests {
             }
         });
     }
-    getAllLoanRequestsByCompany(empresa_id) {
+    getAllLoanRequestsByCompany(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const loanRequests = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`, [empresa_id]);
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const loanRequests = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`, [empId]);
                 return loanRequests;
             }
             catch (err) {
@@ -238,7 +239,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "createLoanRequest", null);
 __decorate([
-    (0, tsoa_1.Get)("/solicitudes/:empresa_id"),
+    (0, tsoa_1.Get)("/solicitudes"),
     (0, tsoa_1.Response)(500, "Internal Server Error", {
         ok: false,
         msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -250,9 +251,9 @@ __decorate([
         data: [],
         status: 200
     }),
-    __param(0, (0, tsoa_1.Path)()),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "getAllLoanRequestsByCompany", null);
 __decorate([

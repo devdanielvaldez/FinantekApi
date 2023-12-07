@@ -3,11 +3,11 @@ import { execute } from '../../api/utils/mysql.connector'; // Reemplaza esto con
 import { InternalServerError } from '../../interfaces/Errors';
 import { Noticia } from '../../interfaces/Noticias';
 import { formatDate } from '../../api/utils/helpers';
+import moment from "moment";
 
 interface RegistrarNoticiaRequest {
     titulo: string;
     descripcion: string;
-    persona_id: number;
     fecha_vencimiento: String;
 }
 
@@ -63,11 +63,10 @@ export default class NoticiasController {
             const {
                 titulo,
                 descripcion,
-                persona_id,
                 fecha_vencimiento,
             } = body;
 
-            const empId = token.dataUsuario.emp_id.empresa_id
+            const empId = token.dataUsuario.emp_id.empresa_id;
 
             // Realiza validaciones si es necesario
 
@@ -76,8 +75,8 @@ export default class NoticiasController {
                 empId,
                 titulo,
                 descripcion,
-                persona_id,
-                formatDate(String(new Date()), 'n'),
+                null,
+                formatDate(moment(), 'n'),
                 fecha_vencimiento,
             ]);
 
@@ -111,38 +110,18 @@ export default class NoticiasController {
     public async getNoticiasByEmpresa(@Header() token: any): Promise<GetAllNoticiasResponse | InternalServerError> {
         try {
             const empId = token.dataUsuario.emp_id.empresa_id;
-            const noticias = await execute(`SELECT
-                n.noticia_id,
-                n.empresa_id,
-                n.titulo,
-                n.descripcion,
-                n.persona_id,
-                n.fecha_publicacion,
-                n.fecha_vencimiento,
-                n.fecha_creacion,
-                n.fecha_actualizacion,
-                p.nombre,
-                p.primer_apellido
-            FROM noticias n
-            JOIN persona p ON n.persona_id = p.persona_id
-            WHERE n.empresa_id = ?`, [
+            const noticias = await execute(`SELECT * from noticias WHERE empresa_id = ?`, [
                 empId
             ]);
 
             const data: Noticia[] = noticias.map((n: any) => ({
                 noticia_id: n.noticia_id,
-                empresa_id: n.empresa_id,
                 titulo: n.titulo,
                 descripcion: n.descripcion,
-                persona_id: n.persona_id,
                 fecha_publicacion: n.fecha_publicacion,
                 fecha_vencimiento: n.fecha_vencimiento,
                 fecha_creacion: n.fecha_creacion,
                 fecha_actualizacion: n.fecha_actualizacion,
-                persona: {
-                    nombre_persona: n.nombre,
-                    apellido_persona: n.primer_apellido,
-                }
             }));
 
             return {

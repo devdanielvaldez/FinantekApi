@@ -20,15 +20,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector"); // Reemplaza esto con la forma en que realizas consultas a la base de datos
 const helpers_1 = require("../../api/utils/helpers");
+const moment_1 = __importDefault(require("moment"));
 let NoticiasController = class NoticiasController {
     registrarNoticia(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { titulo, descripcion, persona_id, fecha_vencimiento, } = body;
+                const { titulo, descripcion, fecha_vencimiento, } = body;
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 // Realiza validaciones si es necesario
                 // Inserta la noticia en la base de datos
@@ -36,8 +40,8 @@ let NoticiasController = class NoticiasController {
                     empId,
                     titulo,
                     descripcion,
-                    persona_id,
-                    (0, helpers_1.formatDate)(String(new Date()), 'n'),
+                    null,
+                    (0, helpers_1.formatDate)((0, moment_1.default)(), 'n'),
                     fecha_vencimiento,
                 ]);
                 return {
@@ -60,37 +64,17 @@ let NoticiasController = class NoticiasController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const noticias = yield (0, mysql_connector_1.execute)(`SELECT
-                n.noticia_id,
-                n.empresa_id,
-                n.titulo,
-                n.descripcion,
-                n.persona_id,
-                n.fecha_publicacion,
-                n.fecha_vencimiento,
-                n.fecha_creacion,
-                n.fecha_actualizacion,
-                p.nombre,
-                p.primer_apellido
-            FROM noticias n
-            JOIN persona p ON n.persona_id = p.persona_id
-            WHERE n.empresa_id = ?`, [
+                const noticias = yield (0, mysql_connector_1.execute)(`SELECT * from noticias WHERE empresa_id = ?`, [
                     empId
                 ]);
                 const data = noticias.map((n) => ({
                     noticia_id: n.noticia_id,
-                    empresa_id: n.empresa_id,
                     titulo: n.titulo,
                     descripcion: n.descripcion,
-                    persona_id: n.persona_id,
                     fecha_publicacion: n.fecha_publicacion,
                     fecha_vencimiento: n.fecha_vencimiento,
                     fecha_creacion: n.fecha_creacion,
                     fecha_actualizacion: n.fecha_actualizacion,
-                    persona: {
-                        nombre_persona: n.nombre,
-                        apellido_persona: n.primer_apellido,
-                    }
                 }));
                 return {
                     ok: true,

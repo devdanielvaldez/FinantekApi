@@ -831,10 +831,6 @@
 					"descripcion": {
 						"type": "string"
 					},
-					"persona_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"fecha_vencimiento": {
 						"type": "string"
 					}
@@ -842,7 +838,6 @@
 				"required": [
 					"titulo",
 					"descripcion",
-					"persona_id",
 					"fecha_vencimiento"
 				],
 				"type": "object",
@@ -4383,7 +4378,7 @@
 				}
 			}
 		},
-		"/api/solicitudes-prestamo/solicitudes/{empresa_id}": {
+		"/api/solicitudes-prestamo/solicitudes": {
 			"get": {
 				"operationId": "GetAllLoanRequestsByCompany",
 				"responses": {
@@ -4435,12 +4430,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]

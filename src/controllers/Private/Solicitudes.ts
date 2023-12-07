@@ -1,4 +1,4 @@
-import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete } from "tsoa";
+import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete, Header } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError } from "../../interfaces/Errors";
 import { LoanRequest } from "../../interfaces/Solicitudes";
@@ -103,7 +103,7 @@ export default class LoanRequests {
     }
   }
 
-  @Get("/solicitudes/:empresa_id")
+  @Get("/solicitudes")
   @Response<InternalServerError>(500, "Internal Server Error", {
     ok: false,
     msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -116,12 +116,13 @@ export default class LoanRequests {
     status: 200
   })
 public async getAllLoanRequestsByCompany(
-  @Path() empresa_id: number
+  @Header() token: any
 ): Promise<InternalServerError | LoanRequest[] | any> {
   try {
+    const empId = token.dataUsuario.emp_id.empresa_id;
     const loanRequests = await execute(
       `SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`,
-      [empresa_id]
+      [empId]
     );
     return loanRequests;
   } catch (err) {
