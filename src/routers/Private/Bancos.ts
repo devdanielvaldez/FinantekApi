@@ -10,22 +10,22 @@ router.post("/registrar", validateToken, async (_req: any, res) => {
   return res.status(response.status).json(response);
 });
 
-router.get("/ver-todos", async (_req: any, res) => {
-  const response: any = await controller.verTodosLosBancos();
+router.get("/ver-todos", validateToken, async (_req: any, res) => {
+  const response: any = await controller.verTodosLosBancos(_req);
   return res.status(response.status).json(response);
 });
 
-router.get("/ver/:banco_id", async (req: any, res) => {
+router.get("/ver/:banco_id", validateToken, async (req: any, res) => {
   const response: any = await controller.verBanco(req.params.banco_id);
   return res.status(response.status).json(response);
 });
 
-router.put("/actualizar/:banco_id", async (req: any, res) => {
+router.put("/actualizar/:banco_id", validateToken, async (req: any, res) => {
   const response: any = await controller.actualizarBanco(req.params.banco_id, req.body);
   return res.status(response.status).json(response);
 });
 
-router.delete("/eliminar/:banco_id", async (req: any, res) => {
+router.delete("/eliminar/:banco_id", validateToken, async (req: any, res) => {
   const response: any = await controller.eliminarBanco(req.params.banco_id);
   return res.status(response.status).json(response);
 });

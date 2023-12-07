@@ -109,10 +109,11 @@ export default class BancosController {
         error: {},
         status: 500,
     })
-    public async verTodosLosBancos(): Promise<GetBancosResponse | InternalServerError> {
+    public async verTodosLosBancos(@Header() token: any): Promise<GetBancosResponse | InternalServerError> {
         try {
-            const query = `SELECT * FROM bancos`;
-            const result = await execute(query);
+            const query = `SELECT * FROM bancos WHERE emp_id = ?`;
+            const empId = token.dataUsuario.emp_id.empresa_id;
+            const result = await execute(query, [empId]);
 
             const bancos: BancoWithRelations[] = result.map((row: any) => {
                 return {
