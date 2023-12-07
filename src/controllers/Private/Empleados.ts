@@ -1,4 +1,4 @@
-import { Body, Get, Header, Post, Put, Query, Response, Route, Tags } from "tsoa";
+import { Body, Get, Head, Header, Post, Put, Query, Response, Route, Tags } from "tsoa";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
 import { RegisterEmpleado } from "../../interfaces/Empleados";
 import { execute } from "../../api/utils/mysql.connector";
@@ -49,7 +49,7 @@ export default class Empleados {
     error: {},
     status: 500
 })
-public async registrarEmpleado(@Body() body: RegisterEmpleado): Promise<CreatedEmpleadoResponse | InternalServerError> {
+public async registrarEmpleado(@Body() body: RegisterEmpleado, @Header() token: any): Promise<CreatedEmpleadoResponse | InternalServerError> {
         const {
             persona,
             empleado,
@@ -78,7 +78,7 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado): Promise<CreatedE
                 persona.segundo_apellido,
                 persona.fecha_nacimiento,
                 persona.sexo,
-                persona.estado,
+                'a',
                 direccionId,
                 persona.cedula
             ]);
@@ -91,7 +91,7 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado): Promise<CreatedE
                 empleado.cargo,
                 empleado.salario,
                 empleado.fecha_inicio_contrato,
-                empleado.empresa_id
+                token.dataUsuario.emp_id.empresa_id
             ]);
 
             const empleadoId = empleadoInsert.insertId;
