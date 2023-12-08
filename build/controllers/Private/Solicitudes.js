@@ -32,7 +32,7 @@ let LoanRequests = class LoanRequests {
                  } = body;
                 // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO solicitudes_prestamo 
-        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, emp_id) 
+        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id) 
         VALUES (?, ?, ?, ?, 'PE', ?)`, [
                     cliente_id,
                     tipo_prestamo_id,
@@ -46,7 +46,7 @@ let LoanRequests = class LoanRequests {
                     const solicitudId = insertResult.insertId;
                     // Insertar los documentos asociados a la solicitud en la tabla de documentos
                     for (const documento of documentos) {
-                        yield (0, mysql_connector_1.execute)(`INSERT INTO documentos_solicitud 
+                        yield (0, mysql_connector_1.execute)(`INSERT INTO documentacion_solicitud 
             (solicitud_id, nombre, enlace) 
             VALUES (?, ?, ?)`, [
                             solicitudId,
@@ -106,7 +106,15 @@ let LoanRequests = class LoanRequests {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const loanRequest = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
-                return loanRequest;
+                const docs = yield (0, mysql_connector_1.execute)('SELECT * FROM documentacion_solicitud WHERE solicitud_id = ?', [id]);
+                return {
+                    ok: true,
+                    status: 200,
+                    data: {
+                        solicitud: loanRequest,
+                        documentos: docs
+                    }
+                };
             }
             catch (err) {
                 return {
@@ -124,7 +132,7 @@ let LoanRequests = class LoanRequests {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, emp_id = ? 
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, empleado_id = ? 
       WHERE solicitud_id = ? AND empresa_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, empId, id, empId]);
                 if (updateResult.affectedRows > 0) {
                     return {
@@ -156,7 +164,8 @@ let LoanRequests = class LoanRequests {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const deleteResult = yield (0, mysql_connector_1.execute)(`DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
-                if (deleteResult.affectedRows > 0) {
+                const deleteDocs = yield (0, mysql_connector_1.execute)(`DELETE FROM documentaction_solicitud WHERE solicitud_id = ?`, [id]);
+                if (deleteResult.affectedRows > 0 && deleteDocs.affectedRows > 0) {
                     return {
                         ok: true,
                         msg: "Solicitud de préstamo eliminada correctamente",
