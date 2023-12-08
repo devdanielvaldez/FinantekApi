@@ -76,11 +76,11 @@ export default class BancosController {
             }
 
             const insertQuery = `
-                INSERT INTO bancos (nombre, telefono, codigo, emp_id)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO bancos (nombre, telefono, codigo, emp_id, estado)
+                VALUES (?, ?, ?, ?, ?)
             `;
 
-            await execute(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id]);
+            await execute(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id, 'a']);
 
             return {
                 ok: true,
@@ -121,6 +121,7 @@ export default class BancosController {
                     nombre: row.nombre,
                     telefono: row.telefono,
                     codigo: row.codigo,
+                    estado: row.estado
                 };
             });
 

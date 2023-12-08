@@ -37,10 +37,10 @@ let BancosController = class BancosController {
                         msg: "El banco que desea ingresar ya existe en el sistema"
                     };
                 const insertQuery = `
-                INSERT INTO bancos (nombre, telefono, codigo, emp_id)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO bancos (nombre, telefono, codigo, emp_id, estado)
+                VALUES (?, ?, ?, ?, ?)
             `;
-                yield (0, mysql_connector_1.execute)(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id]);
+                yield (0, mysql_connector_1.execute)(insertQuery, [nombre, telefono, codigo, token.dataUsuario.emp_id.empresa_id, 'a']);
                 return {
                     ok: true,
                     msg: 'Banco registrado exitosamente',
@@ -69,6 +69,7 @@ let BancosController = class BancosController {
                         nombre: row.nombre,
                         telefono: row.telefono,
                         codigo: row.codigo,
+                        estado: row.estado
                     };
                 });
                 return {
