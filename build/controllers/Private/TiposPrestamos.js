@@ -58,7 +58,7 @@ let LoanTypes = class LoanTypes {
                     return {
                         ok: false,
                         msg: "No se pudo registrar el tipo de préstamo",
-                        status: 500,
+                        status: 400,
                     };
                 }
             }
