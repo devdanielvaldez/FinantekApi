@@ -6,7 +6,7 @@ const router = express.Router();
 const controller = new SolicitudesController();
 
 router.post("/registrar", validateToken, async (_req: any, res) => {
-  const response: any = await controller.createLoanRequest(_req.body);
+  const response: any = await controller.createLoanRequest(_req.body, _req);
   return res.status(response.status).json(response);
 });
 
@@ -15,23 +15,23 @@ router.get("/solicitudes", validateToken, async (_req: any, res) => {
   return res.status(response.status).json(response);
 });
 
-router.get("/solicitudes/:empresa_id/:id", validateToken, async (_req: any, res) => {
-  const response: any = await controller.getLoanRequestByIdAndCompany(_req.params.empresa_id, _req.params.id);
+router.get("/solicitudes/:id", validateToken, async (_req: any, res) => {
+  const response: any = await controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
   return res.status(response.status).json(response);
 });
 
-router.put("/solicitudes/:empresa_id/:id/editar", validateToken, async (_req: any, res) => {
-  const response: any = await controller.updateLoanRequest(_req.params.empresa_id, _req.params.id, _req.body);
+router.put("/solicitudes/:id/editar", validateToken, async (_req: any, res) => {
+  const response: any = await controller.updateLoanRequest(_req, _req.params.id, _req.body);
   return res.status(response.status).json(response);
 });
 
-router.put("/solicitudes/:empresa_id/:solicitud_id/actualizar-estado", validateToken, async (_req: any, res) => {
-  const response: any = await controller.updateLoanRequest(_req.params.empresa_id, _req.params.solicitud_id, _req.body);
+router.put("/solicitudes/:solicitud_id/actualizar-estado", validateToken, async (_req: any, res) => {
+  const response: any = await controller.updateLoanRequestStatus(_req, _req.params.solicitud_id, _req.body);
   return res.status(response.status).json(response);
 });
 
-router.delete("/solicitudes/:empresa_id/:id/eliminar", validateToken, async (_req: any, res) => {
-  const response: any = await controller.getLoanRequestByIdAndCompany(_req.params.empresa_id, _req.params.id);
+router.delete("/solicitudes/:id/eliminar", validateToken, async (_req: any, res) => {
+  const response: any = await controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
   return res.status(response.status).json(response);
 });
 

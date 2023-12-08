@@ -18,27 +18,27 @@ const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedTok
 const router = express_1.default.Router();
 const controller = new Solicitudes_1.default();
 router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.createLoanRequest(_req.body);
+    const response = yield controller.createLoanRequest(_req.body, _req);
     return res.status(response.status).json(response);
 }));
 router.get("/solicitudes", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.getAllLoanRequestsByCompany(_req);
     return res.status(response.status).json(response);
 }));
-router.get("/solicitudes/:empresa_id/:id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getLoanRequestByIdAndCompany(_req.params.empresa_id, _req.params.id);
+router.get("/solicitudes/:id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
     return res.status(response.status).json(response);
 }));
-router.put("/solicitudes/:empresa_id/:id/editar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.updateLoanRequest(_req.params.empresa_id, _req.params.id, _req.body);
+router.put("/solicitudes/:id/editar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.updateLoanRequest(_req, _req.params.id, _req.body);
     return res.status(response.status).json(response);
 }));
-router.put("/solicitudes/:empresa_id/:solicitud_id/actualizar-estado", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.updateLoanRequest(_req.params.empresa_id, _req.params.solicitud_id, _req.body);
+router.put("/solicitudes/:solicitud_id/actualizar-estado", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.updateLoanRequestStatus(_req, _req.params.solicitud_id, _req.body);
     return res.status(response.status).json(response);
 }));
-router.delete("/solicitudes/:empresa_id/:id/eliminar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getLoanRequestByIdAndCompany(_req.params.empresa_id, _req.params.id);
+router.delete("/solicitudes/:id/eliminar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

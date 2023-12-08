@@ -24,10 +24,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
 let LoanRequests = class LoanRequests {
-    createLoanRequest(body) {
+    createLoanRequest(body, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, emp_id, documentos // Lista de documentos
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, documentos // Lista de documentos
                  } = body;
                 // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO solicitudes_prestamo 
@@ -37,7 +38,7 @@ let LoanRequests = class LoanRequests {
                     tipo_prestamo_id,
                     empresa_id,
                     monto_solicitado,
-                    emp_id
+                    empId
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {
@@ -100,10 +101,11 @@ let LoanRequests = class LoanRequests {
             }
         });
     }
-    getLoanRequestByIdAndCompany(empresa_id, id) {
+    getLoanRequestByIdAndCompany(token, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const loanRequest = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empresa_id]);
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const loanRequest = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
                 return loanRequest;
             }
             catch (err) {
@@ -116,13 +118,14 @@ let LoanRequests = class LoanRequests {
             }
         });
     }
-    updateLoanRequest(empresa_id, id, updatedData) {
+    updateLoanRequest(token, id, updatedData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { cliente_id, tipo_prestamo_id, monto_solicitado, emp_id } = updatedData;
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
       SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, emp_id = ? 
-      WHERE solicitud_id = ? AND empresa_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, emp_id, id, empresa_id]);
+      WHERE solicitud_id = ? AND empresa_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, empId, id, empId]);
                 if (updateResult.affectedRows > 0) {
                     return {
                         ok: true,
@@ -148,10 +151,11 @@ let LoanRequests = class LoanRequests {
             }
         });
     }
-    deleteLoanRequest(empresa_id, id) {
+    deleteLoanRequest(token, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const deleteResult = yield (0, mysql_connector_1.execute)(`DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empresa_id]);
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const deleteResult = yield (0, mysql_connector_1.execute)(`DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
                 if (deleteResult.affectedRows > 0) {
                     return {
                         ok: true,
@@ -177,12 +181,13 @@ let LoanRequests = class LoanRequests {
             }
         });
     }
-    updateLoanRequestStatus(empresa_id, solicitud_id, newStatusData) {
+    updateLoanRequestStatus(token, solicitud_id, newStatusData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
                 const { nuevo_estado, mensaje, empleado_id } = newStatusData;
                 // Obtener el estado actual de la solicitud
-                const currentStatusQuery = yield (0, mysql_connector_1.execute)(`SELECT estado_solicitud FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [solicitud_id, empresa_id]);
+                const currentStatusQuery = yield (0, mysql_connector_1.execute)(`SELECT estado_solicitud FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [solicitud_id, empId]);
                 if (!currentStatusQuery || currentStatusQuery.length === 0) {
                     return {
                         ok: false,
@@ -194,7 +199,7 @@ let LoanRequests = class LoanRequests {
                 // Actualizar el estado de la solicitud
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
       SET estado_solicitud = ? 
-      WHERE solicitud_id = ? AND empresa_id = ?`, [nuevo_estado, solicitud_id, empresa_id]);
+      WHERE solicitud_id = ? AND empresa_id = ?`, [nuevo_estado, solicitud_id, empId]);
                 if (updateResult.affectedRows > 0) {
                     // Registrar el cambio en la tabla mensajes_estado_solicitud
                     yield (0, mysql_connector_1.execute)(`INSERT INTO mensajes_estado_solicitud 
@@ -239,8 +244,9 @@ __decorate([
         status: 200,
     }),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "createLoanRequest", null);
 __decorate([
@@ -262,7 +268,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "getAllLoanRequestsByCompany", null);
 __decorate([
-    (0, tsoa_1.Get)("/solicitudes/:empresa_id/:id"),
+    (0, tsoa_1.Get)("/solicitudes/:id"),
     (0, tsoa_1.Response)(200, "Success", {
         ok: true,
         data: {},
@@ -274,14 +280,14 @@ __decorate([
         error: {},
         status: 500,
     }),
-    __param(0, (0, tsoa_1.Path)()),
+    __param(0, (0, tsoa_1.Header)()),
     __param(1, (0, tsoa_1.Path)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "getLoanRequestByIdAndCompany", null);
 __decorate([
-    (0, tsoa_1.Put)("/solicitudes/:empresa_id/:id/editar"),
+    (0, tsoa_1.Put)("/solicitudes/:id/editar"),
     (0, tsoa_1.Response)(200, "Success", {
         ok: true,
         data: {},
@@ -293,15 +299,15 @@ __decorate([
         error: {},
         status: 500,
     }),
-    __param(0, (0, tsoa_1.Path)()),
+    __param(0, (0, tsoa_1.Header)()),
     __param(1, (0, tsoa_1.Path)()),
     __param(2, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:paramtypes", [Object, Number, Object]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "updateLoanRequest", null);
 __decorate([
-    (0, tsoa_1.Delete)("/solicitudes/:empresa_id/:id/eliminar"),
+    (0, tsoa_1.Delete)("/solicitudes/:id/eliminar"),
     (0, tsoa_1.Response)(200, "Success", {
         ok: true,
         data: {},
@@ -313,19 +319,19 @@ __decorate([
         error: {},
         status: 500,
     }),
-    __param(0, (0, tsoa_1.Path)()),
+    __param(0, (0, tsoa_1.Header)()),
     __param(1, (0, tsoa_1.Path)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "deleteLoanRequest", null);
 __decorate([
-    (0, tsoa_1.Put)("/solicitudes/:empresa_id/:solicitud_id/actualizar-estado"),
-    __param(0, (0, tsoa_1.Path)()),
+    (0, tsoa_1.Put)("/solicitudes/:solicitud_id/actualizar-estado"),
+    __param(0, (0, tsoa_1.Header)()),
     __param(1, (0, tsoa_1.Path)()),
     __param(2, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:paramtypes", [Object, Number, Object]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "updateLoanRequestStatus", null);
 LoanRequests = __decorate([

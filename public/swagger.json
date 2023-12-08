@@ -1934,10 +1934,6 @@
 						"type": "number",
 						"format": "double"
 					},
-					"emp_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"documentos": {
 						"items": {
 							"$ref": "#/components/schemas/LoanRequestDocument"
@@ -1950,7 +1946,6 @@
 					"tipo_prestamo_id",
 					"empresa_id",
 					"monto_solicitado",
-					"emp_id",
 					"documentos"
 				],
 				"type": "object",
@@ -1992,10 +1987,6 @@
 						"format": "double"
 					},
 					"monto_solicitado": {
-						"type": "number",
-						"format": "double"
-					},
-					"emp_id": {
 						"type": "number",
 						"format": "double"
 					},
@@ -4365,7 +4356,16 @@
 					"Solicitudes de Préstamo"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -4440,7 +4440,7 @@
 				]
 			}
 		},
-		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}": {
+		"/api/solicitudes-prestamo/solicitudes/{id}": {
 			"get": {
 				"operationId": "GetLoanRequestByIdAndCompany",
 				"responses": {
@@ -4488,12 +4488,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
@@ -4508,7 +4507,7 @@
 				]
 			}
 		},
-		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}/editar": {
+		"/api/solicitudes-prestamo/solicitudes/{id}/editar": {
 			"put": {
 				"operationId": "UpdateLoanRequest",
 				"responses": {
@@ -4557,12 +4556,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
@@ -4587,7 +4585,7 @@
 				}
 			}
 		},
-		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{id}/eliminar": {
+		"/api/solicitudes-prestamo/solicitudes/{id}/eliminar": {
 			"delete": {
 				"operationId": "DeleteLoanRequest",
 				"responses": {
@@ -4636,12 +4634,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
@@ -4656,7 +4653,7 @@
 				]
 			}
 		},
-		"/api/solicitudes-prestamo/solicitudes/{empresa_id}/{solicitud_id}/actualizar-estado": {
+		"/api/solicitudes-prestamo/solicitudes/{solicitud_id}/actualizar-estado": {
 			"put": {
 				"operationId": "UpdateLoanRequestStatus",
 				"responses": {
@@ -4684,12 +4681,11 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "empresa_id",
+						"in": "header",
+						"name": "token",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{

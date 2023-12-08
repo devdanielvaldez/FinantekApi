@@ -8,6 +8,5 @@ export interface LoanRequest {
     tipo_prestamo_id: number;
     empresa_id: number;
     monto_solicitado: number;
-    emp_id: number;
     documentos: LoanRequestDocument[]; // Lista de documentos
   }

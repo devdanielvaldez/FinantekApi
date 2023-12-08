@@ -35,15 +35,16 @@ export default class LoanRequests {
     }
   )
   public async createLoanRequest(
-    @Body() body: LoanRequest
+    @Body() body: LoanRequest,
+    @Header() token: any
   ): Promise<InternalServerError | SuccessResponseCreateLoanRequest> {
     try {
+      const empId = token.dataUsuario.emp_id.empresa_id;
       const {
         cliente_id,
         tipo_prestamo_id,
         empresa_id,
         monto_solicitado,
-        emp_id,
         documentos // Lista de documentos
       } = body;
 
@@ -57,7 +58,7 @@ export default class LoanRequests {
           tipo_prestamo_id,
           empresa_id,
           monto_solicitado,
-          emp_id
+          empId
         ]
       );
 
@@ -140,7 +141,7 @@ public async getAllLoanRequestsByCompany(
   }
 }
 
-@Get("/solicitudes/:empresa_id/:id")
+@Get("/solicitudes/:id")
 @Response<any>(200, "Success", {
   ok: true,
   data: {},
@@ -153,13 +154,14 @@ public async getAllLoanRequestsByCompany(
   status: 500,
 })
 public async getLoanRequestByIdAndCompany(
-  @Path() empresa_id: number,
+  @Header() token: any,
   @Path() id: number
 ): Promise<InternalServerError | LoanRequest> {
   try {
+    const empId = token.dataUsuario.emp_id.empresa_id;
     const loanRequest = await execute(
       `SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`,
-      [id, empresa_id]
+      [id, empId]
     );
     return loanRequest;
   } catch (err) {
@@ -173,7 +175,7 @@ public async getLoanRequestByIdAndCompany(
 }
 
 
-@Put("/solicitudes/:empresa_id/:id/editar")
+@Put("/solicitudes/:id/editar")
 @Response<any>(200, "Success", {
   ok: true,
   data: {},
@@ -186,18 +188,19 @@ public async getLoanRequestByIdAndCompany(
   status: 500,
 })
 public async updateLoanRequest(
-  @Path() empresa_id: number,
+  @Header() token: any,
   @Path() id: number,
   @Body() updatedData: Partial<LoanRequest>
 ): Promise<InternalServerError | SuccessResponse | any> {
   try {
-    const { cliente_id, tipo_prestamo_id, monto_solicitado, emp_id } = updatedData;
+    const empId = token.dataUsuario.emp_id.empresa_id;
+    const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
 
     const updateResult = await execute(
       `UPDATE solicitudes_prestamo 
       SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, emp_id = ? 
       WHERE solicitud_id = ? AND empresa_id = ?`,
-      [cliente_id, tipo_prestamo_id, monto_solicitado, emp_id, id, empresa_id]
+      [cliente_id, tipo_prestamo_id, monto_solicitado, empId, id, empId]
     );
 
     if (updateResult.affectedRows > 0) {
@@ -223,7 +226,7 @@ public async updateLoanRequest(
   }
 }
 
-@Delete("/solicitudes/:empresa_id/:id/eliminar")
+@Delete("/solicitudes/:id/eliminar")
 @Response<any>(200, "Success", {
   ok: true,
   data: {},
@@ -236,13 +239,14 @@ public async updateLoanRequest(
   status: 500,
 })
 public async deleteLoanRequest(
-  @Path() empresa_id: number,
+  @Header() token: any,
   @Path() id: number
 ): Promise<InternalServerError | SuccessResponse | any> {
   try {
+    const empId = token.dataUsuario.emp_id.empresa_id;
     const deleteResult = await execute(
       `DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`,
-      [id, empresa_id]
+      [id, empId]
     );
 
     if (deleteResult.affectedRows > 0) {
@@ -269,19 +273,20 @@ public async deleteLoanRequest(
 }
 
 
-@Put("/solicitudes/:empresa_id/:solicitud_id/actualizar-estado")
+@Put("/solicitudes/:solicitud_id/actualizar-estado")
 public async updateLoanRequestStatus(
-  @Path() empresa_id: number,
+  @Header() token: any,
   @Path() solicitud_id: number,
   @Body() newStatusData: { nuevo_estado: string, mensaje: string, empleado_id: number }
 ): Promise<InternalServerError | SuccessResponse> {
   try {
+    const empId = token.dataUsuario.emp_id.empresa_id;
     const { nuevo_estado, mensaje, empleado_id } = newStatusData;
 
     // Obtener el estado actual de la solicitud
     const currentStatusQuery = await execute(
       `SELECT estado_solicitud FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`,
-      [solicitud_id, empresa_id]
+      [solicitud_id, empId]
     );
 
     if (!currentStatusQuery || currentStatusQuery.length === 0) {
@@ -299,7 +304,7 @@ public async updateLoanRequestStatus(
       `UPDATE solicitudes_prestamo 
       SET estado_solicitud = ? 
       WHERE solicitud_id = ? AND empresa_id = ?`,
-      [nuevo_estado, solicitud_id, empresa_id]
+      [nuevo_estado, solicitud_id, empId]
     );
 
     if (updateResult.affectedRows > 0) {
