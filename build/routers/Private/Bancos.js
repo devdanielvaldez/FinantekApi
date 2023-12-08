@@ -26,15 +26,15 @@ router.get("/ver-todos", decodedToken_1.default, (_req, res) => __awaiter(void 0
     return res.status(response.status).json(response);
 }));
 router.get("/ver/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.verBanco(req.params.banco_id);
+    const response = yield controller.verBanco(req.params.banco_id, req);
     return res.status(response.status).json(response);
 }));
 router.put("/actualizar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarBanco(req.params.banco_id, req.body);
+    const response = yield controller.actualizarBanco(req.params.banco_id, req.body, req);
     return res.status(response.status).json(response);
 }));
 router.delete("/eliminar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.eliminarBanco(req.params.banco_id);
+    const response = yield controller.eliminarBanco(req.params.banco_id, req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

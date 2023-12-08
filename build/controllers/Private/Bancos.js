@@ -88,7 +88,7 @@ let BancosController = class BancosController {
             }
         });
     }
-    verBanco(banco_id) {
+    verBanco(banco_id, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const query = `SELECT * FROM bancos WHERE banco_id = ?`;
@@ -122,19 +122,20 @@ let BancosController = class BancosController {
             }
         });
     }
-    actualizarBanco(banco_id, updateData) {
+    actualizarBanco(banco_id, updateData, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { nombre, telefono, codigo } = updateData;
+                const { nombre, telefono, codigo, estado } = updateData;
                 const updateQuery = `
             UPDATE bancos
             SET
                 nombre = ?,
                 telefono = ?,
-                codigo = ?
+                codigo = ?,
+                estado = ?
             WHERE banco_id = ?
         `;
-                yield (0, mysql_connector_1.execute)(updateQuery, [nombre, telefono, codigo, banco_id]);
+                yield (0, mysql_connector_1.execute)(updateQuery, [nombre, telefono, codigo, estado, banco_id]);
                 return {
                     ok: true,
                     msg: 'Banco actualizado exitosamente',
@@ -151,7 +152,7 @@ let BancosController = class BancosController {
             }
         });
     }
-    eliminarBanco(banco_id) {
+    eliminarBanco(banco_id, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const deleteQuery = 'DELETE FROM bancos WHERE banco_id = ?';
@@ -227,8 +228,9 @@ __decorate([
         error: {},
         status: 500,
     }),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], BancosController.prototype, "verBanco", null);
 __decorate([
@@ -245,8 +247,9 @@ __decorate([
         status: 500,
     }),
     __param(1, (0, tsoa_1.Body)()),
+    __param(2, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], BancosController.prototype, "actualizarBanco", null);
 __decorate([
@@ -262,8 +265,9 @@ __decorate([
         error: {},
         status: 500,
     }),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], BancosController.prototype, "eliminarBanco", null);
 BancosController = __decorate([

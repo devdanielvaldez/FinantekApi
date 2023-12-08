@@ -8,6 +8,7 @@ interface UpdateBancoData {
     nombre?: string;
     telefono?: string;
     codigo?: string;
+    estado?: string;
 }
 
 interface UpdateBancoResponse {
@@ -152,7 +153,7 @@ export default class BancosController {
     error: {},
     status: 500,
 })
-public async verBanco(banco_id: number): Promise<any | InternalServerError> {
+public async verBanco(banco_id: number, @Header() token: any): Promise<any | InternalServerError> {
     try {
         const query = `SELECT * FROM bancos WHERE banco_id = ?`;
         const result = await execute(query, [banco_id]);
@@ -201,21 +202,23 @@ public async verBanco(banco_id: number): Promise<any | InternalServerError> {
 })
 public async actualizarBanco(
     banco_id: number,
-    @Body() updateData: UpdateBancoData
+    @Body() updateData: UpdateBancoData,
+    @Header() token: any
 ): Promise<UpdateBancoResponse | InternalServerError> {
     try {
-        const { nombre, telefono, codigo } = updateData;
+        const { nombre, telefono, codigo, estado } = updateData;
 
         const updateQuery = `
             UPDATE bancos
             SET
                 nombre = ?,
                 telefono = ?,
-                codigo = ?
+                codigo = ?,
+                estado = ?
             WHERE banco_id = ?
         `;
 
-        await execute(updateQuery, [nombre, telefono, codigo, banco_id]);
+        await execute(updateQuery, [nombre, telefono, codigo, estado, banco_id]);
 
         return {
             ok: true,
@@ -244,7 +247,7 @@ public async actualizarBanco(
     error: {},
     status: 500,
 })
-public async eliminarBanco(banco_id: number): Promise<any | InternalServerError> {
+public async eliminarBanco(banco_id: number, @Header() token:any): Promise<any | InternalServerError> {
     try {
         const deleteQuery = 'DELETE FROM bancos WHERE banco_id = ?';
         await execute(deleteQuery, [banco_id]);
