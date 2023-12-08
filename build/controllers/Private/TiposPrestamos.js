@@ -31,8 +31,8 @@ let LoanTypes = class LoanTypes {
                 const { nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos } = body;
                 // Realizar la inserción en la base de datos con la información proporcionada
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO tipos_prestamos 
-        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
                     nombre_tipo,
                     descripcion,
                     tasa_interes,
@@ -43,7 +43,8 @@ let LoanTypes = class LoanTypes {
                     porcentaje_mora,
                     dias_gracia,
                     requisitos,
-                    empId
+                    empId,
+                    'a'
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {
@@ -153,6 +154,43 @@ let LoanTypes = class LoanTypes {
             }
         });
     }
+    changeStateForProduct(id, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const findProduct = yield (0, mysql_connector_1.execute)('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [+id]);
+                if (findProduct.length == 0)
+                    return {
+                        ok: false,
+                        msg: "No se encontraron tipos de préstamos para esta empresa",
+                        status: 404
+                    };
+                if (findProduct[0].estado == 'a') {
+                    yield (0, mysql_connector_1.execute)('UPDATE tipos_prestamos SET estado = ? WHERE tipo_prestamo_id = ?', ['i', +id]);
+                    return {
+                        ok: true,
+                        msg: "El estado de su producto ha sido actualizado correctamente",
+                        status: 200
+                    };
+                }
+                else if (findProduct[0].estado == 'i') {
+                    yield (0, mysql_connector_1.execute)('UPDATE tipos_prestamos SET estado = ? WHERE tipo_prestamo_id = ?', ['a', +id]);
+                    return {
+                        ok: true,
+                        msg: "El estado de su producto ha sido actualizado correctamente",
+                        status: 200
+                    };
+                }
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: {},
+                    status: 500,
+                };
+            }
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
@@ -215,6 +253,30 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], LoanTypes.prototype, "updateLoanType", null);
+__decorate([
+    (0, tsoa_1.Put)("/cambiar-estado/:id"),
+    (0, tsoa_1.Response)(200, "Estado actualizado correctamente", {
+        ok: true,
+        msg: "El estado de su producto ha sido actualizado correctamente",
+        status: 200,
+    }),
+    (0, tsoa_1.Response)(500, "Internal Server Error", {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500,
+    }),
+    (0, tsoa_1.Response)(404, "Not Found Items", {
+        ok: false,
+        msg: "No se encontraron tipos de préstamos para esta empresa",
+        status: 404
+    }),
+    __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], LoanTypes.prototype, "changeStateForProduct", null);
 LoanTypes = __decorate([
     (0, tsoa_1.Route)("/api/tipos-prestamos"),
     (0, tsoa_1.Tags)("Tipos de Préstamos")

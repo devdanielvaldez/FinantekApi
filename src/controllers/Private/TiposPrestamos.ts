@@ -62,8 +62,8 @@ export default class LoanTypes {
       // Realizar la inserción en la base de datos con la información proporcionada
       const insertResult = await execute(
         `INSERT INTO tipos_prestamos 
-        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           nombre_tipo,
           descripcion,
@@ -75,7 +75,8 @@ export default class LoanTypes {
           porcentaje_mora,
           dias_gracia,
           requisitos,
-          empId
+          empId,
+          'a'
         ]
       );
   
@@ -236,6 +237,64 @@ export default class LoanTypes {
         error: err,
         status: 500,
       };
+    }
+  }
+
+  @Put("/cambiar-estado/:id")
+  @Response<any>(
+    200,
+    "Estado actualizado correctamente",
+    {
+      ok: true,
+      msg: "El estado de su producto ha sido actualizado correctamente",
+      status: 200,
+    }
+  )
+  @Response<InternalServerError>(500, "Internal Server Error", {
+    ok: false,
+    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+    error: {},
+    status: 500,
+  })
+  @Response<NotFoundItems>(404, "Not Found Items", {
+    ok: false,
+    msg: "No se encontraron tipos de préstamos para esta empresa",
+    status: 404
+  })
+  public async changeStateForProduct(
+    @Path() id: string,
+    @Header() token: any
+  ): Promise<any | InternalServerError | NotFoundItems> {
+    try {
+      const findProduct = await execute('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [+id]);
+      if(findProduct.length == 0) return {
+        ok: false,
+        msg: "No se encontraron tipos de préstamos para esta empresa",
+        status: 404
+      }
+
+      if(findProduct[0].estado == 'a') {
+        await execute('UPDATE tipos_prestamos SET estado = ? WHERE tipo_prestamo_id = ?', ['i', +id]);
+        return {
+          ok: true,
+          msg: "El estado de su producto ha sido actualizado correctamente",
+          status: 200
+        }
+      } else if(findProduct[0].estado == 'i') {
+        await execute('UPDATE tipos_prestamos SET estado = ? WHERE tipo_prestamo_id = ?', ['a', +id]);
+        return {
+          ok: true,
+          msg: "El estado de su producto ha sido actualizado correctamente",
+          status: 200
+        }
+      }
+    } catch(err) {
+      return {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500,
+      }
     }
   }
   
