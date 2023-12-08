@@ -4541,7 +4541,8 @@
 										},
 										{
 											"$ref": "#/components/schemas/LoanRequest"
-										}
+										},
+										{}
 									]
 								}
 							}
