@@ -11,6 +11,7 @@ import SolicitudesPrestamos from "./Private/Solicitudes";
 import Plantillas from "./Private/PlantillasCSV";
 import Auth from "./Private/Auth";
 import Prestamos from "./Private/Prestamos";
+import UtilsEnums from "./Private/UtilsEnums";
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use('/tipos-prestamos', TiposPrestamos);
 router.use('/solicitudes-prestamo', SolicitudesPrestamos);
 router.use('/api/plantillas', Plantillas);
 router.use('/prestamos', Prestamos);
+router.use('/utils', UtilsEnums);
 
 export default router;

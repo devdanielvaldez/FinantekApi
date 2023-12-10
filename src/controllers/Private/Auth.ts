@@ -68,7 +68,6 @@ export default class AuthController {
     })
     public async login(@Body() body: LoginBody): Promise<SuccessLogin | InternalServerError | FailedLogin> {
         try {
-
                 const {
                     username,
                     password
