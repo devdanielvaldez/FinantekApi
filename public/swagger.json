@@ -5402,6 +5402,35 @@
 					}
 				]
 			}
+		},
+		"/api/solicitudes-desembolsar/all": {
+			"get": {
+				"operationId": "GetAllDesembolso",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes a Desembolsar"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
 		}
 	},
 	"servers": [
