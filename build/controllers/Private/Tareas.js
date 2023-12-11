@@ -50,7 +50,7 @@ let TareasController = class TareasController {
             }
         });
     }
-    actualizarTarea(tarea_id, updateData) {
+    actualizarTarea(tarea_id, updateData, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { descripcion, fecha, prioridad, estado } = updateData;
@@ -182,8 +182,9 @@ __decorate([
         status: 500,
     }),
     __param(1, (0, tsoa_1.Body)()),
+    __param(2, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], TareasController.prototype, "actualizarTarea", null);
 __decorate([

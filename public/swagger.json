@@ -3383,6 +3383,14 @@
 							"format": "double",
 							"type": "number"
 						}
+					},
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"requestBody": {

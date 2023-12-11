@@ -22,7 +22,7 @@ router.post("/crear", decodedToken_1.default, (req, res) => __awaiter(void 0, vo
     return res.status(response.status).json(response);
 }));
 router.put("/update/:tarea_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarTarea(req.params.tarea_id, req.body);
+    const response = yield controller.actualizarTarea(req.params.tarea_id, req.body, req);
     return res.status(response.status).json(response);
 }));
 router.delete("/delete/:tarea_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

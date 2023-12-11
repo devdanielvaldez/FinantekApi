@@ -11,7 +11,7 @@ router.post("/crear", validateToken, async (req, res) => {
 });
 
 router.put("/update/:tarea_id", validateToken, async (req: any, res) => {
-  const response = await controller.actualizarTarea(req.params.tarea_id, req.body);
+  const response = await controller.actualizarTarea(req.params.tarea_id, req.body, req);
   return res.status(response.status).json(response);
 });
 

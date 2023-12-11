@@ -112,7 +112,8 @@ export default class TareasController {
     })
     public async actualizarTarea(
         tarea_id: number,
-        @Body() updateData: UpdateTareaData
+        @Body() updateData: UpdateTareaData,
+        @Header() token: any
     ): Promise<UpdateTareaResponse | InternalServerError> {
         try {
             const { descripcion, fecha, prioridad, estado } = updateData;
