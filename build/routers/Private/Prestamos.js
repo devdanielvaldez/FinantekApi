@@ -17,7 +17,7 @@ const Prestamos_1 = __importDefault(require("../../controllers/Private/Prestamos
 const router = express_1.default.Router();
 const controller = new Prestamos_1.default();
 router.post("/generar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.generarPrestamo(_req.body);
+    const response = yield controller.generarAmortizacionPrestamo(_req.body);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

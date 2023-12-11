@@ -392,12 +392,17 @@
 						"type": "number",
 						"format": "double"
 					},
-					"error": {}
+					"error": {},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
+					}
 				},
 				"required": [
 					"msg",
 					"ok",
-					"status"
+					"status",
+					"persona_id"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -413,12 +418,17 @@
 					"status": {
 						"type": "number",
 						"format": "double"
+					},
+					"persona_id": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"msg",
 					"ok",
-					"status"
+					"status",
+					"persona_id"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5286,9 +5296,9 @@
 				}
 			}
 		},
-		"/api/prestamos/generar": {
+		"/api/prestamos/generar-amortizacion": {
 			"post": {
-				"operationId": "GenerarPrestamo",
+				"operationId": "GenerarAmortizacionPrestamo",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -5331,6 +5341,60 @@
 									"fecha_inicial": {}
 								},
 								"required": [
+									"numeroDeMeses",
+									"frecuencia_pago",
+									"cuota_seguro",
+									"tasa_interes",
+									"monto_aprobado",
+									"fecha_inicial"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/prestamos/generar-prestamo": {
+			"post": {
+				"operationId": "CrearYRegistrarPrestamo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"solicitud_id": {
+										"type": "number",
+										"format": "double"
+									},
+									"numeroDeMeses": {},
+									"frecuencia_pago": {},
+									"cuota_seguro": {
+										"type": "number",
+										"format": "double"
+									},
+									"tasa_interes": {},
+									"monto_aprobado": {},
+									"fecha_inicial": {}
+								},
+								"required": [
+									"solicitud_id",
 									"numeroDeMeses",
 									"frecuencia_pago",
 									"cuota_seguro",

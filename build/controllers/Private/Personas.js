@@ -70,6 +70,7 @@ let Persona = class Persona {
                         ok: true,
                         msg: "Persona actualizada correctamente",
                         status: 200,
+                        persona_id: personaId
                     };
                 }
                 else {
@@ -105,6 +106,7 @@ let Persona = class Persona {
                         ok: true,
                         msg: "Persona registrada correctamente",
                         status: 200,
+                        persona_id: personaInsert.insertId
                     };
                 }
             }
@@ -300,6 +302,7 @@ __decorate([
         msg: "La persona ha sido registrada correctamente",
         ok: true,
         status: 200,
+        persona_id: 0
     }),
     (0, tsoa_1.Response)(400, "Persona Existe", {
         message: "La persona que desea registrar ya se encuentra en el sistema",
@@ -323,6 +326,7 @@ __decorate([
         msg: "La persona ha sido registrada correctamente",
         ok: true,
         status: 200,
+        persona_id: 0
     }),
     (0, tsoa_1.Response)(400, "Persona no Existe", {
         message: "La persona que desea registrar no se encuentra en el sistema",

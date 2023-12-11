@@ -20,6 +20,7 @@ interface RegistrarPersonaResponse {
   ok: boolean;
   status: number;
   error?: any;
+  persona_id: number;
 }
 
 interface ConsultarPersonasResponse {
@@ -32,6 +33,7 @@ interface CreatedPersonaResponse {
   msg: string;
   ok: boolean;
   status: number;
+  persona_id: number;
 }
 
 interface ActualizarPersonaResponse {
@@ -55,6 +57,7 @@ export default class Persona {
     msg: "La persona ha sido registrada correctamente",
     ok: true,
     status: 200,
+    persona_id: 0
   })
   @Response<ValidateError>(400, "Persona Existe", {
     message: "La persona que desea registrar ya se encuentra en el sistema",
@@ -133,6 +136,7 @@ export default class Persona {
           ok: true,
           msg: "Persona actualizada correctamente",
           status: 200,
+          persona_id: personaId
         };
       } else {
         // La persona no existe, realizar la inserción
@@ -179,6 +183,7 @@ export default class Persona {
           ok: true,
           msg: "Persona registrada correctamente",
           status: 200,
+          persona_id: personaInsert.insertId
         };
       }
     } catch (err) {
@@ -196,6 +201,7 @@ export default class Persona {
     msg: "La persona ha sido registrada correctamente",
     ok: true,
     status: 200,
+    persona_id: 0
   })
   @Response<ValidateError>(400, "Persona no Existe", {
     message: "La persona que desea registrar no se encuentra en el sistema",
