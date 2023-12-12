@@ -77,7 +77,7 @@ export const generarNumeroPrestamo = async() => {
   try {
       // Obtener el último número de préstamo de la base de datos
       const queryObtener = 'SELECT ultimo_numero FROM secuencia_prestamo WHERE id = 1';
-      const resultado = await execute(queryObtener, []);
+      const resultado = await execute(queryObtener);
       const ultimoNumero = resultado[0].ultimo_numero;
 
       // Incrementar el número para el nuevo préstamo

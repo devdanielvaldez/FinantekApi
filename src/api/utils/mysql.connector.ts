@@ -42,7 +42,7 @@ export const execute = async (query: string, params?: string[] | Object) => {
 
   } catch (error) {
     await pool.rollback();
-    console.error('[mysql.connector][execute][Error]: ', error);
+    console.error('[mysql.connector][execute][Error]: ', error, query, params);
     throw new Error('failed to execute MySQL query');
   }
 }

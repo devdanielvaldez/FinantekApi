@@ -1,4 +1,4 @@
-import { Body, Get, Head, Header, Post, Put, Request, Res, Response, Route, Security, Tags } from "tsoa";
+import { Body, Get, Head, Header, Path, Post, Put, Request, Res, Response, Route, Security, Tags } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import {
   RegistrarCliente,
@@ -338,6 +338,76 @@ export default class Clientes {
       return {
         ok: true,
         msg: "Estado del cliente actualizado correctamente",
+        status: 200,
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: err,
+        status: 500,
+      };
+    }
+  }
+
+  @Get("/:id")
+  @Response<SuccessResponseFindClients>(
+    200,
+    "Consulta satisfactoria de clientes",
+    {
+      ok: true,
+      data: [],
+      status: 200,
+    }
+  )
+  @Response<InternalServerError>(500, "Internal Server Error", {
+    ok: false,
+    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+    error: {},
+    status: 500,
+  })
+  public async getClientById(
+   @Header() token: any,
+   @Path() id: number
+  ): Promise<SuccessResponseFindClients | InternalServerError> {
+    try {
+      const findClientsByEmp = await execute(
+        `
+        SELECT
+        c.cliente_id,
+        c.estado,
+        p.*,
+        dl.*,
+        db.*,
+        ct.*,
+        dr.*,
+        cy.*,
+        cp.*
+    FROM
+        clientes c
+    LEFT JOIN
+        persona p ON c.persona_id = p.persona_id
+    LEFT JOIN
+        datos_laborales dl ON c.cliente_id = dl.cliente_id
+    LEFT JOIN
+        datos_bancarios db ON c.cliente_id = db.cliente_id
+    LEFT JOIN
+        contactos ct ON p.persona_id = ct.persona_id
+    LEFT JOIN
+        direcciones dr ON p.direccion_id = dr.direccion_id
+    LEFT JOIN
+        conyuge cy ON c.conyuge_id = cy.conyuge_id
+    LEFT JOIN
+        persona cp ON cy.persona_id = cp.persona_id
+    WHERE
+        c.cliente_id = ?;
+    `,
+        [id]
+      );
+
+      return {
+        ok: true,
+        data: findClientsByEmp,
         status: 200,
       };
     } catch (err) {

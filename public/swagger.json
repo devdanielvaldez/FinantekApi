@@ -4139,6 +4139,73 @@
 				}
 			}
 		},
+		"/api/clientes/{id}": {
+			"get": {
+				"operationId": "GetClientById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/SuccessResponseFindClients"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/tipos-prestamos/registrar": {
 			"post": {
 				"operationId": "RegisterLoanType",
@@ -5323,24 +5390,49 @@
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
 								"properties": {
-									"numeroDeMeses": {},
-									"frecuencia_pago": {},
+									"solicitudId": {
+										"type": "number",
+										"format": "double"
+									},
+									"numeroDeMeses": {
+										"type": "number",
+										"format": "double"
+									},
+									"frecuencia_pago": {
+										"type": "string"
+									},
 									"cuota_seguro": {
 										"type": "number",
 										"format": "double"
 									},
-									"tasa_interes": {},
-									"monto_aprobado": {},
+									"tasa_interes": {
+										"type": "number",
+										"format": "double"
+									},
+									"monto_aprobado": {
+										"type": "number",
+										"format": "double"
+									},
 									"fecha_inicial": {}
 								},
 								"required": [
+									"solicitudId",
 									"numeroDeMeses",
 									"frecuencia_pago",
 									"cuota_seguro",
@@ -5372,7 +5464,16 @@
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -5383,15 +5484,28 @@
 										"type": "number",
 										"format": "double"
 									},
-									"numeroDeMeses": {},
-									"frecuencia_pago": {},
+									"numeroDeMeses": {
+										"type": "number",
+										"format": "double"
+									},
+									"frecuencia_pago": {
+										"type": "string"
+									},
 									"cuota_seguro": {
 										"type": "number",
 										"format": "double"
 									},
-									"tasa_interes": {},
-									"monto_aprobado": {},
-									"fecha_inicial": {}
+									"tasa_interes": {
+										"type": "number",
+										"format": "double"
+									},
+									"monto_aprobado": {
+										"type": "number",
+										"format": "double"
+									},
+									"fecha_inicial": {
+										"type": "string"
+									}
 								},
 								"required": [
 									"solicitud_id",
@@ -5407,6 +5521,21 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/prestamos/pagar-cuota": {
+			"post": {
+				"operationId": "PagarCuota",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/utils/provincias": {

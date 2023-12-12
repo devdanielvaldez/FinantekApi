@@ -5,7 +5,7 @@ import * as MySQLConnector from './api/utils/mysql.connector';
 import compression from "compression";
 import router from './routers/index.routers';
 import cors from 'cors';
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8200;
 
 const app: Application = express();
 
