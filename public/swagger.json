@@ -2450,6 +2450,21 @@
 				}
 			}
 		},
+		"/api/empresas/configuracion-empresa": {
+			"post": {
+				"operationId": "ConfiguracionEmpresa",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Empresas"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/personas/registrar": {
 			"post": {
 				"operationId": "RegistrarPersona",
@@ -4206,6 +4221,21 @@
 				]
 			}
 		},
+		"/api/clientes/enviar-cliente-lista-negra": {
+			"post": {
+				"operationId": "EnviarClienteListaNegra",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Clientes"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/tipos-prestamos/registrar": {
 			"post": {
 				"operationId": "RegisterLoanType",
@@ -5538,6 +5568,171 @@
 				"parameters": []
 			}
 		},
+		"/api/prestamos/aplicar-abono": {
+			"post": {
+				"operationId": "AplicarAbono",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/registrar-acuerdo-pago": {
+			"post": {
+				"operationId": "AplicarAcuerdoPago",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/cancelar-acuerdo": {
+			"post": {
+				"operationId": "RegistrarAcuerdo",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/enviar-legal": {
+			"post": {
+				"operationId": "EnviarLegal",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/ejecutar-pre-cierre": {
+			"post": {
+				"operationId": "EjecutarPreCierre",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/registrar-contrato-prestamo": {
+			"post": {
+				"operationId": "RegistrarContratoPrestamo",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/preview-amortizacion": {
+			"post": {
+				"operationId": "PreviewAmortizacion",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/recibir-datos-pali": {
+			"post": {
+				"operationId": "RecibirDatosPali",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/sincronizar-pali": {
+			"post": {
+				"operationId": "SincronizarPali",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/generar-recaudo": {
+			"post": {
+				"operationId": "GenerarRecaudo",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/prestamos/registrar-recaudo": {
+			"post": {
+				"operationId": "RegistrarRecaudo",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/utils/provincias": {
 			"get": {
 				"operationId": "GetProvincias",
@@ -5604,6 +5799,36 @@
 				]
 			}
 		},
+		"/api/utils/tipos-prestamos": {
+			"get": {
+				"operationId": "TiposPrestamos",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Utils"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/utils/tipos-frecuencias": {
+			"get": {
+				"operationId": "TiposFrecuencias",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Utils"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/solicitudes-desembolsar/all": {
 			"get": {
 				"operationId": "GetAllDesembolso",
@@ -5631,6 +5856,21 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/solicitudes-desembolsar/desembolsar-por-cliente": {
+			"post": {
+				"operationId": "DesembolsarPorCliente",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Solicitudes a Desembolsar"
+				],
+				"security": [],
+				"parameters": []
 			}
 		}
 	},

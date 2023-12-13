@@ -222,6 +222,51 @@ export default class PrestamoController {
     public async pagarCuota() {
       
     }
+
+    @Post('/aplicar-abono')
+    public async aplicarAbono() {}
+
+    @Post('/registrar-acuerdo-pago')
+    public async aplicarAcuerdoPago() {}
+
+    @Post('/cancelar-acuerdo')
+    public async registrarAcuerdo() {
+
+    }
+
+    @Post('/enviar-legal')
+    public async enviarLegal() {
+
+    }
+
+    @Post('/ejecutar-pre-cierre')
+    public async ejecutarPreCierre() {
+
+    }
+
+    @Post('/registrar-contrato-prestamo')
+    public async registrarContratoPrestamo() {
+
+    }
+
+    @Post('/preview-amortizacion')
+    public async previewAmortizacion() {
+
+    }
+
+    @Post('/recibir-datos-pali')
+    public async recibirDatosPali() {}
+
+    @Post('/sincronizar-pali')
+    public async sincronizarPali() {}
+
+    @Post('/generar-recaudo')
+    public async generarRecaudo() {
+
+    }
+
+    @Post('/registrar-recaudo')
+    public async registrarRecaudo() {}
   
     // ...otros métodos...
   }

@@ -419,4 +419,7 @@ export default class Clientes {
       };
     }
   }
+
+  @Post('/enviar-cliente-lista-negra')
+  public async enviarClienteListaNegra() {}
 }

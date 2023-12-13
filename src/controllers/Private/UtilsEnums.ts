@@ -43,4 +43,14 @@ export default class UtilsEnumsController {
             }
         }
     }
+
+    @Get('/tipos-prestamos')
+    public async tiposPrestamos() {
+
+    }
+
+    @Get('/tipos-frecuencias')
+    public async tiposFrecuencias() {}
+
+    
 }

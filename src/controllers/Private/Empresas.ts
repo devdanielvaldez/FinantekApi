@@ -354,6 +354,9 @@ export default class Empresas {
       };
     }
   }
+
+  @Post('/configuracion-empresa')
+  public async configuracionEmpresa() {}
   
 
 }

@@ -1,4 +1,4 @@
-import { Get, Header, Response, Route, Tags } from "tsoa";
+import { Get, Header, Post, Response, Route, Tags } from "tsoa";
 
 @Route('api/solicitudes-desembolsar')
 @Tags('Solicitudes a Desembolsar')
@@ -110,4 +110,7 @@ export default class DesembolsoController {
             }
         }
     }
+
+    @Post('/desembolsar-por-cliente')
+    public async desembolsarPorCliente() {}
 }
