@@ -42,7 +42,7 @@ const MySQLConnector = __importStar(require("./api/utils/mysql.connector"));
 const compression_1 = __importDefault(require("compression"));
 const index_routers_1 = __importDefault(require("./routers/index.routers"));
 const cors_1 = __importDefault(require("cors"));
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8200;
 const app = (0, express_1.default)();
 MySQLConnector.init();
 app.use((0, compression_1.default)());

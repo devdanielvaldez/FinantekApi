@@ -51,7 +51,7 @@ const execute = (query, params) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (error) {
         yield pool.rollback();
-        console.error('[mysql.connector][execute][Error]: ', error);
+        console.error('[mysql.connector][execute][Error]: ', error, query, params);
         throw new Error('failed to execute MySQL query');
     }
 });

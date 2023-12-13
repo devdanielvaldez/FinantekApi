@@ -155,24 +155,37 @@ public async getAllEmployeesByQuery(
 ): Promise<GetAllEmp | InternalServerError> {
     try {
         let query = `
-            SELECT
-                e.empleado_id,
-                e.cargo,
-                e.salario,
-                e.fecha_inicio_contrato,
-                e.supervisor_id,
-                e.estado,
-                p.persona_id,
-                p.nombre,
-                p.segundo_nombre,
-                p.primer_apellido,
-                p.segundo_apellido,
-                p.fecha_nacimiento,
-                p.sexo,
-                p.estado
-            FROM empleados e
-            JOIN persona p ON e.persona_id = p.persona_id
-            WHERE empresa_id = ?`;
+        SELECT
+        e.empleado_id,
+        e.cargo,
+        e.salario,
+        e.fecha_inicio_contrato,
+        e.supervisor_id,
+        e.estado AS estado_empleado,
+        e.rol,
+        p.persona_id,
+        p.nombre,
+        p.segundo_nombre,
+        p.primer_apellido,
+        p.segundo_apellido,
+        p.fecha_nacimiento,
+        p.sexo,
+        p.estado AS estado_persona,
+        c.contacto_id,
+        c.telefono,
+        c.movil,
+        c.telefono_oficina,
+        c.correo_electronico,
+        d.provincia_id,
+        d.municipio_id,
+        d.direccion,
+        d.codigo_postal,
+        d.referencia
+    FROM empleados e
+    JOIN persona p ON e.persona_id = p.persona_id
+    LEFT JOIN contactos c ON p.persona_id = c.persona_id
+    LEFT JOIN direcciones d ON p.direccion_id = d.direccion_id
+    WHERE e.empresa_id = ?;`;
         
         const empId = token.dataUsuario.emp_id.empresa_id; // Obtén el emp_id de la empresa de alguna manera
 
@@ -196,13 +209,17 @@ public async getAllEmployeesByQuery(
 
         const findEmployees = await execute(query, [empId]);
 
+        
+
         const data = findEmployees.map((p: any) => ({
-            empleado_id: p.empleado_id,
-            cargo: p.cargo,
-            salario: p.salario,
-            fecha_inicio_contrato: p.fecha_inicio_contrato,
-            supervisor_id: p.supervisor_id,
-            estado: p.estado,
+            empleado: {
+                empleado_id: p.empleado_id,
+                cargo: p.cargo,
+                salario: p.salario,
+                fecha_inicio_contrato: p.fecha_inicio_contrato,
+                supervisor_id: p.supervisor_id,
+                estado: p.estado_empleado,
+            },
             persona: {
                 persona_id: p.persona_id,
                 nombre: p.nombre,
@@ -211,8 +228,23 @@ public async getAllEmployeesByQuery(
                 segundo_apellido: p.segundo_apellido,
                 fecha_nacimiento: p.fecha_nacimiento,
                 sexo: p.sexo,
-                estado: p.estado
-            }
+                estado: p.estado_persona
+            },
+            contactos: {
+                contacto_id: p.contacto_id,
+                telefono: p.telefono,
+                movil: p.movil,
+                telefono_oficina: p.telefono_oficina,
+                correo_electronico: p.correo_electronico
+            },
+            direccion: {
+                direccion_id: p.provincia_id,
+                municipio: p.municipio_id,
+                direccion: p.direccion,
+                codigo_postal: p.codigo_postal,
+                referencia: p.referencia
+            },
+            rol: p.rol
         }));
 
         return {

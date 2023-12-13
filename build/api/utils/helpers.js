@@ -79,7 +79,7 @@ const generarNumeroPrestamo = () => __awaiter(void 0, void 0, void 0, function* 
     try {
         // Obtener el último número de préstamo de la base de datos
         const queryObtener = 'SELECT ultimo_numero FROM secuencia_prestamo WHERE id = 1';
-        const resultado = yield (0, mysql_connector_1.execute)(queryObtener, []);
+        const resultado = yield (0, mysql_connector_1.execute)(queryObtener);
         const ultimoNumero = resultado[0].ultimo_numero;
         // Incrementar el número para el nuevo préstamo
         const nuevoNumero = ultimoNumero + 1;
