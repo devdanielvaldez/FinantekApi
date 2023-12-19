@@ -264,6 +264,9 @@ let Clientes = class Clientes {
             }
         });
     }
+    enviarClienteListaNegra() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
@@ -359,6 +362,12 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], Clientes.prototype, "getClientById", null);
+__decorate([
+    (0, tsoa_1.Post)('/enviar-cliente-lista-negra'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], Clientes.prototype, "enviarClienteListaNegra", null);
 Clientes = __decorate([
     (0, tsoa_1.Route)("/api/clientes"),
     (0, tsoa_1.Tags)("Clientes")

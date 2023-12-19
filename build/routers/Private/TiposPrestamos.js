@@ -33,4 +33,8 @@ router.put('/cambiar-estado/:id', decodedToken_1.default, (_req, res) => __await
     const response = yield controller.changeStateForProduct(_req.params.id, _req);
     return res.status(response.status).json(response);
 }));
+router.get('/:id', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.productById(_req.params.id, _req);
+    return res.status(response.status).json(response);
+}));
 exports.default = router;

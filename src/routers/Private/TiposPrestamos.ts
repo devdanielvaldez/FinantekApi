@@ -25,4 +25,9 @@ router.put('/cambiar-estado/:id', validateToken, async(_req: any, res) => {
   return res.status(response.status).json(response);
 })
 
+router.get('/:id', validateToken, async(_req: any, res) => {
+  const response: any = await controller.productById(_req.params.id, _req);
+  return res.status(response.status).json(response);
+})
+
 export default router;

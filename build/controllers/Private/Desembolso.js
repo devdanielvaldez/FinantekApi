@@ -130,6 +130,9 @@ let DesembolsoController = class DesembolsoController {
             }
         });
     }
+    desembolsarPorCliente() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 };
 __decorate([
     (0, tsoa_1.Get)('all'),
@@ -138,6 +141,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], DesembolsoController.prototype, "getAllDesembolso", null);
+__decorate([
+    (0, tsoa_1.Post)('/desembolsar-por-cliente'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], DesembolsoController.prototype, "desembolsarPorCliente", null);
 DesembolsoController = __decorate([
     (0, tsoa_1.Route)('api/solicitudes-desembolsar'),
     (0, tsoa_1.Tags)('Solicitudes a Desembolsar')

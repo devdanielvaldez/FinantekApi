@@ -177,6 +177,45 @@ let PrestamoController = class PrestamoController {
         return __awaiter(this, void 0, void 0, function* () {
         });
     }
+    aplicarAbono() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    aplicarAcuerdoPago() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    registrarAcuerdo() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    enviarLegal() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    ejecutarPreCierre() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    registrarContratoPrestamo() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    previewAmortizacion() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    recibirDatosPali() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    sincronizarPali() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
+    generarRecaudo() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    registrarRecaudo() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/generar-amortizacion"),
@@ -200,6 +239,72 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "pagarCuota", null);
+__decorate([
+    (0, tsoa_1.Post)('/aplicar-abono'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "aplicarAbono", null);
+__decorate([
+    (0, tsoa_1.Post)('/registrar-acuerdo-pago'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "aplicarAcuerdoPago", null);
+__decorate([
+    (0, tsoa_1.Post)('/cancelar-acuerdo'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "registrarAcuerdo", null);
+__decorate([
+    (0, tsoa_1.Post)('/enviar-legal'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "enviarLegal", null);
+__decorate([
+    (0, tsoa_1.Post)('/ejecutar-pre-cierre'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "ejecutarPreCierre", null);
+__decorate([
+    (0, tsoa_1.Post)('/registrar-contrato-prestamo'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "registrarContratoPrestamo", null);
+__decorate([
+    (0, tsoa_1.Post)('/preview-amortizacion'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "previewAmortizacion", null);
+__decorate([
+    (0, tsoa_1.Post)('/recibir-datos-pali'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "recibirDatosPali", null);
+__decorate([
+    (0, tsoa_1.Post)('/sincronizar-pali'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "sincronizarPali", null);
+__decorate([
+    (0, tsoa_1.Post)('/generar-recaudo'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "generarRecaudo", null);
+__decorate([
+    (0, tsoa_1.Post)('/registrar-recaudo'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "registrarRecaudo", null);
 PrestamoController = __decorate([
     (0, tsoa_1.Route)("/api/prestamos"),
     (0, tsoa_1.Tags)("Prestamos")

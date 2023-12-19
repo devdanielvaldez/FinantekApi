@@ -250,6 +250,9 @@ let Empresas = class Empresas {
             }
         });
     }
+    configuracionEmpresa() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
@@ -320,6 +323,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], Empresas.prototype, "actualizarEmpresa", null);
+__decorate([
+    (0, tsoa_1.Post)('/configuracion-empresa'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], Empresas.prototype, "configuracionEmpresa", null);
 Empresas = __decorate([
     (0, tsoa_1.Route)("api/empresas"),
     (0, tsoa_1.Tags)('Empresas')

@@ -64,6 +64,13 @@ let UtilsEnumsController = class UtilsEnumsController {
             }
         });
     }
+    tiposPrestamos() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    tiposFrecuencias() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 };
 __decorate([
     (0, tsoa_1.Get)('/provincias'),
@@ -80,6 +87,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UtilsEnumsController.prototype, "getMunicipios", null);
+__decorate([
+    (0, tsoa_1.Get)('/tipos-prestamos'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UtilsEnumsController.prototype, "tiposPrestamos", null);
+__decorate([
+    (0, tsoa_1.Get)('/tipos-frecuencias'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UtilsEnumsController.prototype, "tiposFrecuencias", null);
 UtilsEnumsController = __decorate([
     (0, tsoa_1.Route)('/api/utils'),
     (0, tsoa_1.Tags)('Utils')

@@ -297,5 +297,55 @@ export default class LoanTypes {
       }
     }
   }
+
+
+  @Get("/:id")
+  @Response<any>(
+    200,
+    "Datos recuperados",
+    {
+      ok: true,
+      data: [],
+      status: 200,
+    }
+  )
+  @Response<InternalServerError>(500, "Internal Server Error", {
+    ok: false,
+    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+    error: {},
+    status: 500,
+  })
+  @Response<NotFoundItems>(404, "Not Found Items", {
+    ok: false,
+    msg: "No se encontraron tipos de préstamos para esta empresa",
+    status: 404
+  })
+  public async productById(
+    @Path() id: string,
+    @Header() token: any
+  ): Promise<any | InternalServerError | NotFoundItems> {
+    try {
+      const findProduct = await execute('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [+id]);
+      if(findProduct.length == 0) return {
+        ok: false,
+        msg: "No se encontraron tipos de préstamos para esta empresa",
+        status: 404
+      }
+
+        return {
+          ok: true,
+          data: findProduct,
+          status: 200
+        }
+    } catch(err) {
+      return {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500,
+      }
+    }
+  }
+
   
 }
