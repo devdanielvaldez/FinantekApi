@@ -43,7 +43,6 @@ export default class LoanRequests {
       const {
         cliente_id,
         tipo_prestamo_id,
-        empresa_id,
         monto_solicitado,
         documentos // Lista de documentos
       } = body;
@@ -56,7 +55,7 @@ export default class LoanRequests {
         [
           cliente_id,
           tipo_prestamo_id,
-          empresa_id,
+          empId,
           monto_solicitado,
           empId
         ]
@@ -206,9 +205,9 @@ public async updateLoanRequest(
 
     const updateResult = await execute(
       `UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, empleado_id = ? 
-      WHERE solicitud_id = ? AND empresa_id = ?`,
-      [cliente_id, tipo_prestamo_id, monto_solicitado, empId, id, empId]
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?
+      WHERE solicitud_id = ?`,
+      [cliente_id, tipo_prestamo_id, monto_solicitado, id]
     );
 
     if (updateResult.affectedRows > 0) {

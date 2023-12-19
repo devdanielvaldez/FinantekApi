@@ -289,6 +289,8 @@ export default class Clientes {
         status: 200,
       };
     } catch (err) {
+      console.log(token);
+      console.log(err);
       return {
         ok: false,
         msg: "Error interno del sistema, por favor contacte al administrador del sistema",

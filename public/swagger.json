@@ -1939,10 +1939,6 @@
 						"type": "number",
 						"format": "double"
 					},
-					"empresa_id": {
-						"type": "number",
-						"format": "double"
-					},
 					"monto_solicitado": {
 						"type": "number",
 						"format": "double"
@@ -1957,7 +1953,6 @@
 				"required": [
 					"cliente_id",
 					"tipo_prestamo_id",
-					"empresa_id",
 					"monto_solicitado",
 					"documentos"
 				],
@@ -1992,10 +1987,6 @@
 						"format": "double"
 					},
 					"tipo_prestamo_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"empresa_id": {
 						"type": "number",
 						"format": "double"
 					},

@@ -6,7 +6,6 @@ export interface LoanRequestDocument {
 export interface LoanRequest {
     cliente_id: number;
     tipo_prestamo_id: number;
-    empresa_id: number;
     monto_solicitado: number;
     documentos: LoanRequestDocument[]; // Lista de documentos
   }
@@ -14,6 +13,5 @@ export interface LoanRequest {
   export interface UpdateLoanRequest {
     cliente_id: number;
     tipo_prestamo_id: number;
-    empresa_id: number;
     monto_solicitado: number;
   }
