@@ -28,7 +28,7 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, documentos // Lista de documentos
+                const { cliente_id, tipo_prestamo_id, monto_solicitado, documentos // Lista de documentos
                  } = body;
                 // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO solicitudes_prestamo 
@@ -36,7 +36,7 @@ let LoanRequests = class LoanRequests {
         VALUES (?, ?, ?, ?, 'PE', ?)`, [
                     cliente_id,
                     tipo_prestamo_id,
-                    empresa_id,
+                    empId,
                     monto_solicitado,
                     empId
                 ]);
@@ -132,8 +132,8 @@ let LoanRequests = class LoanRequests {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, empleado_id = ? 
-      WHERE solicitud_id = ? AND empresa_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, empId, id, empId]);
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?
+      WHERE solicitud_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, id]);
                 if (updateResult.affectedRows > 0) {
                     return {
                         ok: true,
