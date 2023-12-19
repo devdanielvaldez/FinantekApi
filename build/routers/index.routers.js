@@ -29,7 +29,7 @@ router.use('/bancos', Bancos_1.default);
 router.use('/clientes', Clientes_1.default);
 router.use('/tipos-prestamos', TiposPrestamos_1.default);
 router.use('/solicitudes-prestamo', Solicitudes_1.default);
-router.use('/api/plantillas', PlantillasCSV_1.default);
+router.use('/plantillas', PlantillasCSV_1.default);
 router.use('/prestamos', Prestamos_1.default);
 router.use('/utils', UtilsEnums_1.default);
 router.use('/solicitudes-desembolsar', Desembolso_1.default);

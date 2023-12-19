@@ -1,4 +1,4 @@
-import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete } from "tsoa";
+import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete, Header } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
 import { PlantillaCSV } from "../../interfaces/PlantillasCSV";
@@ -16,20 +16,21 @@ export default class PlantillaCSVController {
     public async crearPlantillaCSV(
       @Body() nuevaPlantilla: {
         banco_id: number,
-        empresa_id: number,
         titulo_plantilla: string,
         campos: Array<{ titulo_campo: string, identificador_campo: string }>
-      }
+      },
+      @Header() token: any
     ): Promise<InternalServerError | SuccessResponse> {
       try {
-        const { banco_id, empresa_id, titulo_plantilla, campos } = nuevaPlantilla;
+        const empId = token.dataUsuario.emp_id.empresa_id;
+        const { banco_id, titulo_plantilla, campos } = nuevaPlantilla;
   
         // Crear la plantilla
         const insertPlantillaResult = await execute(
           `INSERT INTO plantillas_csv 
           (banco_id, empresa_id, titulo_plantilla) 
           VALUES (?, ?, ?)`,
-          [banco_id, empresa_id, titulo_plantilla]
+          [banco_id, empId, titulo_plantilla]
         );
   
         if (insertPlantillaResult.affectedRows <= 0) {
@@ -198,14 +199,15 @@ export default class PlantillaCSVController {
     }
   }
 
-  @Get("/plantillas-csv/empresa/:empresa_id")
+  @Get("/plantillas-csv/")
   public async obtenerTodasPlantillasEmpresa(
-    @Path() empresa_id: number
-  ): Promise<InternalServerError | PlantillaCSV[]> {
+    @Header() token: any
+  ): Promise<InternalServerError | any> {
     try {
+      const empId = token.dataUsuario.emp_id.empresa_id;
       const plantillas = await execute(
         `SELECT * FROM plantillas_csv WHERE empresa_id = ?`,
-        [empresa_id]
+        [empId]
       );
 
       const plantillasConCampos: PlantillaCSV[] = [];
@@ -224,7 +226,12 @@ export default class PlantillaCSVController {
         plantillasConCampos.push(plantillaConCampos);
       }
 
-      return plantillasConCampos;
+      return {
+        ok: true,
+        data: plantillasConCampos,
+        status: 200,
+        msg: "Plantillas recuperadas corractamente"
+      };
     } catch (err) {
       return {
         ok: false,

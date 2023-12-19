@@ -14,26 +14,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const PlantillaCSV_1 = __importDefault(require("../../controllers/Private/PlantillaCSV"));
+const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
 const controller = new PlantillaCSV_1.default();
-router.post("/plantillas-csv", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.crearPlantillaCSV(_req.body);
+router.post("/plantillas-csv", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.crearPlantillaCSV(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.delete("/plantillas-csv/:plantilla_id", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.eliminarPlantillaCSV(_req.params.plantilla_id);
     return res.status(response.status).json(response);
 }));
-router.put("/plantillas-csv/:plantilla_id", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.actualizarPlantillaCSV(_req.params.plantilla_id, _req.body);
     return res.status(response.status).json(response);
 }));
-router.get("/plantillas-csv/:plantilla_id", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.obtenerPlantillaCSV(_req.params.plantilla_id);
     return res.status(response.status).json(response);
 }));
-router.get("/plantillas-csv/empresa/:empresa_id", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.obtenerTodasPlantillasEmpresa(_req.params.empresa_id);
+router.get("/plantillas-csv/", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.obtenerTodasPlantillasEmpresa(_req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

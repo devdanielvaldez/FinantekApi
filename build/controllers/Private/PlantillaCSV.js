@@ -24,14 +24,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
 let PlantillaCSVController = class PlantillaCSVController {
-    crearPlantillaCSV(nuevaPlantilla) {
+    crearPlantillaCSV(nuevaPlantilla, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { banco_id, empresa_id, titulo_plantilla, campos } = nuevaPlantilla;
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { banco_id, titulo_plantilla, campos } = nuevaPlantilla;
                 // Crear la plantilla
                 const insertPlantillaResult = yield (0, mysql_connector_1.execute)(`INSERT INTO plantillas_csv 
           (banco_id, empresa_id, titulo_plantilla) 
-          VALUES (?, ?, ?)`, [banco_id, empresa_id, titulo_plantilla]);
+          VALUES (?, ?, ?)`, [banco_id, empId, titulo_plantilla]);
                 if (insertPlantillaResult.affectedRows <= 0) {
                     return {
                         ok: false,
@@ -156,17 +157,23 @@ let PlantillaCSVController = class PlantillaCSVController {
             }
         });
     }
-    obtenerTodasPlantillasEmpresa(empresa_id) {
+    obtenerTodasPlantillasEmpresa(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const plantillas = yield (0, mysql_connector_1.execute)(`SELECT * FROM plantillas_csv WHERE empresa_id = ?`, [empresa_id]);
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const plantillas = yield (0, mysql_connector_1.execute)(`SELECT * FROM plantillas_csv WHERE empresa_id = ?`, [empId]);
                 const plantillasConCampos = [];
                 for (const plantilla of plantillas) {
                     const campos = yield (0, mysql_connector_1.execute)(`SELECT * FROM campos_plantilla_csv WHERE plantilla_id = ?`, [plantilla.plantilla_id]);
                     const plantillaConCampos = Object.assign(Object.assign({}, plantilla), { campos });
                     plantillasConCampos.push(plantillaConCampos);
                 }
-                return plantillasConCampos;
+                return {
+                    ok: true,
+                    data: plantillasConCampos,
+                    status: 200,
+                    msg: "Plantillas recuperadas corractamente"
+                };
             }
             catch (err) {
                 return {
@@ -182,8 +189,9 @@ let PlantillaCSVController = class PlantillaCSVController {
 __decorate([
     (0, tsoa_1.Post)("/plantillas-csv"),
     __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PlantillaCSVController.prototype, "crearPlantillaCSV", null);
 __decorate([
@@ -209,10 +217,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PlantillaCSVController.prototype, "obtenerPlantillaCSV", null);
 __decorate([
-    (0, tsoa_1.Get)("/plantillas-csv/empresa/:empresa_id"),
-    __param(0, (0, tsoa_1.Path)()),
+    (0, tsoa_1.Get)("/plantillas-csv/"),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PlantillaCSVController.prototype, "obtenerTodasPlantillasEmpresa", null);
 PlantillaCSVController = __decorate([

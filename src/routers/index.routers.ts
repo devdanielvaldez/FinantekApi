@@ -26,7 +26,7 @@ router.use('/bancos', Bancos);
 router.use('/clientes', Clientes);
 router.use('/tipos-prestamos', TiposPrestamos);
 router.use('/solicitudes-prestamo', SolicitudesPrestamos);
-router.use('/api/plantillas', Plantillas);
+router.use('/plantillas', Plantillas);
 router.use('/prestamos', Prestamos);
 router.use('/utils', UtilsEnums);
 router.use('/solicitudes-desembolsar', Desembolso);

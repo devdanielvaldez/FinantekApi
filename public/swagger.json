@@ -5059,7 +5059,16 @@
 					"Plantillas CSV"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -5087,10 +5096,6 @@
 									"titulo_plantilla": {
 										"type": "string"
 									},
-									"empresa_id": {
-										"type": "number",
-										"format": "double"
-									},
 									"banco_id": {
 										"type": "number",
 										"format": "double"
@@ -5099,7 +5104,6 @@
 								"required": [
 									"campos",
 									"titulo_plantilla",
-									"empresa_id",
 									"banco_id"
 								],
 								"type": "object"
@@ -5107,6 +5111,40 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "ObtenerTodasPlantillasEmpresa",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Plantillas CSV"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/plantillas/plantillas-csv/{plantilla_id}": {
@@ -5258,48 +5296,6 @@
 					{
 						"in": "path",
 						"name": "plantilla_id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/plantillas/plantillas-csv/empresa/{empresa_id}": {
-			"get": {
-				"operationId": "ObtenerTodasPlantillasEmpresa",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/InternalServerError"
-										},
-										{
-											"items": {
-												"$ref": "#/components/schemas/PlantillaCSV"
-											},
-											"type": "array"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Plantillas CSV"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "empresa_id",
 						"required": true,
 						"schema": {
 							"format": "double",
