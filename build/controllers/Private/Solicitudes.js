@@ -163,9 +163,8 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const deleteResult = yield (0, mysql_connector_1.execute)(`DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
-                const deleteDocs = yield (0, mysql_connector_1.execute)(`DELETE FROM documentaction_solicitud WHERE solicitud_id = ?`, [id]);
-                if (deleteResult.affectedRows > 0 && deleteDocs.affectedRows > 0) {
+                const deleteResult = yield (0, mysql_connector_1.execute)(`UPDATE FROM solicitudes_prestamo SET estado_solicitud =? WHERE solicitud_id = ?`, ['IN', empId]);
+                if (deleteResult.affectedRows > 0) {
                     return {
                         ok: true,
                         msg: "Solicitud de préstamo eliminada correctamente",

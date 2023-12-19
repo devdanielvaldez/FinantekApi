@@ -252,12 +252,11 @@ public async deleteLoanRequest(
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
     const deleteResult = await execute(
-      `DELETE FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`,
-      [id, empId]
+      `UPDATE FROM solicitudes_prestamo SET estado_solicitud =? WHERE solicitud_id = ?`,
+      ['IN', empId]
     );
-    const deleteDocs = await execute(`DELETE FROM documentaction_solicitud WHERE solicitud_id = ?`, [id]);
 
-    if (deleteResult.affectedRows > 0 && deleteDocs.affectedRows > 0) {
+    if (deleteResult.affectedRows > 0) {
       return {
         ok: true,
         msg: "Solicitud de préstamo eliminada correctamente",
