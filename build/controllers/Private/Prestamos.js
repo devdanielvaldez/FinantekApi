@@ -36,6 +36,31 @@ const frecuenciasDias = {
     AN: 360
 };
 let PrestamoController = class PrestamoController {
+    generarAmortizacionPreview(datosPrestamo, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                console.log(empId);
+                const { fecha_inicial, monto_aprobado, tasa_interes, frecuencia_pago, cuota_seguro, numeroDeMeses } = datosPrestamo;
+                const loan = (0, prestamos_1.generarPlanPrestamo)(fecha_inicial, +monto_aprobado, +tasa_interes, +cuota_seguro, frecuencia_pago, +numeroDeMeses, frecuenciasDias);
+                return {
+                    ok: true,
+                    msg: "Amortizacion generada correctamente",
+                    status: 200,
+                    data: loan
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema al generar el préstamo",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
     generarAmortizacionPrestamo(datosPrestamo, token) {
         return __awaiter(this, void 0, void 0, function* () {
             // const empId = token.dataUsuario.emp_id.empresa_id;
@@ -153,6 +178,7 @@ let PrestamoController = class PrestamoController {
                     1,
                     empId
                 ];
+                yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo SET monto_aprobado = ? WHERE solicitud_id = ?`, [monto_aprobado, solicitud_id]);
                 console.log(values);
                 // Ejecutar la consulta
                 yield (0, mysql_connector_1.execute)(insertQuery, values);
@@ -173,33 +199,171 @@ let PrestamoController = class PrestamoController {
             }
         });
     }
-    pagarCuota() {
+    pagarCuota(datosPago, token) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { prestamoId, montoPago, metodo_pago, solicitudId } = datosPago;
+                // 1. Registrar el pago en la tabla de pagos
+                const queryPago = 'INSERT INTO pagos (prestamo_id, monto, fecha_pago, metodo_pago) VALUES (?, ?, NOW(), ?)';
+                yield (0, mysql_connector_1.execute)(queryPago, [prestamoId, montoPago, metodo_pago]);
+                // 2. Obtener la cuota actual del préstamo
+                const queryCuotaActual = 'SELECT cuota_actual FROM prestamos WHERE prestamo_id = ?';
+                const resultadoCuota = yield (0, mysql_connector_1.execute)(queryCuotaActual, [prestamoId]);
+                const cuotaActual = resultadoCuota[0].cuota_actual;
+                // 3. Actualizar el estado de la cuota en la tabla de amortización
+                const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
+                yield (0, mysql_connector_1.execute)(queryActualizarAmortizacion, ['PA', solicitudId, cuotaActual]);
+                const findNextDate = yield (0, mysql_connector_1.execute)('SELECT fecha_pago FROM amortizacion WHERE n_cuota = ?', [+cuotaActual + 1]);
+                // 4. Actualizar la cuota actual en la tabla de prestamos (pasar a la siguiente cuota)
+                const queryActualizarPrestamo = 'UPDATE prestamos SET cuota_actual = ?, prestamo_fecha_pago = ? WHERE prestamo_id = ?';
+                console.log(findNextDate);
+                yield (0, mysql_connector_1.execute)(queryActualizarPrestamo, [+cuotaActual + 1, findNextDate[0].fecha_pago, prestamoId]);
+                return {
+                    ok: true,
+                    msg: "Pago de la cuota realizado con éxito",
+                    status: 200
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema al realizar el pago de la cuota",
+                    error: err,
+                    status: 500,
+                };
+            }
         });
     }
-    aplicarAbono() {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
-    aplicarAcuerdoPago() {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
-    registrarAcuerdo() {
+    aplicarAbono(datosAbono, token) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const { prestamoId, montoAbono, metodo_pago, solicitudId } = datosAbono;
+                // 1. Registrar el abono en la tabla de pagos
+                const queryAbono = 'INSERT INTO abonos (prestamo_id, monto, fecha_abono, metodo_pago, emp_id) VALUES (?, ?, NOW(), ?, ?)';
+                yield (0, mysql_connector_1.execute)(queryAbono, [prestamoId, montoAbono, metodo_pago, empId]);
+                // 2. Obtener la cuota actual y sus detalles
+                const queryCuotaActual = 'SELECT cuota_actual, prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora FROM prestamos WHERE prestamo_id = ?';
+                const prestamoActual = yield (0, mysql_connector_1.execute)(queryCuotaActual, [prestamoId]);
+                let { cuota_actual, prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora } = prestamoActual[0];
+                let montoRestante = montoAbono;
+                // 3. Aplicar el abono: intereses, mora, seguro, capital
+                let montoUsado = 0;
+                // Aplicar a la mora si no está en 0
+                if (prestamo_mora > 0) {
+                    montoUsado = Math.min(montoRestante, prestamo_mora);
+                    prestamo_mora -= montoUsado;
+                    montoRestante -= montoUsado;
+                }
+                console.log(montoRestante);
+                // Aplicar al interés
+                montoUsado = Math.min(montoRestante, prestamo_cuota_interes);
+                prestamo_cuota_interes -= montoUsado;
+                montoRestante -= montoUsado;
+                console.log(montoRestante);
+                // Aplicar al seguro
+                montoUsado = Math.min(montoRestante, prestamo_cuota_seguro);
+                prestamo_cuota_seguro -= montoUsado;
+                montoRestante -= montoUsado;
+                console.log(montoRestante);
+                // Aplicar al capital
+                montoUsado = Math.min(montoRestante, prestamo_cuota_capital);
+                prestamo_cuota_capital -= montoUsado;
+                montoRestante -= montoUsado;
+                console.log(montoRestante);
+                // 4. Actualizar la tabla prestamos con los nuevos montos
+                const queryActualizarPrestamo = `
+          UPDATE prestamos
+          SET prestamo_cuota_capital = ?, 
+              prestamo_cuota_interes = ?, 
+              prestamo_cuota_seguro = ?, 
+              prestamo_mora = ?
+          WHERE prestamo_id = ?`;
+                yield (0, mysql_connector_1.execute)(queryActualizarPrestamo, [prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora, prestamoId]);
+                // 5. Verificar y actualizar el estado en la tabla de amortización
+                const esCuotaCompleta = prestamo_mora == 0 && prestamo_cuota_interes == 0 && prestamo_cuota_seguro == 0 && prestamo_cuota_capital == 0;
+                const estadoCuota = esCuotaCompleta ? 'PA' : 'AB';
+                const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
+                yield (0, mysql_connector_1.execute)(queryActualizarAmortizacion, [estadoCuota, solicitudId, cuota_actual]);
+                console.log(estadoCuota);
+                if (esCuotaCompleta) {
+                    const cuotaAmortizacion = yield (0, mysql_connector_1.execute)('SELECT cuotaCapital, cuotaInteres, cuotaSeguro, montoPendientePrestamo FROM amortizacion WHERE solicitudId = ? AND n_cuota = ?', [solicitudId, +cuota_actual + 1]);
+                    console.log(cuotaAmortizacion);
+                    // Avanzar a la siguiente cuota
+                    yield (0, mysql_connector_1.execute)('UPDATE prestamos SET cuota_actual = cuota_actual + 1, prestamo_cuota_capital = ?, prestamo_cuota_interes = ?, prestamo_cuota_seguro = ?, prestamo_balance_actual = ?, cuota_actual = ? WHERE prestamo_id = ?', [cuotaAmortizacion[0].cuotaCapital, cuotaAmortizacion[0].cuotaInteres, cuotaAmortizacion[0].cuotaSeguro, cuotaAmortizacion[0].montoPendientePrestamo, +cuota_actual + 1, prestamoId]);
+                }
+                return {
+                    ok: true,
+                    msg: "Abono aplicado con éxito",
+                    status: 200
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: "Error al aplicar el abono",
+                    error: err,
+                    status: 500,
+                };
+            }
         });
     }
-    enviarLegal() {
+    getLoanById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // consultar el prestamo
+                const getLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM prestamos WHERE prestamo_id = ?', [id]);
+                // consultar abonos del prestamo
+                const getLoanAbono = yield (0, mysql_connector_1.execute)('SELECT * FROM abonos WHERE prestamo_id = ?', [id]);
+                // consultar amortizacion del prestamo
+                const getAmortizacionLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM amortizacion WHERE solicitudId = ?', [getLoan[0].solicitud_id]);
+                // consultar pagos del prestamo
+                const getAllPaymentsByLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM pagos WHERE prestamo_id = ?', [id]);
+                return {
+                    ok: true,
+                    status: 200,
+                    loan: getLoan,
+                    abonos: getLoanAbono,
+                    amortizacion: getAmortizacionLoan,
+                    payments: getAllPaymentsByLoan
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    msg: "Error al consultar el prestamo",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
+    prestamosAtraso(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                // consultar el prestamo
+                const getLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM cuotas_retrasadas WHERE empId = ?', [empId]);
+                return {
+                    ok: true,
+                    status: 200,
+                    data: getLoan
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    msg: "Error al consultar el prestamo",
+                    error: err,
+                    status: 500,
+                };
+            }
         });
     }
     ejecutarPreCierre() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    registrarContratoPrestamo() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    previewAmortizacion() {
         return __awaiter(this, void 0, void 0, function* () {
         });
     }
@@ -216,7 +380,49 @@ let PrestamoController = class PrestamoController {
     registrarRecaudo() {
         return __awaiter(this, void 0, void 0, function* () { });
     }
+    allPrestamos(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empId = token.dataUsuario.emp_id.empresa_id;
+                const findLoans = yield (0, mysql_connector_1.execute)('SELECT * FROM prestamos WHERE emp_id = ?', [empId]);
+                return {
+                    ok: true,
+                    status: 200,
+                    data: findLoans
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema al generar el préstamo",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
 };
+__decorate([
+    (0, tsoa_1.Post)("/generar-amortizacion-preview"),
+    (0, tsoa_1.Response)(200, "Consulta de personas satisfactoria", {
+        ok: true,
+        data: [],
+        status: 200,
+        msg: ""
+    }),
+    (0, tsoa_1.Response)(500, "Internal Server Error", {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500,
+    }),
+    __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "generarAmortizacionPreview", null);
 __decorate([
     (0, tsoa_1.Post)("/generar-amortizacion"),
     __param(0, (0, tsoa_1.Body)()),
@@ -235,52 +441,40 @@ __decorate([
 ], PrestamoController.prototype, "crearYRegistrarPrestamo", null);
 __decorate([
     (0, tsoa_1.Post)('/pagar-cuota'),
+    __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "pagarCuota", null);
 __decorate([
     (0, tsoa_1.Post)('/aplicar-abono'),
+    __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "aplicarAbono", null);
 __decorate([
-    (0, tsoa_1.Post)('/registrar-acuerdo-pago'),
+    (0, tsoa_1.Get)('/:id'),
+    __param(0, (0, tsoa_1.Path)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], PrestamoController.prototype, "aplicarAcuerdoPago", null);
+], PrestamoController.prototype, "getLoanById", null);
 __decorate([
-    (0, tsoa_1.Post)('/cancelar-acuerdo'),
+    (0, tsoa_1.Get)('/atraso'),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], PrestamoController.prototype, "registrarAcuerdo", null);
-__decorate([
-    (0, tsoa_1.Post)('/enviar-legal'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], PrestamoController.prototype, "enviarLegal", null);
+], PrestamoController.prototype, "prestamosAtraso", null);
 __decorate([
     (0, tsoa_1.Post)('/ejecutar-pre-cierre'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "ejecutarPreCierre", null);
-__decorate([
-    (0, tsoa_1.Post)('/registrar-contrato-prestamo'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], PrestamoController.prototype, "registrarContratoPrestamo", null);
-__decorate([
-    (0, tsoa_1.Post)('/preview-amortizacion'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], PrestamoController.prototype, "previewAmortizacion", null);
 __decorate([
     (0, tsoa_1.Post)('/recibir-datos-pali'),
     __metadata("design:type", Function),
@@ -305,6 +499,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "registrarRecaudo", null);
+__decorate([
+    (0, tsoa_1.Get)('/all'),
+    __param(0, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "allPrestamos", null);
 PrestamoController = __decorate([
     (0, tsoa_1.Route)("/api/prestamos"),
     (0, tsoa_1.Tags)("Prestamos")

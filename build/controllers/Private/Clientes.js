@@ -28,8 +28,10 @@ let Clientes = class Clientes {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { conyuge_id, datos_bancarios, datos_laborales, persona_id, referencias, } = body;
-                const insertConyuge = yield (0, mysql_connector_1.execute)("INSERT INTO conyuge (persona_id) VALUES (?)", [conyuge_id]);
-                const insertClient = yield (0, mysql_connector_1.execute)("INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)", [insertConyuge.insertId, "a", persona_id, token.dataUsuario.emp_id.empresa_id]);
+                if (conyuge_id !== null) {
+                    var insertConyuge = yield (0, mysql_connector_1.execute)("INSERT INTO conyuge (persona_id) VALUES (?)", [conyuge_id]);
+                }
+                const insertClient = yield (0, mysql_connector_1.execute)("INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)", [(insertConyuge === null || insertConyuge === void 0 ? void 0 : insertConyuge.insertId) || null, "a", persona_id, token.dataUsuario.emp_id.empresa_id]);
                 // insert data banks
                 for (const db of datos_bancarios) {
                     yield (0, mysql_connector_1.execute)("INSERT INTO datos_bancarios (banco_codigo_id, n_cuenta, cuenta_default, cliente_id) VALUES (?, ?, ?, ?)", [
@@ -66,6 +68,7 @@ let Clientes = class Clientes {
                 };
             }
             catch (err) {
+                console.log(err);
                 return {
                     ok: false,
                     msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -144,9 +147,7 @@ let Clientes = class Clientes {
         dl.*,
         db.*,
         ct.*,
-        dr.*,
-        cy.*,
-        cp.*
+        dr.*
     FROM
         clientes c
     LEFT JOIN
@@ -159,10 +160,6 @@ let Clientes = class Clientes {
         contactos ct ON p.persona_id = ct.persona_id
     LEFT JOIN
         direcciones dr ON p.direccion_id = dr.direccion_id
-    LEFT JOIN
-        conyuge cy ON c.conyuge_id = cy.conyuge_id
-    LEFT JOIN
-        persona cp ON cy.persona_id = cp.persona_id
     WHERE
         c.emp_id = ?;
     `, [token.dataUsuario.emp_id.empresa_id]);
@@ -173,7 +170,7 @@ let Clientes = class Clientes {
                 };
             }
             catch (err) {
-                console.log(token);
+                // console.log(token);
                 console.log(err);
                 return {
                     ok: false,
@@ -228,9 +225,7 @@ let Clientes = class Clientes {
         dl.*,
         db.*,
         ct.*,
-        dr.*,
-        cy.*,
-        cp.*
+        dr.*
     FROM
         clientes c
     LEFT JOIN
@@ -243,10 +238,6 @@ let Clientes = class Clientes {
         contactos ct ON p.persona_id = ct.persona_id
     LEFT JOIN
         direcciones dr ON p.direccion_id = dr.direccion_id
-    LEFT JOIN
-        conyuge cy ON c.conyuge_id = cy.conyuge_id
-    LEFT JOIN
-        persona cp ON cy.persona_id = cp.persona_id
     WHERE
         c.cliente_id = ?;
     `, [id]);

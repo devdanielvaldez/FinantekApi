@@ -25,4 +25,16 @@ router.get('/municipios/:id', decodedToken_1.default, (_req, res) => __awaiter(v
     const response = yield controller.getMunicipios(_req, _req.params.id);
     return res.status(response.status).json(response);
 }));
+router.get('/tipos-frecuencias', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.tiposFrecuencias();
+    return res.status(response.status).json(response);
+}));
+router.get('/codes', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.codesPlantillas();
+    return res.status(response.status).json(response);
+}));
+router.post('/files', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.uploadFiles(_req);
+    return res.status(response.status).json(response);
+}));
 exports.default = router;

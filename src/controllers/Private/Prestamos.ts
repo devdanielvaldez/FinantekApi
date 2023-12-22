@@ -2,7 +2,7 @@ import { generarPlanPrestamo } from './../../api/utils/prestamos';
 import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete, Header } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
-import { generarNumeroPrestamo } from '../../api/utils/helpers';
+import { aplicarAbonoIndividual, generarNumeroPrestamo } from '../../api/utils/helpers';
 
 const frecuenciasDias = {
   DI: 1,
@@ -25,6 +25,71 @@ interface SuccessResponse {
   @Route("/api/prestamos")
   @Tags("Prestamos")
 export default class PrestamoController {
+  @Post("/generar-amortizacion-preview")
+  @Response<SuccessResponse>(
+    200,
+    "Consulta de personas satisfactoria",
+    {
+      ok: true,
+      data: [],
+      status: 200,
+      msg: ""
+    }
+  )
+  @Response<InternalServerError>(500, "Internal Server Error", {
+    ok: false,
+    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+    error: {},
+    status: 500,
+  })
+  public async generarAmortizacionPreview(
+    @Body() datosPrestamo: {
+      fecha_inicial: any;
+      monto_aprobado: number;
+      tasa_interes: number;
+      cuota_seguro: number;
+      frecuencia_pago: string;
+      numeroDeMeses: number;
+    },
+    @Header() token: any
+  ): Promise<InternalServerError | SuccessResponse> {
+    try {
+      const empId = token.dataUsuario.emp_id.empresa_id;
+      console.log(empId);
+      const {
+        fecha_inicial,
+        monto_aprobado,
+        tasa_interes,
+        frecuencia_pago,
+        cuota_seguro,
+          numeroDeMeses
+      } = datosPrestamo;
+
+      const loan = generarPlanPrestamo(fecha_inicial,
+        +monto_aprobado,
+        +tasa_interes,
+        +cuota_seguro,
+        frecuencia_pago,
+        +numeroDeMeses,
+        frecuenciasDias);
+
+          return {
+            ok: true,
+            msg: "Amortizacion generada correctamente",
+            status: 200,
+            data: loan
+          };
+    } catch (err) {
+        console.log(err);
+      return {
+        ok: false,
+        msg: "Error interno del sistema al generar el préstamo",
+        error: err,
+        status: 500,
+      };
+    }
+  }
+
     @Post("/generar-amortizacion")
     public async generarAmortizacionPrestamo(
       @Body() datosPrestamo: {
@@ -197,6 +262,8 @@ export default class PrestamoController {
           empId
         ];
 
+        await execute(`UPDATE solicitudes_prestamo SET monto_aprobado = ? WHERE solicitud_id = ?`, [monto_aprobado, solicitud_id]);
+
         console.log(values);
     
         // Ejecutar la consulta
@@ -219,38 +286,207 @@ export default class PrestamoController {
     }
     
     @Post('/pagar-cuota')
-    public async pagarCuota() {
-      
-    }
+    public async pagarCuota(
+      @Body() datosPago: {
+        prestamoId: number;
+        montoPago: number;
+        metodo_pago: string;
+        solicitudId: number;
+      },
+      @Header() token: any
+    ): Promise<any> {
+      try {
+        const empId = token.dataUsuario.emp_id.empresa_id;
+        const { prestamoId, montoPago, metodo_pago, solicitudId } = datosPago;
+    
+        // 1. Registrar el pago en la tabla de pagos
+        const queryPago = 'INSERT INTO pagos (prestamo_id, monto, fecha_pago, metodo_pago) VALUES (?, ?, NOW(), ?)';
+        await execute(queryPago, [prestamoId, montoPago, metodo_pago]);
+    
+        // 2. Obtener la cuota actual del préstamo
+        const queryCuotaActual = 'SELECT cuota_actual FROM prestamos WHERE prestamo_id = ?';
+        const resultadoCuota = await execute(queryCuotaActual, [prestamoId]);
+        const cuotaActual = resultadoCuota[0].cuota_actual;
+    
+        // 3. Actualizar el estado de la cuota en la tabla de amortización
+        const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
+        await execute(queryActualizarAmortizacion, ['PA', solicitudId, cuotaActual]);
+
+        const findNextDate = await execute('SELECT fecha_pago FROM amortizacion WHERE n_cuota = ?', [+cuotaActual + 1]);
+    
+        // 4. Actualizar la cuota actual en la tabla de prestamos (pasar a la siguiente cuota)
+        const queryActualizarPrestamo = 'UPDATE prestamos SET cuota_actual = ?, prestamo_fecha_pago = ? WHERE prestamo_id = ?';
+        console.log(findNextDate);
+        await execute(queryActualizarPrestamo, [+cuotaActual + 1, findNextDate[0].fecha_pago, prestamoId]);
+    
+        return {
+          ok: true,
+          msg: "Pago de la cuota realizado con éxito",
+          status: 200
+        };
+      } catch (err) {
+        console.log(err);
+        return {
+          ok: false,
+          msg: "Error interno del sistema al realizar el pago de la cuota",
+          error: err,
+          status: 500,
+        };
+      }
+    }    
 
     @Post('/aplicar-abono')
-    public async aplicarAbono() {}
+    public async aplicarAbono(
+      @Body() datosAbono: {
+        prestamoId: number;
+        montoAbono: number;
+        metodo_pago: string;
+        solicitudId: number;
+      },
+      @Header() token: any
+    ): Promise<any> {
+      try {
+        const empId = token.dataUsuario.emp_id.empresa_id;
+        const { prestamoId, montoAbono, metodo_pago, solicitudId } = datosAbono;
+    
+        // 1. Registrar el abono en la tabla de pagos
+        const queryAbono = 'INSERT INTO abonos (prestamo_id, monto, fecha_abono, metodo_pago, emp_id) VALUES (?, ?, NOW(), ?, ?)';
+        await execute(queryAbono, [prestamoId, montoAbono, metodo_pago, empId]);
+    
+        // 2. Obtener la cuota actual y sus detalles
+        const queryCuotaActual = 'SELECT cuota_actual, prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora FROM prestamos WHERE prestamo_id = ?';
+        const prestamoActual = await execute(queryCuotaActual, [prestamoId]);
+        let { cuota_actual, prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora } = prestamoActual[0];
+        let montoRestante = montoAbono;
+    
+        // 3. Aplicar el abono: intereses, mora, seguro, capital
+        let montoUsado = 0;
 
-    @Post('/registrar-acuerdo-pago')
-    public async aplicarAcuerdoPago() {}
+        // Aplicar a la mora si no está en 0
+        if (prestamo_mora > 0) {
+            montoUsado = Math.min(montoRestante, prestamo_mora);
+            prestamo_mora -= montoUsado;
+            montoRestante -= montoUsado;
+        }
+        console.log(montoRestante);
+        
+        // Aplicar al interés
+        montoUsado = Math.min(montoRestante, prestamo_cuota_interes);
+        prestamo_cuota_interes -= montoUsado;
+        montoRestante -= montoUsado;
+        console.log(montoRestante);
 
-    @Post('/cancelar-acuerdo')
-    public async registrarAcuerdo() {
+        
+        // Aplicar al seguro
+        montoUsado = Math.min(montoRestante, prestamo_cuota_seguro);
+        prestamo_cuota_seguro -= montoUsado;
+        montoRestante -= montoUsado;
+        console.log(montoRestante);
 
+        
+        // Aplicar al capital
+        montoUsado = Math.min(montoRestante, prestamo_cuota_capital);
+        prestamo_cuota_capital -= montoUsado;
+        montoRestante -= montoUsado;
+        console.log(montoRestante);
+    
+        // 4. Actualizar la tabla prestamos con los nuevos montos
+        const queryActualizarPrestamo = `
+          UPDATE prestamos
+          SET prestamo_cuota_capital = ?, 
+              prestamo_cuota_interes = ?, 
+              prestamo_cuota_seguro = ?, 
+              prestamo_mora = ?
+          WHERE prestamo_id = ?`;
+        await execute(queryActualizarPrestamo, [prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora, prestamoId]);
+    
+        // 5. Verificar y actualizar el estado en la tabla de amortización
+        const esCuotaCompleta = prestamo_mora == 0 && prestamo_cuota_interes == 0 && prestamo_cuota_seguro == 0 && prestamo_cuota_capital == 0;
+        const estadoCuota = esCuotaCompleta ? 'PA' : 'AB';
+        const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
+        await execute(queryActualizarAmortizacion, [estadoCuota, solicitudId, cuota_actual]);
+        console.log(estadoCuota);
+        
+        if (esCuotaCompleta) {
+          const cuotaAmortizacion = await execute('SELECT cuotaCapital, cuotaInteres, cuotaSeguro, montoPendientePrestamo FROM amortizacion WHERE solicitudId = ? AND n_cuota = ?', [solicitudId, +cuota_actual + 1])
+          console.log(cuotaAmortizacion);
+          // Avanzar a la siguiente cuota
+          await execute('UPDATE prestamos SET cuota_actual = cuota_actual + 1, prestamo_cuota_capital = ?, prestamo_cuota_interes = ?, prestamo_cuota_seguro = ?, prestamo_balance_actual = ?, cuota_actual = ? WHERE prestamo_id = ?', [cuotaAmortizacion[0].cuotaCapital, cuotaAmortizacion[0].cuotaInteres, cuotaAmortizacion[0].cuotaSeguro, cuotaAmortizacion[0].montoPendientePrestamo, +cuota_actual + 1, prestamoId]);
+        }
+    
+        return {
+          ok: true,
+          msg: "Abono aplicado con éxito",
+          status: 200
+        };
+      } catch (err) {
+        console.log(err);
+        return {
+          ok: false,
+          msg: "Error al aplicar el abono",
+          error: err,
+          status: 500,
+        };
+      }
+    }
+    
+    @Get('/:id')
+    public async getLoanById(@Path() id: number) {
+      try {
+        // consultar el prestamo
+        const getLoan = await execute('SELECT * FROM prestamos WHERE prestamo_id = ?', [id]);
+
+        // consultar abonos del prestamo
+        const getLoanAbono = await execute('SELECT * FROM abonos WHERE prestamo_id = ?', [id]);
+        
+        // consultar amortizacion del prestamo
+        const getAmortizacionLoan = await execute('SELECT * FROM amortizacion WHERE solicitudId = ?', [getLoan[0].solicitud_id]);
+
+        // consultar pagos del prestamo
+        const getAllPaymentsByLoan = await execute('SELECT * FROM pagos WHERE prestamo_id = ?', [id]);
+
+        return {
+          ok: true,
+          status: 200,
+          loan: getLoan,
+          abonos: getLoanAbono,
+          amortizacion: getAmortizacionLoan,
+          payments: getAllPaymentsByLoan
+        }
+      } catch(err) {
+        return {
+          ok: false,
+          msg: "Error al consultar el prestamo",
+          error: err,
+          status: 500,
+        };
+      }
     }
 
-    @Post('/enviar-legal')
-    public async enviarLegal() {
-
+    @Get('/atraso')
+    public async prestamosAtraso(@Header() token: any) {
+      try {
+        const empId = token.dataUsuario.emp_id.empresa_id;
+        // consultar el prestamo
+        const getLoan = await execute('SELECT * FROM cuotas_retrasadas WHERE empId = ?', [empId]);
+        return {
+          ok: true,
+          status: 200,
+          data: getLoan
+        }
+      } catch(err) {
+        return {
+          ok: false,
+          msg: "Error al consultar el prestamo",
+          error: err,
+          status: 500,
+        };
+      }
     }
+    
 
     @Post('/ejecutar-pre-cierre')
     public async ejecutarPreCierre() {
-
-    }
-
-    @Post('/registrar-contrato-prestamo')
-    public async registrarContratoPrestamo() {
-
-    }
-
-    @Post('/preview-amortizacion')
-    public async previewAmortizacion() {
 
     }
 
@@ -267,6 +503,31 @@ export default class PrestamoController {
 
     @Post('/registrar-recaudo')
     public async registrarRecaudo() {}
+
+    @Get('/all')
+    public async allPrestamos(
+      @Header() token: any
+    ) {
+      try {
+        const empId = token.dataUsuario.emp_id.empresa_id;
+        const findLoans = await execute('SELECT * FROM prestamos WHERE emp_id = ?', [empId]);
+
+        return {
+          ok: true,
+          status: 200,
+          data: findLoans
+        }
+
+      } catch(err) {
+        console.log(err);
+        return {
+          ok: false,
+          msg: "Error interno del sistema al generar el préstamo",
+          error: err,
+          status: 500,
+        };
+      }
+    }
   
     // ...otros métodos...
   }

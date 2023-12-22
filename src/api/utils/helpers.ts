@@ -94,3 +94,9 @@ export const generarNumeroPrestamo = async() => {
       throw error;
   }
 }
+
+
+export const aplicarAbonoIndividual = (montoAbono: any, montoDeuda: any) => {
+  let montoPagado = Math.min(montoAbono, montoDeuda);
+  return montoAbono - montoPagado;
+}

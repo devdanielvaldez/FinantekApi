@@ -75,71 +75,6 @@ export default class Persona {
   ): Promise<RegistrarPersonaResponse | InternalServerError> {
     try {
       const { persona, contactos, direccion } = body;
-
-      const existPersona = await execute(
-        "SELECT persona_id FROM persona WHERE cedula = ?",
-        [persona.cedula]
-      );
-
-      if (existPersona.length > 0) {
-        // La persona ya existe, realizar el UPDATE en lugar de la inserción
-        const personaId = existPersona[0].persona_id;
-
-        // Actualizar la dirección
-        await execute(
-          "UPDATE direcciones SET provincia_id = ?, municipio_id = ?, direccion = ?, codigo_postal = ?, referencia = ? WHERE direccion_id = ?",
-          [
-            direccion.provincia_id,
-            direccion.municipio_id,
-            direccion.direccion,
-            direccion.codigo_postal,
-            direccion.referencia,
-            personaId,
-          ]
-        );
-
-        // Actualizar los datos de la persona
-        await execute(
-          "UPDATE persona SET nombre = ?, segundo_nombre = ?, primer_apellido = ?, segundo_apellido = ?, fecha_nacimiento = ?, sexo = ?, estado = ? WHERE persona_id = ?",
-          [
-            persona.nombre,
-            persona.segundo_nombre,
-            persona.primer_apellido,
-            persona.segundo_apellido,
-            persona.fecha_nacimiento,
-            persona.sexo,
-            'a',
-            personaId,
-          ]
-        );
-
-        // Eliminar los contactos existentes de la persona
-        await execute("DELETE FROM contactos WHERE persona_id = ?", [
-          personaId,
-        ]);
-
-        // Insertar los nuevos contactos de la persona
-        for (const c of contactos) {
-          await execute(
-            "INSERT INTO contactos (telefono, movil, telefono_oficina, correo_electronico, persona_id) VALUES (?, ?, ?, ?, ?)",
-            [
-              c.telefono,
-              c.movil,
-              c.telefono_oficina,
-              c.correo_electronico,
-              personaId,
-            ]
-          );
-        }
-
-        return {
-          ok: true,
-          msg: "Persona actualizada correctamente",
-          status: 200,
-          persona_id: personaId
-        };
-      } else {
-        // La persona no existe, realizar la inserción
         const direccionInsert = await execute(
           "INSERT INTO direcciones (provincia_id, municipio_id, direccion, codigo_postal, referencia) VALUES (?, ?, ?, ?, ?)",
           [
@@ -185,7 +120,6 @@ export default class Persona {
           status: 200,
           persona_id: personaInsert.insertId
         };
-      }
     } catch (err) {
       return {
         ok: false,

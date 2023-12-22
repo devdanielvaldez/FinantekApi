@@ -28,87 +28,39 @@ let Persona = class Persona {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { persona, contactos, direccion } = body;
-                const existPersona = yield (0, mysql_connector_1.execute)("SELECT persona_id FROM persona WHERE cedula = ?", [persona.cedula]);
-                if (existPersona.length > 0) {
-                    // La persona ya existe, realizar el UPDATE en lugar de la inserción
-                    const personaId = existPersona[0].persona_id;
-                    // Actualizar la dirección
-                    yield (0, mysql_connector_1.execute)("UPDATE direcciones SET provincia_id = ?, municipio_id = ?, direccion = ?, codigo_postal = ?, referencia = ? WHERE direccion_id = ?", [
-                        direccion.provincia_id,
-                        direccion.municipio_id,
-                        direccion.direccion,
-                        direccion.codigo_postal,
-                        direccion.referencia,
-                        personaId,
+                const direccionInsert = yield (0, mysql_connector_1.execute)("INSERT INTO direcciones (provincia_id, municipio_id, direccion, codigo_postal, referencia) VALUES (?, ?, ?, ?, ?)", [
+                    direccion.provincia_id,
+                    direccion.municipio_id,
+                    direccion.direccion,
+                    direccion.codigo_postal,
+                    direccion.referencia,
+                ]);
+                const personaInsert = yield (0, mysql_connector_1.execute)("INSERT INTO persona (nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, sexo, estado, direccion_id, cedula) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+                    persona.nombre,
+                    persona.segundo_nombre,
+                    persona.primer_apellido,
+                    persona.segundo_apellido,
+                    persona.fecha_nacimiento,
+                    persona.sexo,
+                    'a',
+                    direccionInsert.insertId,
+                    persona.cedula,
+                ]);
+                for (const c of contactos) {
+                    yield (0, mysql_connector_1.execute)("INSERT INTO contactos (telefono, movil, telefono_oficina, correo_electronico, persona_id) VALUES (?, ?, ?, ?, ?)", [
+                        c.telefono,
+                        c.movil,
+                        c.telefono_oficina,
+                        c.correo_electronico,
+                        personaInsert.insertId,
                     ]);
-                    // Actualizar los datos de la persona
-                    yield (0, mysql_connector_1.execute)("UPDATE persona SET nombre = ?, segundo_nombre = ?, primer_apellido = ?, segundo_apellido = ?, fecha_nacimiento = ?, sexo = ?, estado = ? WHERE persona_id = ?", [
-                        persona.nombre,
-                        persona.segundo_nombre,
-                        persona.primer_apellido,
-                        persona.segundo_apellido,
-                        persona.fecha_nacimiento,
-                        persona.sexo,
-                        'a',
-                        personaId,
-                    ]);
-                    // Eliminar los contactos existentes de la persona
-                    yield (0, mysql_connector_1.execute)("DELETE FROM contactos WHERE persona_id = ?", [
-                        personaId,
-                    ]);
-                    // Insertar los nuevos contactos de la persona
-                    for (const c of contactos) {
-                        yield (0, mysql_connector_1.execute)("INSERT INTO contactos (telefono, movil, telefono_oficina, correo_electronico, persona_id) VALUES (?, ?, ?, ?, ?)", [
-                            c.telefono,
-                            c.movil,
-                            c.telefono_oficina,
-                            c.correo_electronico,
-                            personaId,
-                        ]);
-                    }
-                    return {
-                        ok: true,
-                        msg: "Persona actualizada correctamente",
-                        status: 200,
-                        persona_id: personaId
-                    };
                 }
-                else {
-                    // La persona no existe, realizar la inserción
-                    const direccionInsert = yield (0, mysql_connector_1.execute)("INSERT INTO direcciones (provincia_id, municipio_id, direccion, codigo_postal, referencia) VALUES (?, ?, ?, ?, ?)", [
-                        direccion.provincia_id,
-                        direccion.municipio_id,
-                        direccion.direccion,
-                        direccion.codigo_postal,
-                        direccion.referencia,
-                    ]);
-                    const personaInsert = yield (0, mysql_connector_1.execute)("INSERT INTO persona (nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, sexo, estado, direccion_id, cedula) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
-                        persona.nombre,
-                        persona.segundo_nombre,
-                        persona.primer_apellido,
-                        persona.segundo_apellido,
-                        persona.fecha_nacimiento,
-                        persona.sexo,
-                        'a',
-                        direccionInsert.insertId,
-                        persona.cedula,
-                    ]);
-                    for (const c of contactos) {
-                        yield (0, mysql_connector_1.execute)("INSERT INTO contactos (telefono, movil, telefono_oficina, correo_electronico, persona_id) VALUES (?, ?, ?, ?, ?)", [
-                            c.telefono,
-                            c.movil,
-                            c.telefono_oficina,
-                            c.correo_electronico,
-                            personaInsert.insertId,
-                        ]);
-                    }
-                    return {
-                        ok: true,
-                        msg: "Persona registrada correctamente",
-                        status: 200,
-                        persona_id: personaInsert.insertId
-                    };
-                }
+                return {
+                    ok: true,
+                    msg: "Persona registrada correctamente",
+                    status: 200,
+                    persona_id: personaInsert.insertId
+                };
             }
             catch (err) {
                 return {

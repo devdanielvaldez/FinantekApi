@@ -20,7 +20,7 @@ let pool;
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         pool = yield (0, promise_1.createConnection)({
-            connectionLimit: 100,
+            connectionLimit: 10,
             host: "finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com",
             user: "dev",
             password: "AVNS_1GCHLZawTjjpEwKiUdX",

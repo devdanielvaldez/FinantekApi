@@ -28,17 +28,20 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { cliente_id, tipo_prestamo_id, monto_solicitado, documentos // Lista de documentos
+                const { cliente_id, tipo_prestamo_id, monto_solicitado, documentos, frecuencia, seguro, plazo // Lista de documentos
                  } = body;
                 // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO solicitudes_prestamo 
-        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id) 
-        VALUES (?, ?, ?, ?, 'PE', ?)`, [
+        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id, frecuencia, seguro, plazo) 
+        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?, ?)`, [
                     cliente_id,
                     tipo_prestamo_id,
                     empId,
                     monto_solicitado,
-                    empId
+                    empId,
+                    frecuencia,
+                    seguro,
+                    plazo
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {
@@ -83,7 +86,7 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const loanRequests = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`, [empId]);
+                const loanRequests = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE empresa_id = ? AND estado_solicitud NOT IN (?, ?)`, [empId, 'PE_DE', 'AP_DE']);
                 return {
                     ok: true,
                     data: loanRequests,
@@ -130,10 +133,10 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
+                const { cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo } = updatedData;
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?
-      WHERE solicitud_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, id]);
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, seguro = ?, frecuencia = ?, plazo = ?
+      WHERE solicitud_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo, id]);
                 if (updateResult.affectedRows > 0) {
                     return {
                         ok: true,
@@ -193,7 +196,7 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { nuevo_estado, mensaje, empleado_id } = newStatusData;
+                const { nuevo_estado, mensaje } = newStatusData;
                 // Obtener el estado actual de la solicitud
                 const currentStatusQuery = yield (0, mysql_connector_1.execute)(`SELECT estado_solicitud FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [solicitud_id, empId]);
                 if (!currentStatusQuery || currentStatusQuery.length === 0) {
@@ -211,8 +214,8 @@ let LoanRequests = class LoanRequests {
                 if (updateResult.affectedRows > 0) {
                     // Registrar el cambio en la tabla mensajes_estado_solicitud
                     yield (0, mysql_connector_1.execute)(`INSERT INTO mensajes_estado_solicitud 
-        (solicitud_id, estado_anterior, estado_nuevo, mensaje, empleado_id) 
-        VALUES (?, ?, ?, ?, ?)`, [solicitud_id, estado_anterior, nuevo_estado, mensaje, empleado_id]);
+        (solicitud_id, estado_anterior, estado_nuevo, mensaje) 
+        VALUES (?, ?, ?, ?)`, [solicitud_id, estado_anterior, nuevo_estado, mensaje]);
                     return {
                         ok: true,
                         msg: "Estado de la solicitud de préstamo actualizado correctamente",
@@ -226,6 +229,26 @@ let LoanRequests = class LoanRequests {
                         status: 500,
                     };
                 }
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema al actualizar el estado de la solicitud",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
+    processEstados(token, solicitud_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const estadoSolicitud = yield (0, mysql_connector_1.execute)(`SELECT * FROM mensajes_estado_solicitud WHERE solicitud_id = ?`, [solicitud_id]);
+                return {
+                    ok: true,
+                    status: 200,
+                    data: estadoSolicitud
+                };
             }
             catch (err) {
                 return {
@@ -342,6 +365,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number, Object]),
     __metadata("design:returntype", Promise)
 ], LoanRequests.prototype, "updateLoanRequestStatus", null);
+__decorate([
+    (0, tsoa_1.Get)("/solicitudes/:solicitud_id/estados"),
+    __param(0, (0, tsoa_1.Header)()),
+    __param(1, (0, tsoa_1.Path)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", Promise)
+], LoanRequests.prototype, "processEstados", null);
 LoanRequests = __decorate([
     (0, tsoa_1.Route)("/api/solicitudes-prestamo"),
     (0, tsoa_1.Tags)("Solicitudes de Préstamo")

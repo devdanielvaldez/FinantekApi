@@ -21,8 +21,32 @@ router.post("/generar-amortizacion", decodedToken_1.default, (_req, res) => __aw
     const response = yield controller.generarAmortizacionPrestamo(_req.body, _req);
     return res.status(response.status).json(response);
 }));
+router.get("/all", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.allPrestamos(_req);
+    return res.status(response.status).json(response);
+}));
+router.post("/generar-amortizacion-preview", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.generarAmortizacionPreview(_req.body, _req);
+    return res.status(response.status).json(response);
+}));
 router.post('/generar-prestamo', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.crearYRegistrarPrestamo(_req.body, _req);
+    return res.status(response.status).json(response);
+}));
+router.post('/pagar-cuota', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.pagarCuota(_req.body, _req);
+    return res.status(response.status).json(response);
+}));
+router.post('/aplicar-abono', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.aplicarAbono(_req.body, _req);
+    return res.status(response.status).json(response);
+}));
+router.get('/:id', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getLoanById(_req.params.id);
+    return res.status(response.status).json(response);
+}));
+router.get('/atraso', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.prestamosAtraso(_req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

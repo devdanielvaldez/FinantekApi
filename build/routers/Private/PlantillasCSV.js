@@ -21,12 +21,8 @@ router.post("/plantillas-csv", decodedToken_1.default, (_req, res) => __awaiter(
     const response = yield controller.crearPlantillaCSV(_req.body, _req);
     return res.status(response.status).json(response);
 }));
-router.delete("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.eliminarPlantillaCSV(_req.params.plantilla_id);
-    return res.status(response.status).json(response);
-}));
 router.put("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarPlantillaCSV(_req.params.plantilla_id, _req.body);
+    const response = yield controller.eliminarPlantillaCSV(_req.params.plantilla_id);
     return res.status(response.status).json(response);
 }));
 router.get("/plantillas-csv/:plantilla_id", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {

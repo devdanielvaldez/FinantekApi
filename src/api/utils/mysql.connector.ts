@@ -11,7 +11,7 @@ let pool: any;
 export const init = async () => {
   try {
     pool = await createConnection({
-      connectionLimit: 100,
+      connectionLimit: 10,
       host: "finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com",
       user: "dev",
       password: "AVNS_1GCHLZawTjjpEwKiUdX",

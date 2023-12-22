@@ -95,43 +95,6 @@ let PlantillaCSVController = class PlantillaCSVController {
             }
         });
     }
-    actualizarPlantillaCSV(plantilla_id, datosActualizados) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { titulo_plantilla, campos } = datosActualizados;
-                // Actualizar la información de la plantilla
-                const updatePlantillaResult = yield (0, mysql_connector_1.execute)(`UPDATE plantillas_csv 
-        SET titulo_plantilla = ? 
-        WHERE plantilla_id = ?`, [titulo_plantilla, plantilla_id]);
-                if (updatePlantillaResult.affectedRows <= 0) {
-                    return {
-                        ok: false,
-                        msg: "No se pudo actualizar la plantilla CSV o la plantilla no existe",
-                        status: 500,
-                    };
-                }
-                // Actualizar los campos asociados a la plantilla
-                for (const campo of campos) {
-                    yield (0, mysql_connector_1.execute)(`UPDATE campos_plantilla_csv 
-          SET titulo_campo = ?, identificador_campo = ? 
-          WHERE campo_id = ? AND plantilla_id = ?`, [campo.titulo_campo, campo.identificador_campo, campo.campo_id, plantilla_id]);
-                }
-                return {
-                    ok: true,
-                    msg: "Plantilla CSV actualizada correctamente",
-                    status: 200,
-                };
-            }
-            catch (err) {
-                return {
-                    ok: false,
-                    msg: "Error interno del sistema al actualizar la plantilla CSV",
-                    error: err,
-                    status: 500,
-                };
-            }
-        });
-    }
     obtenerPlantillaCSV(plantilla_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -161,7 +124,13 @@ let PlantillaCSVController = class PlantillaCSVController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const plantillas = yield (0, mysql_connector_1.execute)(`SELECT * FROM plantillas_csv WHERE empresa_id = ?`, [empId]);
+                const plantillas = yield (0, mysql_connector_1.execute)(`SELECT
+        p.*,
+        b.*
+        FROM plantillas_csv p
+        INNER JOIN 
+        bancos b ON p.banco_id = b.banco_id
+        WHERE empresa_id = ?`, [empId]);
                 const plantillasConCampos = [];
                 for (const plantilla of plantillas) {
                     const campos = yield (0, mysql_connector_1.execute)(`SELECT * FROM campos_plantilla_csv WHERE plantilla_id = ?`, [plantilla.plantilla_id]);
@@ -195,20 +164,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PlantillaCSVController.prototype, "crearPlantillaCSV", null);
 __decorate([
-    (0, tsoa_1.Delete)("/plantillas-csv/:plantilla_id"),
+    (0, tsoa_1.Put)("/plantillas-csv/:plantilla_id"),
     __param(0, (0, tsoa_1.Path)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], PlantillaCSVController.prototype, "eliminarPlantillaCSV", null);
-__decorate([
-    (0, tsoa_1.Put)("/plantillas-csv/:plantilla_id"),
-    __param(0, (0, tsoa_1.Path)()),
-    __param(1, (0, tsoa_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", Promise)
-], PlantillaCSVController.prototype, "actualizarPlantillaCSV", null);
 __decorate([
     (0, tsoa_1.Get)("/plantillas-csv/:plantilla_id"),
     __param(0, (0, tsoa_1.Path)()),

@@ -165,6 +165,7 @@ public async getAllEmployeesByQuery(
         e.rol,
         p.persona_id,
         p.nombre,
+        p.cedula,
         p.segundo_nombre,
         p.primer_apellido,
         p.segundo_apellido,
@@ -228,7 +229,8 @@ public async getAllEmployeesByQuery(
                 segundo_apellido: p.segundo_apellido,
                 fecha_nacimiento: p.fecha_nacimiento,
                 sexo: p.sexo,
-                estado: p.estado_persona
+                estado: p.estado_persona,
+                cedula: p.cedula
             },
             contactos: {
                 contacto_id: p.contacto_id,

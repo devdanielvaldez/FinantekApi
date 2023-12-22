@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generarNumeroPrestamo = exports.generarPlanPrestamo = exports.formatDate = exports.verifyPassword = exports.hashPassword = exports.generatePassword = void 0;
+exports.aplicarAbonoIndividual = exports.generarNumeroPrestamo = exports.generarPlanPrestamo = exports.formatDate = exports.verifyPassword = exports.hashPassword = exports.generatePassword = void 0;
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const moment_1 = __importDefault(require("moment"));
@@ -95,3 +95,8 @@ const generarNumeroPrestamo = () => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.generarNumeroPrestamo = generarNumeroPrestamo;
+const aplicarAbonoIndividual = (montoAbono, montoDeuda) => {
+    let montoPagado = Math.min(montoAbono, montoDeuda);
+    return montoAbono - montoPagado;
+};
+exports.aplicarAbonoIndividual = aplicarAbonoIndividual;

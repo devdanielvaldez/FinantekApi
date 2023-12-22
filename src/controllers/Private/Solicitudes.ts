@@ -44,20 +44,26 @@ export default class LoanRequests {
         cliente_id,
         tipo_prestamo_id,
         monto_solicitado,
-        documentos // Lista de documentos
+        documentos,
+        frecuencia,
+        seguro,
+        plazo // Lista de documentos
       } = body;
 
       // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
       const insertResult = await execute(
         `INSERT INTO solicitudes_prestamo 
-        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id) 
-        VALUES (?, ?, ?, ?, 'PE', ?)`,
+        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id, frecuencia, seguro, plazo) 
+        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?, ?)`,
         [
           cliente_id,
           tipo_prestamo_id,
           empId,
           monto_solicitado,
-          empId
+          empId,
+          frecuencia,
+          seguro,
+          plazo
         ]
       );
 
@@ -121,9 +127,10 @@ public async getAllLoanRequestsByCompany(
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
     const loanRequests = await execute(
-      `SELECT * FROM solicitudes_prestamo WHERE empresa_id = ?`,
-      [empId]
+      `SELECT * FROM solicitudes_prestamo WHERE empresa_id = ? AND estado_solicitud NOT IN (?, ?)`,
+      [empId, 'PE_DE', 'AP_DE']
     );
+    
     return {
       ok: true,
       data: loanRequests,
@@ -201,13 +208,13 @@ public async updateLoanRequest(
 ): Promise<InternalServerError | SuccessResponse | any> {
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
-    const { cliente_id, tipo_prestamo_id, monto_solicitado } = updatedData;
+    const { cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo } = updatedData;
 
     const updateResult = await execute(
       `UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, seguro = ?, frecuencia = ?, plazo = ?
       WHERE solicitud_id = ?`,
-      [cliente_id, tipo_prestamo_id, monto_solicitado, id]
+      [cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo, id]
     );
 
     if (updateResult.affectedRows > 0) {
@@ -284,11 +291,11 @@ public async deleteLoanRequest(
 public async updateLoanRequestStatus(
   @Header() token: any,
   @Path() solicitud_id: number,
-  @Body() newStatusData: { nuevo_estado: string, mensaje: string, empleado_id: number }
+  @Body() newStatusData: { nuevo_estado: string, mensaje: string }
 ): Promise<InternalServerError | SuccessResponse> {
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
-    const { nuevo_estado, mensaje, empleado_id } = newStatusData;
+    const { nuevo_estado, mensaje } = newStatusData;
 
     // Obtener el estado actual de la solicitud
     const currentStatusQuery = await execute(
@@ -318,9 +325,9 @@ public async updateLoanRequestStatus(
       // Registrar el cambio en la tabla mensajes_estado_solicitud
       await execute(
         `INSERT INTO mensajes_estado_solicitud 
-        (solicitud_id, estado_anterior, estado_nuevo, mensaje, empleado_id) 
-        VALUES (?, ?, ?, ?, ?)`,
-        [solicitud_id, estado_anterior, nuevo_estado, mensaje, empleado_id]
+        (solicitud_id, estado_anterior, estado_nuevo, mensaje) 
+        VALUES (?, ?, ?, ?)`,
+        [solicitud_id, estado_anterior, nuevo_estado, mensaje]
       );
 
       return {
@@ -335,6 +342,34 @@ public async updateLoanRequestStatus(
         status: 500,
       };
     }
+  } catch (err) {
+    return {
+      ok: false,
+      msg: "Error interno del sistema al actualizar el estado de la solicitud",
+      error: err,
+      status: 500,
+    };
+  }
+}
+
+
+@Get("/solicitudes/:solicitud_id/estados")
+public async processEstados(
+  @Header() token: any,
+  @Path() solicitud_id: number
+): Promise<InternalServerError | SuccessResponse | any> {
+  try {
+    const estadoSolicitud = await execute(
+      `SELECT * FROM mensajes_estado_solicitud WHERE solicitud_id = ?`,
+      [solicitud_id]
+    );
+
+      return {
+        ok: true,
+        status: 200,
+        data: estadoSolicitud
+      }
+
   } catch (err) {
     return {
       ok: false,

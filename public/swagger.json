@@ -1948,13 +1948,27 @@
 							"$ref": "#/components/schemas/LoanRequestDocument"
 						},
 						"type": "array"
+					},
+					"frecuencia": {
+						"type": "string"
+					},
+					"seguro": {
+						"type": "number",
+						"format": "double"
+					},
+					"plazo": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"cliente_id",
 					"tipo_prestamo_id",
 					"monto_solicitado",
-					"documentos"
+					"documentos",
+					"frecuencia",
+					"seguro",
+					"plazo"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1999,6 +2013,17 @@
 							"$ref": "#/components/schemas/LoanRequestDocument"
 						},
 						"type": "array"
+					},
+					"frecuencia": {
+						"type": "string"
+					},
+					"seguro": {
+						"type": "number",
+						"format": "double"
+					},
+					"plazo": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"type": "object",
@@ -5010,10 +5035,6 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"empleado_id": {
-										"type": "number",
-										"format": "double"
-									},
 									"mensaje": {
 										"type": "string"
 									},
@@ -5022,7 +5043,6 @@
 									}
 								},
 								"required": [
-									"empleado_id",
 									"mensaje",
 									"nuevo_estado"
 								],
@@ -5031,6 +5051,54 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/solicitudes-prestamo/solicitudes/{solicitud_id}/estados": {
+			"get": {
+				"operationId": "ProcessEstados",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										},
+										{}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Solicitudes de Préstamo"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "solicitud_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/api/plantillas/plantillas-csv": {
@@ -5148,7 +5216,7 @@
 			}
 		},
 		"/api/plantillas/plantillas-csv/{plantilla_id}": {
-			"delete": {
+			"put": {
 				"operationId": "EliminarPlantillaCSV",
 				"responses": {
 					"200": {
@@ -5184,85 +5252,6 @@
 						}
 					}
 				]
-			},
-			"put": {
-				"operationId": "ActualizarPlantillaCSV",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/InternalServerError"
-										},
-										{
-											"$ref": "#/components/schemas/SuccessResponse"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Plantillas CSV"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "plantilla_id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"campos": {
-										"items": {
-											"properties": {
-												"identificador_campo": {
-													"type": "string"
-												},
-												"titulo_campo": {
-													"type": "string"
-												},
-												"campo_id": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"identificador_campo",
-												"titulo_campo",
-												"campo_id"
-											],
-											"type": "object"
-										},
-										"type": "array"
-									},
-									"titulo_plantilla": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"campos",
-									"titulo_plantilla"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
 			},
 			"get": {
 				"operationId": "ObtenerPlantillaCSV",
@@ -5466,6 +5455,104 @@
 				}
 			}
 		},
+		"/api/prestamos/generar-amortizacion-preview": {
+			"post": {
+				"operationId": "GenerarAmortizacionPreview",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"numeroDeMeses": {
+										"type": "number",
+										"format": "double"
+									},
+									"frecuencia_pago": {
+										"type": "string"
+									},
+									"cuota_seguro": {
+										"type": "number",
+										"format": "double"
+									},
+									"tasa_interes": {
+										"type": "number",
+										"format": "double"
+									},
+									"monto_aprobado": {
+										"type": "number",
+										"format": "double"
+									},
+									"fecha_inicial": {}
+								},
+								"required": [
+									"numeroDeMeses",
+									"frecuencia_pago",
+									"cuota_seguro",
+									"tasa_interes",
+									"monto_aprobado",
+									"fecha_inicial"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/prestamos/generar-amortizacion": {
 			"post": {
 				"operationId": "GenerarAmortizacionPrestamo",
@@ -5630,110 +5717,289 @@
 			"post": {
 				"operationId": "PagarCuota",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"solicitudId": {
+										"type": "number",
+										"format": "double"
+									},
+									"metodo_pago": {
+										"type": "string"
+									},
+									"montoPago": {
+										"type": "number",
+										"format": "double"
+									},
+									"prestamoId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"solicitudId",
+									"metodo_pago",
+									"montoPago",
+									"prestamoId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/prestamos/aplicar-abono": {
 			"post": {
 				"operationId": "AplicarAbono",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"solicitudId": {
+										"type": "number",
+										"format": "double"
+									},
+									"metodo_pago": {
+										"type": "string"
+									},
+									"montoAbono": {
+										"type": "number",
+										"format": "double"
+									},
+									"prestamoId": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"solicitudId",
+									"metodo_pago",
+									"montoAbono",
+									"prestamoId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
-		"/api/prestamos/registrar-acuerdo-pago": {
-			"post": {
-				"operationId": "AplicarAcuerdoPago",
+		"/api/prestamos/{id}": {
+			"get": {
+				"operationId": "GetLoanById",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"msg": {},
+												"payments": {},
+												"amortizacion": {},
+												"abonos": {},
+												"loan": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"payments",
+												"amortizacion",
+												"abonos",
+												"loan",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"payments": {},
+												"amortizacion": {},
+												"abonos": {},
+												"loan": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"error",
+												"msg",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
-		"/api/prestamos/cancelar-acuerdo": {
-			"post": {
-				"operationId": "RegistrarAcuerdo",
+		"/api/prestamos/atraso": {
+			"get": {
+				"operationId": "PrestamosAtraso",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"msg": {},
+												"data": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"data",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"data": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"error",
+												"msg",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Prestamos"
 				],
 				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/prestamos/enviar-legal": {
-			"post": {
-				"operationId": "EnviarLegal",
-				"responses": {
-					"204": {
-						"description": "No content"
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
 					}
-				},
-				"tags": [
-					"Prestamos"
-				],
-				"security": [],
-				"parameters": []
+				]
 			}
 		},
 		"/api/prestamos/ejecutar-pre-cierre": {
 			"post": {
 				"operationId": "EjecutarPreCierre",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Prestamos"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/prestamos/registrar-contrato-prestamo": {
-			"post": {
-				"operationId": "RegistrarContratoPrestamo",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Prestamos"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/prestamos/preview-amortizacion": {
-			"post": {
-				"operationId": "PreviewAmortizacion",
 				"responses": {
 					"204": {
 						"description": "No content"
@@ -5804,6 +6070,81 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/prestamos/all": {
+			"get": {
+				"operationId": "AllPrestamos",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"msg": {},
+												"data": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"data",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"data": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"error",
+												"msg",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prestamos"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/utils/provincias": {
@@ -5891,15 +6232,256 @@
 			"get": {
 				"operationId": "TiposFrecuencias",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"msg": {},
+												"data": {
+													"items": {
+														"type": "string"
+													},
+													"type": "array"
+												},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"data",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"data": {},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"error",
+												"msg",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Utils"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/utils/codes": {
+			"get": {
+				"operationId": "CodesPlantillas",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"msg": {},
+												"data": {
+													"items": {
+														"properties": {
+															"descripcion": {
+																"type": "string"
+															},
+															"code": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"descripcion",
+															"code"
+														],
+														"type": "object"
+													},
+													"type": "array"
+												},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"data",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"data": {},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"error",
+												"msg",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Utils"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/utils/files": {
+			"post": {
+				"operationId": "UploadFiles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"data": {},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"data",
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"error",
+												"msg",
+												"status",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Utils"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
 			}
 		},
 		"/api/solicitudes-desembolsar/all": {
@@ -5910,7 +6492,20 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										},
+										{
+											"items": {
+												"$ref": "#/components/schemas/LoanRequest"
+											},
+											"type": "array"
+										},
+										{}
+									]
+								}
 							}
 						}
 					}
@@ -5935,15 +6530,83 @@
 			"post": {
 				"operationId": "DesembolsarPorCliente",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"error": {},
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"msg": {
+													"type": "string"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"msg",
+												"ok"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"status": {
+													"type": "number",
+													"format": "double"
+												},
+												"error": {},
+												"msg": {
+													"type": "string"
+												},
+												"ok": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"status",
+												"error",
+												"msg",
+												"ok"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [
 					"Solicitudes a Desembolsar"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
 			}
 		}
 	},

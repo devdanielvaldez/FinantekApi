@@ -64,14 +64,16 @@ export default class Clientes {
         referencias,
       } = body;
 
-      const insertConyuge = await execute(
-        "INSERT INTO conyuge (persona_id) VALUES (?)",
-        [conyuge_id]
-      );
+      if(conyuge_id !== null) {
+        var insertConyuge = await execute(
+          "INSERT INTO conyuge (persona_id) VALUES (?)",
+          [conyuge_id]
+        );
+      }
 
       const insertClient = await execute(
         "INSERT INTO clientes (conyuge_id, estado, persona_id, emp_id) VALUES (?, ?, ?, ?)",
-        [insertConyuge.insertId, "a", persona_id, token.dataUsuario.emp_id.empresa_id]
+        [insertConyuge?.insertId || null, "a", persona_id, token.dataUsuario.emp_id.empresa_id]
       );
 
       // insert data banks
@@ -121,6 +123,7 @@ export default class Clientes {
         status: 200,
       };
     } catch (err) {
+      console.log(err);
       return {
         ok: false,
         msg: "Error interno del sistema, por favor contacte al administrador del sistema",
@@ -258,9 +261,7 @@ export default class Clientes {
         dl.*,
         db.*,
         ct.*,
-        dr.*,
-        cy.*,
-        cp.*
+        dr.*
     FROM
         clientes c
     LEFT JOIN
@@ -273,10 +274,6 @@ export default class Clientes {
         contactos ct ON p.persona_id = ct.persona_id
     LEFT JOIN
         direcciones dr ON p.direccion_id = dr.direccion_id
-    LEFT JOIN
-        conyuge cy ON c.conyuge_id = cy.conyuge_id
-    LEFT JOIN
-        persona cp ON cy.persona_id = cp.persona_id
     WHERE
         c.emp_id = ?;
     `,
@@ -289,7 +286,7 @@ export default class Clientes {
         status: 200,
       };
     } catch (err) {
-      console.log(token);
+      // console.log(token);
       console.log(err);
       return {
         ok: false,
@@ -382,9 +379,7 @@ export default class Clientes {
         dl.*,
         db.*,
         ct.*,
-        dr.*,
-        cy.*,
-        cp.*
+        dr.*
     FROM
         clientes c
     LEFT JOIN
@@ -397,10 +392,6 @@ export default class Clientes {
         contactos ct ON p.persona_id = ct.persona_id
     LEFT JOIN
         direcciones dr ON p.direccion_id = dr.direccion_id
-    LEFT JOIN
-        conyuge cy ON c.conyuge_id = cy.conyuge_id
-    LEFT JOIN
-        persona cp ON cy.persona_id = cp.persona_id
     WHERE
         c.cliente_id = ?;
     `,

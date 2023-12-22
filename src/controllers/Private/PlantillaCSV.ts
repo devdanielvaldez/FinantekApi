@@ -68,7 +68,7 @@ export default class PlantillaCSVController {
       }
     }
   
-    @Delete("/plantillas-csv/:plantilla_id")
+    @Put("/plantillas-csv/:plantilla_id")
   public async eliminarPlantillaCSV(
     @Path() plantilla_id: number
   ): Promise<InternalServerError | SuccessResponse> {
@@ -102,58 +102,6 @@ export default class PlantillaCSVController {
       return {
         ok: false,
         msg: "Error interno del sistema al eliminar la plantilla CSV",
-        error: err,
-        status: 500,
-      };
-    }
-  }
-
-  @Put("/plantillas-csv/:plantilla_id")
-  public async actualizarPlantillaCSV(
-    @Path() plantilla_id: number,
-    @Body() datosActualizados: {
-      titulo_plantilla: string,
-      campos: Array<{ campo_id: number, titulo_campo: string, identificador_campo: string }>
-    }
-  ): Promise<InternalServerError | SuccessResponse> {
-    try {
-      const { titulo_plantilla, campos } = datosActualizados;
-
-      // Actualizar la información de la plantilla
-      const updatePlantillaResult = await execute(
-        `UPDATE plantillas_csv 
-        SET titulo_plantilla = ? 
-        WHERE plantilla_id = ?`,
-        [titulo_plantilla, plantilla_id]
-      );
-
-      if (updatePlantillaResult.affectedRows <= 0) {
-        return {
-          ok: false,
-          msg: "No se pudo actualizar la plantilla CSV o la plantilla no existe",
-          status: 500,
-        };
-      }
-
-      // Actualizar los campos asociados a la plantilla
-      for (const campo of campos) {
-        await execute(
-          `UPDATE campos_plantilla_csv 
-          SET titulo_campo = ?, identificador_campo = ? 
-          WHERE campo_id = ? AND plantilla_id = ?`,
-          [campo.titulo_campo, campo.identificador_campo, campo.campo_id, plantilla_id]
-        );
-      }
-
-      return {
-        ok: true,
-        msg: "Plantilla CSV actualizada correctamente",
-        status: 200,
-      };
-    } catch (err) {
-      return {
-        ok: false,
-        msg: "Error interno del sistema al actualizar la plantilla CSV",
         error: err,
         status: 500,
       };
@@ -206,7 +154,13 @@ export default class PlantillaCSVController {
     try {
       const empId = token.dataUsuario.emp_id.empresa_id;
       const plantillas = await execute(
-        `SELECT * FROM plantillas_csv WHERE empresa_id = ?`,
+        `SELECT
+        p.*,
+        b.*
+        FROM plantillas_csv p
+        INNER JOIN 
+        bancos b ON p.banco_id = b.banco_id
+        WHERE empresa_id = ?`,
         [empId]
       );
 

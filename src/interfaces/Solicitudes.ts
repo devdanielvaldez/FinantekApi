@@ -7,7 +7,10 @@ export interface LoanRequest {
     cliente_id: number;
     tipo_prestamo_id: number;
     monto_solicitado: number;
-    documentos: LoanRequestDocument[]; // Lista de documentos
+    documentos: LoanRequestDocument[]; 
+    frecuencia: string; // Lista de documentos
+    seguro: number;
+    plazo: number;
   }
 
   export interface UpdateLoanRequest {

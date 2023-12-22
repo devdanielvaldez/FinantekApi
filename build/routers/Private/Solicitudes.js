@@ -37,6 +37,10 @@ router.put("/solicitudes/:solicitud_id/actualizar-estado", decodedToken_1.defaul
     const response = yield controller.updateLoanRequestStatus(_req, _req.params.solicitud_id, _req.body);
     return res.status(response.status).json(response);
 }));
+router.get("/solicitudes/:solicitud_id/estados", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.processEstados(_req, _req.params.solicitud_id);
+    return res.status(response.status).json(response);
+}));
 router.delete("/solicitudes/:id/eliminar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
     return res.status(response.status).json(response);

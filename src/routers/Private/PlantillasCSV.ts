@@ -10,13 +10,8 @@ router.post("/plantillas-csv", validateToken, async (_req: any, res) => {
   return res.status(response.status).json(response);
 });
 
-router.delete("/plantillas-csv/:plantilla_id", validateToken, async (_req: any, res) => {
+router.put("/plantillas-csv/:plantilla_id", validateToken, async (_req: any, res) => {
   const response: any = await controller.eliminarPlantillaCSV(_req.params.plantilla_id);
-  return res.status(response.status).json(response);
-});
-
-router.put("/plantillas-csv/:plantilla_id",validateToken, async (_req: any, res) => {
-  const response: any = await controller.actualizarPlantillaCSV(_req.params.plantilla_id, _req.body);
   return res.status(response.status).json(response);
 });
 

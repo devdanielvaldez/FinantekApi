@@ -23,6 +23,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
+const utils_1 = require("../../api/utils/utils");
+const UploadFiles_1 = require("./UploadFiles");
 let UtilsEnumsController = class UtilsEnumsController {
     getProvincias(token) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -68,8 +70,65 @@ let UtilsEnumsController = class UtilsEnumsController {
         return __awaiter(this, void 0, void 0, function* () {
         });
     }
-    tiposFrecuencias() {
-        return __awaiter(this, void 0, void 0, function* () { });
+    tiposFrecuencias(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return {
+                    ok: true,
+                    status: 200,
+                    data: utils_1.frecuenciasLiteral
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    status: 500,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: err
+                };
+            }
+        });
+    }
+    codesPlantillas(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return {
+                    ok: true,
+                    status: 200,
+                    data: utils_1.codesPlantillas
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    status: 500,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: err
+                };
+            }
+        });
+    }
+    uploadFiles(files, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log(files.file);
+                const uplaodRes = yield (0, UploadFiles_1.uploadToS3)(UploadFiles_1.s3, files.file);
+                if (uplaodRes.success) {
+                    return uplaodRes;
+                }
+                else {
+                    return uplaodRes;
+                }
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    status: 500,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: err
+                };
+            }
+        });
     }
 };
 __decorate([
@@ -95,10 +154,26 @@ __decorate([
 ], UtilsEnumsController.prototype, "tiposPrestamos", null);
 __decorate([
     (0, tsoa_1.Get)('/tipos-frecuencias'),
+    __param(0, (0, tsoa_1.Header)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UtilsEnumsController.prototype, "tiposFrecuencias", null);
+__decorate([
+    (0, tsoa_1.Get)('/codes'),
+    __param(0, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UtilsEnumsController.prototype, "codesPlantillas", null);
+__decorate([
+    (0, tsoa_1.Post)('/files'),
+    __param(0, (0, tsoa_1.Body)()),
+    __param(1, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UtilsEnumsController.prototype, "uploadFiles", null);
 UtilsEnumsController = __decorate([
     (0, tsoa_1.Route)('/api/utils'),
     (0, tsoa_1.Tags)('Utils')
