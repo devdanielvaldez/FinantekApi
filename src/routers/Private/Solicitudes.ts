@@ -36,7 +36,7 @@ router.get("/solicitudes/:solicitud_id/estados", validateToken, async (_req: any
 });
 
 router.delete("/solicitudes/:id/eliminar", validateToken, async (_req: any, res) => {
-  const response: any = await controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
+  const response: any = await controller.deleteLoanRequest(_req, _req.params.id);
   return res.status(response.status).json(response);
 });
 

@@ -258,9 +258,17 @@ public async deleteLoanRequest(
 ): Promise<InternalServerError | SuccessResponse | any> {
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
+    const findRequestInLoan = await execute('SELECT * FROM prestamos WHERE solicitud_id = ?', [id]);
+
+    if(findRequestInLoan.length > 0) return {
+      ok: true,
+      msg: "La solicitud que desea eliminar posee prestamos asociados",
+      status: 400
+    }
+
     const deleteResult = await execute(
-      `UPDATE FROM solicitudes_prestamo SET estado_solicitud =? WHERE solicitud_id = ?`,
-      ['IN', empId]
+      `DELETE FROM solicitudes_prestamo WHERE solicitud_id = ?`,
+      [id]
     );
 
     if (deleteResult.affectedRows > 0) {

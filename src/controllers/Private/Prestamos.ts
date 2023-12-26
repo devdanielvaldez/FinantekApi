@@ -117,7 +117,8 @@ export default class PrestamoController {
             numeroDeMeses,
             solicitudId
         } = datosPrestamo;
-
+        const findSolicitud = await execute('SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?', [solicitudId]);
+        const findTipoPrestamo = await execute('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [findSolicitud[0].tipo_prestamo_id]);
         const loan = generarPlanPrestamo(fecha_inicial,
           +monto_aprobado,
           +tasa_interes,
@@ -207,6 +208,15 @@ export default class PrestamoController {
           numeroDeMeses,
           solicitud_id
         } = datosPrestamo;
+        const findSolicitud = await execute('SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?', [solicitud_id]);
+        const findTipoPrestamo = await execute('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [findSolicitud[0].tipo_prestamo_id]);
+        const findSolicitudInLoan = await execute('SELECT * FROM prestamos WHERE solicitud_id = ?', [solicitud_id]);
+
+        if(findSolicitudInLoan.length > 0) return {
+          ok: false,
+          status: 400,
+          msg: "La solicitud seleccionada ya posee un prestamo creado."
+        }
     
         // Aquí asumimos que generarPlanPrestamo es una función que calcula los detalles del préstamo
         const planPrestamo = generarPlanPrestamo(fecha_inicial, monto_aprobado, tasa_interes, cuota_seguro, frecuencia_pago, numeroDeMeses, frecuenciasDias);

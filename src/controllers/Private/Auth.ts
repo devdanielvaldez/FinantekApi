@@ -90,7 +90,7 @@ export default class AuthController {
                     const empresa = await execute('SELECT empresa_id from empleados WHERE empleado_id = ?', [existUser[0].empleado_id])
                     
                     const firstLogin = existUser[0].first_login === 1;
-                    const token = jwt.sign({ user: existUser[0].user_id, emp_id: empresa[0] }, 'token');
+                    const token = jwt.sign({ user: existUser[0].user_id, emp_id: empresa[0] }, 'token', { expiresIn: '1h'});
 
                     return {
                         ok: true,
