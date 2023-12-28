@@ -1,4 +1,5 @@
 import { execute } from "../utils/mysql.connector";
+import cron from 'node-cron';
 
 const registrarIncrementarAtraso = async (numeroPrestamo: number, numeroCuota: number) => {
     try {
@@ -37,4 +38,6 @@ const eliminarCuotaPagada = async (numeroPrestamo: number, numeroCuota: number) 
     }
   }
   
-  
+  export const cierreExecute = () => {
+    console.log('iniciando cierre');
+  }

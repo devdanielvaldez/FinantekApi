@@ -2202,6 +2202,27 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"PreCierreResponse": {
+				"properties": {
+					"ok": {
+						"type": "boolean"
+					},
+					"msg": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ok",
+					"msg",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -6604,6 +6625,87 @@
 					"content": {
 						"application/json": {
 							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/api/pre-cierre/registrar": {
+			"post": {
+				"operationId": "RegistrarPreCierre",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/PreCierreResponse"
+										},
+										{
+											"$ref": "#/components/schemas/InternalServerError"
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerError"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"ok": false,
+											"msg": "Error interno del sistema, por favor contacte al administrador del sistema",
+											"error": {},
+											"status": 500
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pre-Cierre"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"comentarios": {
+										"type": "string"
+									},
+									"montoTotal": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"comentarios",
+									"montoTotal"
+								],
+								"type": "object"
+							}
 						}
 					}
 				}
