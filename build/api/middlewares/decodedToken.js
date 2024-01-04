@@ -11,6 +11,7 @@ const validateToken = (req, res, next) => {
     }
     try {
         const decoded = jsonwebtoken_1.default.verify(token, 'token');
+        console.log(decoded);
         req.dataUsuario = decoded; // Agrega los datos del usuario a la solicitud
         next(); // Continúa con el siguiente middleware
     }

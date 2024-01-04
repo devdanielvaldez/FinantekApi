@@ -42,7 +42,7 @@ router.get("/solicitudes/:solicitud_id/estados", decodedToken_1.default, (_req, 
     return res.status(response.status).json(response);
 }));
 router.delete("/solicitudes/:id/eliminar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getLoanRequestByIdAndCompany(_req, _req.params.id);
+    const response = yield controller.deleteLoanRequest(_req, _req.params.id);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

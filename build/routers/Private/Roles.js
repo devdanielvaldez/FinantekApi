@@ -13,32 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Bancos_1 = __importDefault(require("../../controllers/Private/Bancos"));
+const Roles_1 = __importDefault(require("../../controllers/Private/Roles")); // Asegúrate de importar el controlador correcto
 const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
-const controller = new Bancos_1.default();
+const controller = new Roles_1.default();
 router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registrarBanco(_req.body, _req);
+    const response = yield controller.registrarRol(_req.body);
     return res.status(response.status).json(response);
 }));
-router.get("/ver-todos", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.verTodosLosBancos(_req);
+router.get("/roles", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.obtenerRoles();
     return res.status(response.status).json(response);
 }));
-router.get("/catalogo/bancos", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.getBanksCatalog(_req);
+router.get("/pantallas", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getPantallas();
     return res.status(response.status).json(response);
 }));
-router.get("/ver/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.verBanco(req.params.banco_id, req);
-    return res.status(response.status).json(response);
-}));
-router.put("/actualizar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarBanco(req.params.banco_id, req.body, req);
-    return res.status(response.status).json(response);
-}));
-router.delete("/eliminar/:banco_id", decodedToken_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.eliminarBanco(req.params.banco_id, req);
+router.get("/rol/user", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.RolUser(_req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

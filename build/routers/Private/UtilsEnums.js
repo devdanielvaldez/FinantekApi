@@ -33,6 +33,10 @@ router.get('/codes', decodedToken_1.default, (_req, res) => __awaiter(void 0, vo
     const response = yield controller.codesPlantillas();
     return res.status(response.status).json(response);
 }));
+router.get('/prelacion', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.prelacionEnums();
+    return res.status(response.status).json(response);
+}));
 router.post('/files', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.uploadFiles(_req);
     return res.status(response.status).json(response);

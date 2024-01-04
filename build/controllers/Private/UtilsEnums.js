@@ -108,6 +108,25 @@ let UtilsEnumsController = class UtilsEnumsController {
             }
         });
     }
+    prelacionEnums(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return {
+                    ok: true,
+                    status: 200,
+                    data: utils_1.PrecedenciaPagoCatalogo
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    status: 500,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: err
+                };
+            }
+        });
+    }
     uploadFiles(files, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -166,6 +185,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UtilsEnumsController.prototype, "codesPlantillas", null);
+__decorate([
+    (0, tsoa_1.Get)('/prelacion'),
+    __param(0, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UtilsEnumsController.prototype, "prelacionEnums", null);
 __decorate([
     (0, tsoa_1.Post)('/files'),
     __param(0, (0, tsoa_1.Body)()),

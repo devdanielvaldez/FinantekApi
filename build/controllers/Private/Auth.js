@@ -47,7 +47,7 @@ let AuthController = class AuthController {
                     yield (0, mysql_connector_1.execute)('UPDATE users SET failed_attempts = 0, last_login = NOW() WHERE user_id = ?', [existUser[0].user_id]);
                     const empresa = yield (0, mysql_connector_1.execute)('SELECT empresa_id from empleados WHERE empleado_id = ?', [existUser[0].empleado_id]);
                     const firstLogin = existUser[0].first_login === 1;
-                    const token = jsonwebtoken_1.default.sign({ user: existUser[0].user_id, emp_id: empresa[0] }, 'token');
+                    const token = jsonwebtoken_1.default.sign({ user: existUser[0].user_id, emp_id: empresa[0] }, 'token', { expiresIn: '4h' });
                     return {
                         ok: true,
                         msg: 'Inicio de sesion exitoso',

@@ -28,20 +28,18 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { cliente_id, tipo_prestamo_id, monto_solicitado, documentos, frecuencia, seguro, plazo // Lista de documentos
-                 } = body;
+                const { cliente_id, tipo_prestamo_id, monto_solicitado, documentos, frecuencia, plazo, fecha_inicio } = body;
                 // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO solicitudes_prestamo 
-        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id, frecuencia, seguro, plazo) 
-        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?, ?)`, [
+        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, frecuencia, plazo, fecha_inicio) 
+        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?)`, [
                     cliente_id,
                     tipo_prestamo_id,
                     empId,
                     monto_solicitado,
-                    empId,
                     frecuencia,
-                    seguro,
-                    plazo
+                    plazo,
+                    fecha_inicio
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {
@@ -108,7 +106,7 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const loanRequest = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`, [id, empId]);
+                const loanRequest = yield (0, mysql_connector_1.execute)(`SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?`, [id]);
                 const docs = yield (0, mysql_connector_1.execute)('SELECT * FROM documentacion_solicitud WHERE solicitud_id = ?', [id]);
                 return {
                     ok: true,
@@ -133,10 +131,10 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo } = updatedData;
+                const { cliente_id, tipo_prestamo_id, monto_solicitado, frecuencia, plazo } = updatedData;
                 const updateResult = yield (0, mysql_connector_1.execute)(`UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, seguro = ?, frecuencia = ?, plazo = ?
-      WHERE solicitud_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo, id]);
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, frecuencia = ?, plazo = ?
+      WHERE solicitud_id = ?`, [cliente_id, tipo_prestamo_id, monto_solicitado, frecuencia, plazo, id]);
                 if (updateResult.affectedRows > 0) {
                     return {
                         ok: true,
@@ -166,7 +164,14 @@ let LoanRequests = class LoanRequests {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const deleteResult = yield (0, mysql_connector_1.execute)(`UPDATE FROM solicitudes_prestamo SET estado_solicitud =? WHERE solicitud_id = ?`, ['IN', empId]);
+                const findRequestInLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM prestamos WHERE solicitud_id = ?', [id]);
+                if (findRequestInLoan.length > 0)
+                    return {
+                        ok: true,
+                        msg: "La solicitud que desea eliminar posee prestamos asociados",
+                        status: 400
+                    };
+                const deleteResult = yield (0, mysql_connector_1.execute)(`DELETE FROM solicitudes_prestamo WHERE solicitud_id = ?`, [id]);
                 if (deleteResult.affectedRows > 0) {
                     return {
                         ok: true,

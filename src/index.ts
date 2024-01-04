@@ -5,6 +5,7 @@ import * as MySQLConnector from './api/utils/mysql.connector';
 import compression from "compression";
 import router from './routers/index.routers';
 import cors from 'cors';
+import pidusage from 'pidusage';
 const PORT = process.env.PORT || 8300;
 
 const app: Application = express();
@@ -27,6 +28,18 @@ app.use(
     },
   })
 );
+
+setInterval(() => {
+    pidusage(process.pid, (err, stats) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Uso de CPU:', stats.cpu);
+        console.log('Uso de memoria:', stats.memory);
+    })
+}, 1000);
+
 
 // cron.schedule('*/30 * * * *', async () => {
 //   console.log('Verificando pre-cierres...');

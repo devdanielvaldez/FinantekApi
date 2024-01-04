@@ -49,4 +49,8 @@ router.get('/atraso', decodedToken_1.default, (_req, res) => __awaiter(void 0, v
     const response = yield controller.prestamosAtraso(_req);
     return res.status(response.status).json(response);
 }));
+router.get('/prestamo-reporte/:id', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getLoanReportById(_req.params.id);
+    return res.status(response.status).json(response);
+}));
 exports.default = router;

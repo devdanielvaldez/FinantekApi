@@ -28,11 +28,11 @@ let LoanTypes = class LoanTypes {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos } = body;
+                const { nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, seguro } = body;
                 // Realizar la inserción en la base de datos con la información proporcionada
                 const insertResult = yield (0, mysql_connector_1.execute)(`INSERT INTO tipos_prestamos 
-        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
+        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado, seguro) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
                     nombre_tipo,
                     descripcion,
                     tasa_interes,
@@ -44,7 +44,8 @@ let LoanTypes = class LoanTypes {
                     dias_gracia,
                     requisitos,
                     empId,
-                    'a'
+                    'a',
+                    seguro
                 ]);
                 // Verificar si la inserción fue exitosa
                 if (insertResult && insertResult.insertId) {

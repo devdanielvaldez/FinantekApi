@@ -139,6 +139,7 @@ let Clientes = class Clientes {
     getAllClients(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(token.dataUsuario);
                 const findClientsByEmp = yield (0, mysql_connector_1.execute)(`
         SELECT
         c.cliente_id,
@@ -170,7 +171,7 @@ let Clientes = class Clientes {
                 };
             }
             catch (err) {
-                // console.log(token);
+                console.log(token.dataUsuario);
                 console.log(err);
                 return {
                     ok: false,

@@ -26,7 +26,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
-const helpers_1 = require("../../api/utils/helpers");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 // pws = 22cd813e
 let Empleados = class Empleados {
@@ -75,7 +74,8 @@ let Empleados = class Empleados {
                         personaId
                     ]);
                 }
-                const raw_pwd = (0, helpers_1.generatePassword)();
+                // const raw_pwd = generatePassword();
+                const raw_pwd = 'Finantek123';
                 const hash_pwd = yield bcrypt_1.default.hash(raw_pwd, 10);
                 console.log('password generate --->', raw_pwd, hash_pwd);
                 yield (0, mysql_connector_1.execute)('INSERT INTO users (username, pwd, persona_id, roll_id, empleado_id) VALUES (?, ?, ?, ?, ?)', [

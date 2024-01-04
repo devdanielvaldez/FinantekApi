@@ -247,6 +247,43 @@ let Persona = class Persona {
             }
         });
     }
+    getPeopleByDNI(querys) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { cedula } = querys;
+                if (cedula == "" || cedula == null || cedula == undefined) {
+                    return {
+                        ok: true,
+                        data: [],
+                        status: 200,
+                    };
+                }
+                let query = `SELECT * FROM persona WHERE 1 = 1`;
+                query += ` AND cedula LIKE '%${cedula}%'`;
+                const findPer = yield (0, mysql_connector_1.execute)(query);
+                if (findPer.length == 0)
+                    return {
+                        ok: false,
+                        msg: "No se encontraron personas con los parametros compartidos",
+                        status: 404,
+                    };
+                return {
+                    ok: true,
+                    data: findPer,
+                    status: 200,
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
@@ -341,6 +378,29 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], Persona.prototype, "getPersonaById", null);
+__decorate([
+    (0, tsoa_1.Get)("/dni"),
+    (0, tsoa_1.Response)(200, "Consulta de personas satisfactoria", {
+        ok: true,
+        data: [],
+        status: 200,
+    }),
+    (0, tsoa_1.Response)(500, "Internal Server Error", {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500,
+    }),
+    (0, tsoa_1.Response)(404, "No se encontraron personas", {
+        ok: false,
+        msg: "No se encontraron personas con los parametros compartidos",
+        status: 404,
+    }),
+    __param(0, (0, tsoa_1.Queries)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], Persona.prototype, "getPeopleByDNI", null);
 Persona = __decorate([
     (0, tsoa_1.Route)("api/personas"),
     (0, tsoa_1.Tags)("Personas")

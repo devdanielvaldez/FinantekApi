@@ -20,10 +20,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const prestamos_1 = require("./../../api/utils/prestamos");
 const tsoa_1 = require("tsoa");
 const mysql_connector_1 = require("../../api/utils/mysql.connector");
+const utils_1 = __importDefault(require("../../api/utils/utils"));
 const frecuenciasDias = {
     DI: 1,
     SM: 7,
@@ -69,6 +73,8 @@ let PrestamoController = class PrestamoController {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 console.log(empId);
                 const { fecha_inicial, monto_aprobado, tasa_interes, frecuencia_pago, cuota_seguro, numeroDeMeses, solicitudId } = datosPrestamo;
+                const findSolicitud = yield (0, mysql_connector_1.execute)('SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?', [solicitudId]);
+                const findTipoPrestamo = yield (0, mysql_connector_1.execute)('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [findSolicitud[0].tipo_prestamo_id]);
                 const loan = (0, prestamos_1.generarPlanPrestamo)(fecha_inicial, +monto_aprobado, +tasa_interes, +cuota_seguro, frecuencia_pago, +numeroDeMeses, frecuenciasDias);
                 var n_cuota = 1;
                 for (const l of loan) {
@@ -131,6 +137,15 @@ let PrestamoController = class PrestamoController {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
                 const { fecha_inicial, monto_aprobado, tasa_interes, frecuencia_pago, cuota_seguro, numeroDeMeses, solicitud_id } = datosPrestamo;
+                const findSolicitud = yield (0, mysql_connector_1.execute)('SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?', [solicitud_id]);
+                const findTipoPrestamo = yield (0, mysql_connector_1.execute)('SELECT * FROM tipos_prestamos WHERE tipo_prestamo_id = ?', [findSolicitud[0].tipo_prestamo_id]);
+                const findSolicitudInLoan = yield (0, mysql_connector_1.execute)('SELECT * FROM prestamos WHERE solicitud_id = ?', [solicitud_id]);
+                if (findSolicitudInLoan.length > 0)
+                    return {
+                        ok: false,
+                        status: 400,
+                        msg: "La solicitud seleccionada ya posee un prestamo creado."
+                    };
                 // Aquí asumimos que generarPlanPrestamo es una función que calcula los detalles del préstamo
                 const planPrestamo = (0, prestamos_1.generarPlanPrestamo)(fecha_inicial, monto_aprobado, tasa_interes, cuota_seguro, frecuencia_pago, numeroDeMeses, frecuenciasDias);
                 const cantidad_cuotas = planPrestamo.length;
@@ -240,7 +255,7 @@ let PrestamoController = class PrestamoController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const empId = token.dataUsuario.emp_id.empresa_id;
-                const { prestamoId, montoAbono, metodo_pago, solicitudId } = datosAbono;
+                const { prestamoId, montoAbono, metodo_pago, solicitudId, prelacion } = datosAbono;
                 // 1. Registrar el abono en la tabla de pagos
                 const queryAbono = 'INSERT INTO abonos (prestamo_id, monto, fecha_abono, metodo_pago, emp_id) VALUES (?, ?, NOW(), ?, ?)';
                 yield (0, mysql_connector_1.execute)(queryAbono, [prestamoId, montoAbono, metodo_pago, empId]);
@@ -251,28 +266,16 @@ let PrestamoController = class PrestamoController {
                 let montoRestante = montoAbono;
                 // 3. Aplicar el abono: intereses, mora, seguro, capital
                 let montoUsado = 0;
-                // Aplicar a la mora si no está en 0
-                if (prestamo_mora > 0) {
-                    montoUsado = Math.min(montoRestante, prestamo_mora);
-                    prestamo_mora -= montoUsado;
-                    montoRestante -= montoUsado;
-                }
-                console.log(montoRestante);
-                // Aplicar al interés
-                montoUsado = Math.min(montoRestante, prestamo_cuota_interes);
-                prestamo_cuota_interes -= montoUsado;
-                montoRestante -= montoUsado;
-                console.log(montoRestante);
-                // Aplicar al seguro
-                montoUsado = Math.min(montoRestante, prestamo_cuota_seguro);
-                prestamo_cuota_seguro -= montoUsado;
-                montoRestante -= montoUsado;
-                console.log(montoRestante);
-                // Aplicar al capital
-                montoUsado = Math.min(montoRestante, prestamo_cuota_capital);
-                prestamo_cuota_capital -= montoUsado;
-                montoRestante -= montoUsado;
-                console.log(montoRestante);
+                const logicaPrelacionPago = new utils_1.default();
+                // ... Código previo ...
+                // 3. Aplicar el abono: intereses, mora, seguro, capital
+                const deudaActualizada = logicaPrelacionPago.aplicarPrelacionPago({
+                    prestamo_mora,
+                    prestamo_cuota_interes,
+                    prestamo_cuota_seguro,
+                    prestamo_cuota_capital,
+                }, montoAbono, prelacion);
+                console.log(prestamoActual[0], deudaActualizada);
                 // 4. Actualizar la tabla prestamos con los nuevos montos
                 const queryActualizarPrestamo = `
           UPDATE prestamos
@@ -281,9 +284,9 @@ let PrestamoController = class PrestamoController {
               prestamo_cuota_seguro = ?, 
               prestamo_mora = ?
           WHERE prestamo_id = ?`;
-                yield (0, mysql_connector_1.execute)(queryActualizarPrestamo, [prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora, prestamoId]);
+                yield (0, mysql_connector_1.execute)(queryActualizarPrestamo, [deudaActualizada.prestamo_cuota_capital, deudaActualizada.prestamo_cuota_interes, deudaActualizada.prestamo_cuota_seguro, deudaActualizada.prestamo_mora, prestamoId]);
                 // 5. Verificar y actualizar el estado en la tabla de amortización
-                const esCuotaCompleta = prestamo_mora == 0 && prestamo_cuota_interes == 0 && prestamo_cuota_seguro == 0 && prestamo_cuota_capital == 0;
+                const esCuotaCompleta = deudaActualizada.prestamo_mora == 0 && deudaActualizada.prestamo_cuota_interes == 0 && deudaActualizada.prestamo_cuota_seguro == 0 && deudaActualizada.prestamo_cuota_capital == 0;
                 const estadoCuota = esCuotaCompleta ? 'PA' : 'AB';
                 const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
                 yield (0, mysql_connector_1.execute)(queryActualizarAmortizacion, [estadoCuota, solicitudId, cuota_actual]);
@@ -297,7 +300,8 @@ let PrestamoController = class PrestamoController {
                 return {
                     ok: true,
                     msg: "Abono aplicado con éxito",
-                    status: 200
+                    status: 200,
+                    recibo: deudaActualizada
                 };
             }
             catch (err) {
@@ -396,6 +400,29 @@ let PrestamoController = class PrestamoController {
                 return {
                     ok: false,
                     msg: "Error interno del sistema al generar el préstamo",
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
+    getLoanReportById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // consultar el prestamo
+                const getLoanDay = yield (0, mysql_connector_1.execute)('SELECT prestamo_balance_actual, prestamo_monto_cuotas, fecha_final, cuota_actual, prestamo_fecha_pago, solicitud_id FROM prestamos WHERE prestamo_id = ?', [id]);
+                const solicitud = yield (0, mysql_connector_1.execute)('SELECT frecuencia FROM solicitudes_prestamo WHERE solicitud_id = ?', [getLoanDay[0].solicitud_id]);
+                return {
+                    ok: true,
+                    status: 200,
+                    loan: getLoanDay,
+                    solicitud: solicitud
+                };
+            }
+            catch (err) {
+                return {
+                    ok: false,
+                    msg: "Error al consultar el prestamo",
                     error: err,
                     status: 500,
                 };
@@ -506,6 +533,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PrestamoController.prototype, "allPrestamos", null);
+__decorate([
+    (0, tsoa_1.Get)('/prestamo-reporte/:id'),
+    __param(0, (0, tsoa_1.Path)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], PrestamoController.prototype, "getLoanReportById", null);
 PrestamoController = __decorate([
     (0, tsoa_1.Route)("/api/prestamos"),
     (0, tsoa_1.Tags)("Prestamos")

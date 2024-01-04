@@ -253,6 +253,29 @@ let Empresas = class Empresas {
     configuracionEmpresa() {
         return __awaiter(this, void 0, void 0, function* () { });
     }
+    empresaConectada(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const empresa = token.dataUsuario.emp_id.empresa_id;
+                const findEmpConnected = yield (0, mysql_connector_1.execute)('SELECT nombre_completo FROM empresas WHERE emp_id = ?', [empresa]);
+                console.log(findEmpConnected);
+                return {
+                    ok: true,
+                    status: 200,
+                    emp: findEmpConnected
+                };
+            }
+            catch (err) {
+                console.log(err);
+                return {
+                    ok: false,
+                    msg: 'Error inesperado del sistema, por favor contacte al administrador',
+                    error: err,
+                    status: 500,
+                };
+            }
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/registrar"),
@@ -329,6 +352,29 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], Empresas.prototype, "configuracionEmpresa", null);
+__decorate([
+    (0, tsoa_1.Get)('/empresa-conectada'),
+    (0, tsoa_1.Response)(200, "Empresa Conectada", {
+        emp: "Presta Facil SRL",
+        ok: true,
+        status: 200
+    }),
+    (0, tsoa_1.Response)(500, "Internal Server Error", {
+        ok: false,
+        msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+        error: {},
+        status: 500
+    }),
+    (0, tsoa_1.Response)(404, "No se encontro la empresa", {
+        ok: false,
+        msg: "No se encontro la empresa con los parametros compartidos",
+        status: 404
+    }),
+    __param(0, (0, tsoa_1.Header)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], Empresas.prototype, "empresaConectada", null);
 Empresas = __decorate([
     (0, tsoa_1.Route)("api/empresas"),
     (0, tsoa_1.Tags)('Empresas')

@@ -21,11 +21,11 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         pool = yield (0, promise_1.createConnection)({
             connectionLimit: 10,
-            host: "finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com",
-            user: "dev",
-            password: "AVNS_1GCHLZawTjjpEwKiUdX",
-            database: "finantek",
-            port: 25060
+            host: dataSource.DB_HOST,
+            user: dataSource.DB_USER,
+            password: dataSource.DB_PASSWORD,
+            database: dataSource.DB_DATABASE,
+            port: Number(dataSource.DB_PORT)
         });
         console.debug('MySql Adapter Pool generated successfully');
     }
@@ -46,11 +46,11 @@ const execute = (query, params) => __awaiter(void 0, void 0, void 0, function* (
     try {
         yield pool.beginTransaction();
         const [results] = yield pool.execute(query, params);
-        // await pool.commit();
+        yield pool.commit();
         return results;
     }
     catch (error) {
-        // await pool.rollback();
+        yield pool.rollback();
         console.error('[mysql.connector][execute][Error]: ', error, query, params);
         throw new Error('failed to execute MySQL query');
     }

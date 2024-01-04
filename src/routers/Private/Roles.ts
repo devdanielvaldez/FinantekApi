@@ -25,9 +25,4 @@ router.get("/rol/user", validateToken, async (_req: any, res) => {
   return res.status(response.status).json(response);
 });
 
-router.get("/roles/:id", validateToken, async (req: any, res) => {
-  const response: any = await controller.obtenerRolPorId(req.params.id);
-  return res.status(response.status).json(response);
-});
-
 export default router;

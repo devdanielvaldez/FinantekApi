@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cierreExecute = void 0;
 const mysql_connector_1 = require("../utils/mysql.connector");
 const registrarIncrementarAtraso = (numeroPrestamo, numeroCuota) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -46,3 +47,7 @@ const eliminarCuotaPagada = (numeroPrestamo, numeroCuota) => __awaiter(void 0, v
         throw error;
     }
 });
+const cierreExecute = () => {
+    console.log('iniciando cierre');
+};
+exports.cierreExecute = cierreExecute;

@@ -13,25 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Empresas_1 = __importDefault(require("../../controllers/Private/Empresas"));
+const Pre_Cierre_1 = __importDefault(require("../../controllers/Private/Pre-Cierre"));
 const decodedToken_1 = __importDefault(require("../../api/middlewares/decodedToken"));
 const router = express_1.default.Router();
-const controller = new Empresas_1.default();
-router.post("/registrar", (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.registrarEmpresas(_req.body);
-    console.log(response);
-    return res.status(response.status).json(response);
-}));
-router.get('/all', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.consultarEmpresas(_req.query);
-    return res.status(response.status).json(response);
-}));
-router.put('/actualizar', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.actualizarEmpresa(_req.body);
-    return res.status(response.status).json(response);
-}));
-router.get('/empresa-conectada', decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield controller.empresaConectada(_req);
+const controller = new Pre_Cierre_1.default();
+router.post("/registrar", decodedToken_1.default, (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.registrarPreCierre(_req.body, _req);
     return res.status(response.status).json(response);
 }));
 exports.default = router;

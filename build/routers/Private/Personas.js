@@ -25,6 +25,10 @@ router.get('/all', (_req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const response = yield controller.getPersonas(_req.body);
     return res.status(response.status).json(response);
 }));
+router.get('/dni', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield controller.getPeopleByDNI(_req.query);
+    return res.status(response.status).json(response);
+}));
 router.get('/persona-por-id/:id', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield controller.getPersonaById(_req.params.id);
     return res.status(response.status).json(response);
