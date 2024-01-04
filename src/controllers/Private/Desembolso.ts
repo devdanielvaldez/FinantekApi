@@ -18,7 +18,8 @@ export default class DesembolsoController {
           b.*,
           c.*,
           p.*,
-          co.*
+          co.*,
+          cb.*
         FROM 
           solicitudes_prestamo sp
         INNER JOIN 
@@ -31,6 +32,8 @@ export default class DesembolsoController {
             persona p ON p.persona_id = c.persona_id
         INNER JOIN
             contactos co ON co.persona_id = p.persona_id
+        INNER JOIN
+            CatalogoBancos cb ON cb.Bank_id = b.catalog_bank_id
         WHERE 
           sp.empresa_id = ? AND 
           sp.estado_solicitud = ? AND 

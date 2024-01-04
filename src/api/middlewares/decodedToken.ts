@@ -23,6 +23,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 
     try {
         const decoded = jwt.verify(token, 'token') as UserData;
+        console.log(decoded);
         req.dataUsuario = decoded; // Agrega los datos del usuario a la solicitud
         next(); // Continúa con el siguiente middleware
     } catch (error) {

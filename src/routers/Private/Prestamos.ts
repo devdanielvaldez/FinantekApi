@@ -45,4 +45,9 @@ router.get('/atraso', validateToken, async (_req: any, res) => {
   return res.status(response.status).json(response);
 })
 
+router.get('/prestamo-reporte/:id', validateToken, async (_req: any, res) => {
+  const response: any = await controller.getLoanReportById(_req.params.id);
+  return res.status(response.status).json(response);
+})
+
 export default router;

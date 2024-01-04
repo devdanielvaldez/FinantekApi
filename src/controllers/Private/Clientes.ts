@@ -252,6 +252,8 @@ export default class Clientes {
    @Header() token: any
   ): Promise<SuccessResponseFindClients | InternalServerError> {
     try {
+      console.log(token.dataUsuario);
+
       const findClientsByEmp = await execute(
         `
         SELECT
@@ -286,7 +288,7 @@ export default class Clientes {
         status: 200,
       };
     } catch (err) {
-      // console.log(token);
+      console.log(token.dataUsuario);
       console.log(err);
       return {
         ok: false,

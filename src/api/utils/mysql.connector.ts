@@ -12,11 +12,11 @@ export const init = async () => {
   try {
     pool = await createConnection({
       connectionLimit: 10,
-      host: "finantek-dev-api-do-user-15293740-0.c.db.ondigitalocean.com",
-      user: "dev",
-      password: "AVNS_1GCHLZawTjjpEwKiUdX",
-      database: "finantek",
-      port: 25060
+      host: dataSource.DB_HOST,
+      user: dataSource.DB_USER,
+      password: dataSource.DB_PASSWORD,
+      database: dataSource.DB_DATABASE,
+      port: Number(dataSource.DB_PORT)
     });
 
     console.debug('MySql Adapter Pool generated successfully');

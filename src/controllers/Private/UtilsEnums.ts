@@ -1,6 +1,6 @@
 import { Body, Get, Header, Path, Post, Route, Tags } from "tsoa";
 import { execute } from "../../api/utils/mysql.connector"
-import { codesPlantillas, frecuenciasLiteral } from "../../api/utils/utils";
+import { PrecedenciaPagoCatalogo, codesPlantillas, frecuenciasLiteral } from "../../api/utils/utils";
 import { s3, uploadToS3 } from "./UploadFiles";
 
 @Route('/api/utils')
@@ -80,6 +80,26 @@ export default class UtilsEnumsController {
                 ok: true,
                 status: 200,
                 data: codesPlantillas
+            }
+        } catch(err) {
+            return {
+                ok: false,
+                status: 500,
+                msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+                error: err
+            }
+        }
+    }
+
+    @Get('/prelacion')
+    public async prelacionEnums(
+        @Header() token?: any
+    ) {
+        try {
+            return {
+                ok: true,
+                status: 200,
+                data: PrecedenciaPagoCatalogo
             }
         } catch(err) {
             return {

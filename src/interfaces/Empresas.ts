@@ -3,7 +3,6 @@ import { Direccion } from "./Direccion";
 import { Persona } from "./Persona";
 
 export interface RegistrarEmpresa {
-    emp_id?: number;
     nombre_completo: string;
     nombre_corto?: string;
     rnc: string;

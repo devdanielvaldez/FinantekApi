@@ -9,8 +9,8 @@ export interface LoanRequest {
     monto_solicitado: number;
     documentos: LoanRequestDocument[]; 
     frecuencia: string; // Lista de documentos
-    seguro: number;
     plazo: number;
+    fecha_inicio: string;
   }
 
   export interface UpdateLoanRequest {

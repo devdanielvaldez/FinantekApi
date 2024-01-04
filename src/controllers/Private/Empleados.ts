@@ -107,7 +107,8 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado, @Header() token: 
                 ]);
             }
 
-            const raw_pwd = generatePassword();
+            // const raw_pwd = generatePassword();
+            const raw_pwd = 'Finantek123';
             const hash_pwd = await bcrypt.hash(raw_pwd, 10);
             console.log('password generate --->', raw_pwd, hash_pwd);
       

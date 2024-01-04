@@ -37,25 +37,6 @@ export default class PreCierreController {
             // Por ejemplo, extraer datos del preCierreData y realizar una inserción en la base de datos.
             const { montoTotal, comentarios } = preCierreData;
 
-                    // Obtener la fecha de hoy en formato 'YYYY-MM-DD'
-        const today = new Date();
-        const todayString = today.toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
-
-        // Verificar si ya existe un pre-cierre para la fecha de hoy (ignorando la hora)
-        const checkQuery = `
-            SELECT * FROM pre_cierres 
-            WHERE empresa_id = ? AND DATE(fecha) = ?
-        `;
-        const existingPreCierre = await execute(checkQuery, [token.dataUsuario.emp_id.empresa_id, todayString]);
-
-        if (existingPreCierre.length > 0) {
-            return {
-                ok: false,
-                msg: 'Ya existe un pre-cierre registrado para la fecha de hoy',
-                status: 400, // O el código de estado que consideres apropiado
-            };
-        }
-
             const insertQuery = `
                 INSERT INTO pre_cierres (empresa_id, monto_total, estado, comentarios)
                 VALUES (?, ?, ?, ?)

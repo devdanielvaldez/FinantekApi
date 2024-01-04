@@ -15,6 +15,11 @@ router.get('/all', async (_req: any, res) => {
     return res.status(response.status).json(response);
 });
 
+router.get('/dni', async (_req: any, res) => {
+    const response: any = await controller.getPeopleByDNI(_req.query);
+    return res.status(response.status).json(response);
+});
+
 router.get('/persona-por-id/:id', async(_req: any, res) => {
     const response: any = await controller.getPersonaById(_req.params.id);
     return res.status(response.status).json(response);

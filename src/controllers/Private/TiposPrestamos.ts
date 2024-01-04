@@ -56,14 +56,15 @@ export default class LoanTypes {
         gastos_legales,
         porcentaje_mora,
         dias_gracia,
-        requisitos
+        requisitos,
+        seguro
       } = body;
   
       // Realizar la inserción en la base de datos con la información proporcionada
       const insertResult = await execute(
         `INSERT INTO tipos_prestamos 
-        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (nombre_tipo, descripcion, tasa_interes, plazo_maximo_meses, monto_minimo, monto_maximo, gastos_legales, porcentaje_mora, dias_gracia, requisitos, empresa_id, estado, seguro) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           nombre_tipo,
           descripcion,
@@ -76,7 +77,8 @@ export default class LoanTypes {
           dias_gracia,
           requisitos,
           empId,
-          'a'
+          'a',
+          seguro
         ]
       );
   

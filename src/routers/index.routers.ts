@@ -14,6 +14,7 @@ import Prestamos from "./Private/Prestamos";
 import UtilsEnums from "./Private/UtilsEnums";
 import Desembolso from "./Private/Desembolso";
 import PreCierre from "./Private/Pre-Cierre";
+import Roles from './Private/Roles';
 
 const router = express.Router();
 
@@ -32,5 +33,6 @@ router.use('/prestamos', Prestamos);
 router.use('/utils', UtilsEnums);
 router.use('/solicitudes-desembolsar', Desembolso);
 router.use('/pre-cierre', PreCierre);
+router.use('/roles', Roles);
 
 export default router;

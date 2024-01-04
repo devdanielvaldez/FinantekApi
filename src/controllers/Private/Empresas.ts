@@ -1,5 +1,5 @@
 import { ValidateError } from './../../interfaces/Errors';
-import { Get, Route, Post, Body, SuccessResponse, Response, Queries, Tags, Put } from "tsoa";
+import { Get, Route, Post, Body, SuccessResponse, Response, Queries, Tags, Put, Header } from "tsoa";
 import { ActualizarEmpresa, RegistrarEmpresa } from "../../interfaces/Empresas";
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
@@ -357,6 +357,45 @@ export default class Empresas {
 
   @Post('/configuracion-empresa')
   public async configuracionEmpresa() {}
+
+  @Get('/empresa-conectada')
+  @Response<any>(200, "Empresa Conectada", {
+    emp: "Presta Facil SRL",
+    ok: true,
+    status: 200
+  })
+  @Response<InternalServerError>(500, "Internal Server Error", {
+    ok: false,
+    msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+    error: {},
+    status: 500
+  })
+  @Response<NotFoundItems>(404, "No se encontro la empresa", {
+    ok: false,
+    msg: "No se encontro la empresa con los parametros compartidos",
+    status: 404
+  })
+  public async empresaConectada(@Header() token: any):Promise<any> {
+    try {
+      const empresa = token.dataUsuario.emp_id.empresa_id;
+
+      const findEmpConnected = await execute('SELECT nombre_completo FROM empresas WHERE emp_id = ?', [empresa]);
+      console.log(findEmpConnected);
+      return {
+        ok: true,
+        status: 200,
+        emp: findEmpConnected
+      }
+    } catch(err) {
+      console.log(err);
+      return {
+        ok: false,
+        msg: 'Error inesperado del sistema, por favor contacte al administrador',
+        error: err,
+        status: 500,
+      };
+    }
+  }
   
 
 }

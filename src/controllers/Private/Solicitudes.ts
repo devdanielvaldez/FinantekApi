@@ -46,24 +46,23 @@ export default class LoanRequests {
         monto_solicitado,
         documentos,
         frecuencia,
-        seguro,
-        plazo // Lista de documentos
+        plazo,
+        fecha_inicio
       } = body;
 
       // Al crear la solicitud, el estado automáticamente queda como "PE" (pendiente)
       const insertResult = await execute(
         `INSERT INTO solicitudes_prestamo 
-        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, empleado_id, frecuencia, seguro, plazo) 
-        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?, ?)`,
+        (cliente_id, tipo_prestamo_id, empresa_id, monto_solicitado, estado_solicitud, frecuencia, plazo, fecha_inicio) 
+        VALUES (?, ?, ?, ?, 'PE', ?, ?, ?)`,
         [
           cliente_id,
           tipo_prestamo_id,
           empId,
           monto_solicitado,
-          empId,
           frecuencia,
-          seguro,
-          plazo
+          plazo,
+          fecha_inicio
         ]
       );
 
@@ -166,8 +165,8 @@ public async getLoanRequestByIdAndCompany(
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
     const loanRequest = await execute(
-      `SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ? AND empresa_id = ?`,
-      [id, empId]
+      `SELECT * FROM solicitudes_prestamo WHERE solicitud_id = ?`,
+      [id]
     );
     const docs = await execute('SELECT * FROM documentacion_solicitud WHERE solicitud_id = ?', [id]);
     return {
@@ -208,13 +207,13 @@ public async updateLoanRequest(
 ): Promise<InternalServerError | SuccessResponse | any> {
   try {
     const empId = token.dataUsuario.emp_id.empresa_id;
-    const { cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo } = updatedData;
+    const { cliente_id, tipo_prestamo_id, monto_solicitado, frecuencia, plazo } = updatedData;
 
     const updateResult = await execute(
       `UPDATE solicitudes_prestamo 
-      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, seguro = ?, frecuencia = ?, plazo = ?
+      SET cliente_id = ?, tipo_prestamo_id = ?, monto_solicitado = ?, frecuencia = ?, plazo = ?
       WHERE solicitud_id = ?`,
-      [cliente_id, tipo_prestamo_id, monto_solicitado, seguro, frecuencia, plazo, id]
+      [cliente_id, tipo_prestamo_id, monto_solicitado, frecuencia, plazo, id]
     );
 
     if (updateResult.affectedRows > 0) {

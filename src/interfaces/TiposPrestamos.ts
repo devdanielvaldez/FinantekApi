@@ -9,6 +9,7 @@ export interface LoanType {
     porcentaje_mora: number;
     dias_gracia: number;
     requisitos: string[];
+    seguro: number;
 }
 
 export interface UpdatedLoanType {

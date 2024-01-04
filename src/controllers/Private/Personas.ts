@@ -11,7 +11,7 @@ import {
 import { RegistrarPersona, Persona as PersonaInterface } from "../../interfaces/Persona";
 import { InternalServerError, NotFoundItems, ValidateError } from "../../interfaces/Errors";
 import { execute } from "../../api/utils/mysql.connector";
-import { QuerysPersonasFind } from "../../interfaces/Querys";
+import { QuerysPeopleByDNI, QuerysPersonasFind } from "../../interfaces/Querys";
 import { Direccion } from "../../interfaces/Direccion";
 import { Contactos } from "../../interfaces/Contactos";
 
@@ -390,4 +390,69 @@ export default class Persona {
       };
     }
   }
+
+  @Get("/dni")
+@Response<ConsultarPersonasResponse>(
+  200,
+  "Consulta de personas satisfactoria",
+  {
+    ok: true,
+    data: [],
+    status: 200,
+  }
+)
+@Response<InternalServerError>(500, "Internal Server Error", {
+  ok: false,
+  msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+  error: {},
+  status: 500,
+})
+@Response<NotFoundItems>(404, "No se encontraron personas", {
+  ok: false,
+  msg: "No se encontraron personas con los parametros compartidos",
+  status: 404,
+})
+public async getPeopleByDNI(
+  @Queries() querys: QuerysPeopleByDNI
+): Promise<ConsultarPersonasResponse | InternalServerError | NotFoundItems> {
+  try {
+    const { cedula } = querys;
+
+    if(cedula == "" || cedula == null || cedula == undefined) {
+      return {
+        ok: true,
+        data: [],
+        status: 200,
+      };
+    }
+
+    let query = `SELECT * FROM persona WHERE 1 = 1`;
+
+      query += ` AND cedula LIKE '%${cedula}%'`;
+
+    const findPer = await execute(query);
+
+    if (findPer.length == 0)
+      return {
+        ok: false,
+        msg: "No se encontraron personas con los parametros compartidos",
+        status: 404,
+      };
+
+    return {
+      ok: true,
+      data: findPer,
+      status: 200,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      ok: false,
+      msg: "Error interno del sistema, por favor contacte al administrador del sistema",
+      error: err,
+      status: 500,
+    };
+  }
+}
+
 }

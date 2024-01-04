@@ -3,6 +3,7 @@ import { Body, Post, Route, Tags, Response, Get, Path, Put, Delete, Header } fro
 import { execute } from "../../api/utils/mysql.connector";
 import { InternalServerError, NotFoundItems } from "../../interfaces/Errors";
 import { aplicarAbonoIndividual, generarNumeroPrestamo } from '../../api/utils/helpers';
+import LogicaPrelacionPago, { PrecedenciaPago } from '../../api/utils/utils';
 
 const frecuenciasDias = {
   DI: 1,
@@ -62,7 +63,7 @@ export default class PrestamoController {
         tasa_interes,
         frecuencia_pago,
         cuota_seguro,
-          numeroDeMeses
+        numeroDeMeses
       } = datosPrestamo;
 
       const loan = generarPlanPrestamo(fecha_inicial,
@@ -352,12 +353,13 @@ export default class PrestamoController {
         montoAbono: number;
         metodo_pago: string;
         solicitudId: number;
+        prelacion: string[];
       },
       @Header() token: any
     ): Promise<any> {
       try {
         const empId = token.dataUsuario.emp_id.empresa_id;
-        const { prestamoId, montoAbono, metodo_pago, solicitudId } = datosAbono;
+        const { prestamoId, montoAbono, metodo_pago, solicitudId, prelacion } = datosAbono;
     
         // 1. Registrar el abono en la tabla de pagos
         const queryAbono = 'INSERT INTO abonos (prestamo_id, monto, fecha_abono, metodo_pago, emp_id) VALUES (?, ?, NOW(), ?, ?)';
@@ -372,33 +374,23 @@ export default class PrestamoController {
         // 3. Aplicar el abono: intereses, mora, seguro, capital
         let montoUsado = 0;
 
-        // Aplicar a la mora si no está en 0
-        if (prestamo_mora > 0) {
-            montoUsado = Math.min(montoRestante, prestamo_mora);
-            prestamo_mora -= montoUsado;
-            montoRestante -= montoUsado;
-        }
-        console.log(montoRestante);
-        
-        // Aplicar al interés
-        montoUsado = Math.min(montoRestante, prestamo_cuota_interes);
-        prestamo_cuota_interes -= montoUsado;
-        montoRestante -= montoUsado;
-        console.log(montoRestante);
+        const logicaPrelacionPago = new LogicaPrelacionPago();
 
-        
-        // Aplicar al seguro
-        montoUsado = Math.min(montoRestante, prestamo_cuota_seguro);
-        prestamo_cuota_seguro -= montoUsado;
-        montoRestante -= montoUsado;
-        console.log(montoRestante);
+// ... Código previo ...
 
-        
-        // Aplicar al capital
-        montoUsado = Math.min(montoRestante, prestamo_cuota_capital);
-        prestamo_cuota_capital -= montoUsado;
-        montoRestante -= montoUsado;
-        console.log(montoRestante);
+// 3. Aplicar el abono: intereses, mora, seguro, capital
+        const deudaActualizada = logicaPrelacionPago.aplicarPrelacionPago(
+          {
+            prestamo_mora,
+            prestamo_cuota_interes,
+            prestamo_cuota_seguro,
+            prestamo_cuota_capital,
+          },
+          montoAbono,
+          prelacion
+        );
+
+        console.log(prestamoActual[0], deudaActualizada);
     
         // 4. Actualizar la tabla prestamos con los nuevos montos
         const queryActualizarPrestamo = `
@@ -408,10 +400,10 @@ export default class PrestamoController {
               prestamo_cuota_seguro = ?, 
               prestamo_mora = ?
           WHERE prestamo_id = ?`;
-        await execute(queryActualizarPrestamo, [prestamo_cuota_capital, prestamo_cuota_interes, prestamo_cuota_seguro, prestamo_mora, prestamoId]);
+        await execute(queryActualizarPrestamo, [deudaActualizada.prestamo_cuota_capital, deudaActualizada.prestamo_cuota_interes, deudaActualizada.prestamo_cuota_seguro, deudaActualizada.prestamo_mora, prestamoId]);
     
         // 5. Verificar y actualizar el estado en la tabla de amortización
-        const esCuotaCompleta = prestamo_mora == 0 && prestamo_cuota_interes == 0 && prestamo_cuota_seguro == 0 && prestamo_cuota_capital == 0;
+        const esCuotaCompleta = deudaActualizada.prestamo_mora == 0 && deudaActualizada.prestamo_cuota_interes == 0 && deudaActualizada.prestamo_cuota_seguro == 0 && deudaActualizada.prestamo_cuota_capital == 0;
         const estadoCuota = esCuotaCompleta ? 'PA' : 'AB';
         const queryActualizarAmortizacion = 'UPDATE amortizacion SET estado = ? WHERE solicitudId = ? AND n_cuota = ?';
         await execute(queryActualizarAmortizacion, [estadoCuota, solicitudId, cuota_actual]);
@@ -427,7 +419,8 @@ export default class PrestamoController {
         return {
           ok: true,
           msg: "Abono aplicado con éxito",
-          status: 200
+          status: 200,
+          recibo: deudaActualizada
         };
       } catch (err) {
         console.log(err);
@@ -533,6 +526,30 @@ export default class PrestamoController {
         return {
           ok: false,
           msg: "Error interno del sistema al generar el préstamo",
+          error: err,
+          status: 500,
+        };
+      }
+    }
+
+
+    @Get('/prestamo-reporte/:id')
+    public async getLoanReportById(@Path() id: number) {
+      try {
+        // consultar el prestamo
+        const getLoanDay = await execute('SELECT prestamo_balance_actual, prestamo_monto_cuotas, fecha_final, cuota_actual, prestamo_fecha_pago, solicitud_id FROM prestamos WHERE prestamo_id = ?', [id]);
+        const solicitud = await execute('SELECT frecuencia FROM solicitudes_prestamo WHERE solicitud_id = ?', [getLoanDay[0].solicitud_id])
+
+        return {
+          ok: true,
+          status: 200,
+          loan: getLoanDay,
+          solicitud: solicitud
+        }
+      } catch(err) {
+        return {
+          ok: false,
+          msg: "Error al consultar el prestamo",
           error: err,
           status: 500,
         };
