@@ -7,9 +7,6 @@ import router from './routers/index.routers';
 import cors from 'cors';
 const PORT = process.env.PORT || 8300;
 
-import cron from 'node-cron';
-import { cierreExecute } from "./api/jobs/cierres";
-
 const app: Application = express();
 
 MySQLConnector.init();
