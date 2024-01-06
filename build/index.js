@@ -42,7 +42,6 @@ const MySQLConnector = __importStar(require("./api/utils/mysql.connector"));
 const compression_1 = __importDefault(require("compression"));
 const index_routers_1 = __importDefault(require("./routers/index.routers"));
 const cors_1 = __importDefault(require("cors"));
-const pidusage_1 = __importDefault(require("pidusage"));
 const PORT = process.env.PORT || 8300;
 const app = (0, express_1.default)();
 MySQLConnector.init();
@@ -57,16 +56,16 @@ app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.defaul
         url: "/swagger.json",
     },
 }));
-setInterval(() => {
-    (0, pidusage_1.default)(process.pid, (err, stats) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log('Uso de CPU:', stats.cpu);
-        console.log('Uso de memoria:', stats.memory);
-    });
-}, 1000);
+// setInterval(() => {
+//     pidusage(process.pid, (err, stats) => {
+//         if (err) {
+//             console.error(err);
+//             return;
+//         }
+//         console.log('Uso de CPU:', stats.cpu);
+//         console.log('Uso de memoria:', stats.memory);
+//     })
+// }, 1000);
 // cron.schedule('*/30 * * * *', async () => {
 //   console.log('Verificando pre-cierres...');
 //   try {

@@ -33,6 +33,14 @@ let Empleados = class Empleados {
         return __awaiter(this, void 0, void 0, function* () {
             const { persona, empleado, contactos, direccion, rol } = body;
             try {
+                const findCedula = 'SELECT * FROM users WHERE username = ?';
+                const excuteFindCedula = yield (0, mysql_connector_1.execute)(findCedula, [persona.cedula]);
+                if (excuteFindCedula.length > 0)
+                    return {
+                        ok: false,
+                        status: 400,
+                        msg: "El usuario que desea registrar ya se encuentra en el sistema"
+                    };
                 // Registrar la dirección
                 const direccionInsert = yield (0, mysql_connector_1.execute)('INSERT INTO direcciones (provincia_id, municipio_id, direccion, codigo_postal, referencia) VALUES (?, ?, ?, ?, ?)', [
                     direccion.provincia_id,
@@ -87,7 +95,7 @@ let Empleados = class Empleados {
                 ]);
                 return {
                     ok: true,
-                    msg: "Empleado registrado correctamente",
+                    msg: `Empleado registrado correctamente, el password es: ${raw_pwd}`,
                     status: 200
                 };
             }
