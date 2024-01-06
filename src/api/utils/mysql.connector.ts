@@ -37,11 +37,10 @@ export const execute = async (query: string, params?: string[] | Object) => {
   try {
     await pool.beginTransaction();
     const [results] = await pool.execute(query, params);
-    await pool.commit();
+
     return results;
 
   } catch (error) {
-    await pool.rollback();
     console.error('[mysql.connector][execute][Error]: ', error, query, params);
     throw new Error('failed to execute MySQL query');
   }

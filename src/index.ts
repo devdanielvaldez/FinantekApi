@@ -29,16 +29,16 @@ app.use(
   })
 );
 
-setInterval(() => {
-    pidusage(process.pid, (err, stats) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log('Uso de CPU:', stats.cpu);
-        console.log('Uso de memoria:', stats.memory);
-    })
-}, 1000);
+// setInterval(() => {
+//     pidusage(process.pid, (err, stats) => {
+//         if (err) {
+//             console.error(err);
+//             return;
+//         }
+//         console.log('Uso de CPU:', stats.cpu);
+//         console.log('Uso de memoria:', stats.memory);
+//     })
+// }, 1000);
 
 
 // cron.schedule('*/30 * * * *', async () => {
