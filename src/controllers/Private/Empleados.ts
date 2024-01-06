@@ -59,6 +59,14 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado, @Header() token: 
         } = body;
 
         try {
+            const findCedula = 'SELECT * FROM users WHERE username = ?';
+            const excuteFindCedula = await execute(findCedula, [persona.cedula]);
+
+            if(excuteFindCedula.length > 0) return {
+                ok: false,
+                status: 400,
+                msg: "El usuario que desea registrar ya se encuentra en el sistema"
+            }
             // Registrar la dirección
             const direccionInsert = await execute('INSERT INTO direcciones (provincia_id, municipio_id, direccion, codigo_postal, referencia) VALUES (?, ?, ?, ?, ?)', [
                 direccion.provincia_id,
@@ -122,7 +130,7 @@ public async registrarEmpleado(@Body() body: RegisterEmpleado, @Header() token: 
 
             return {
                 ok: true,
-                msg: "Empleado registrado correctamente",
+                msg: `Empleado registrado correctamente, el password es: ${raw_pwd}`,
                 status: 200
             };
         } catch (err) {
