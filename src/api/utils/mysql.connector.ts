@@ -31,7 +31,7 @@ const executeQuery = async (query: string, params?: string[] | Object, retries =
 
   try {
     if (pool) {
-      await pool.beginTransaction();
+      // await pool.beginTransaction();
       const [results] = await pool.execute(query, params);
       return results;
     } else {

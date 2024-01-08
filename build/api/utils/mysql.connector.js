@@ -38,7 +38,7 @@ const executeQuery = (query, params, retries = 3) => __awaiter(void 0, void 0, v
     }
     try {
         if (pool) {
-            yield pool.beginTransaction();
+            // await pool.beginTransaction();
             const [results] = yield pool.execute(query, params);
             return results;
         }
