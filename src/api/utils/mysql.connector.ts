@@ -1,13 +1,16 @@
-import { createPool, Pool, createConnection } from 'mysql2/promise';
+import { createPool, Pool, createConnection} from 'mysql2/promise';
 import { DATA_SOURCES } from '../../config/vars.confing';
 
 const dataSource = DATA_SOURCES.mySqlDataSource;
 
-let pool: Pool | null = null;
+let pool: any;
 
-const initializePool = async () => {
+/**
+ * generates pool connection to be used throughout the app
+ */
+export const init = async () => {
   try {
-    pool = await createPool({
+    pool = await createConnection({
       connectionLimit: 10,
       host: dataSource.DB_HOST,
       user: dataSource.DB_USER,
@@ -16,47 +19,33 @@ const initializePool = async () => {
       port: Number(dataSource.DB_PORT)
     });
 
-    console.debug('MySQL Adapter Pool generated successfully');
+    console.debug('MySql Adapter Pool generated successfully');
   } catch (error) {
     console.error('[mysql.connector][init][Error]: ', error);
-    throw new Error('Failed to initialize pool');
+    throw new Error('failed to initialized pool');
   }
 };
 
-// @ts-ignore
-const executeQuery = async (query: string, params?: string[] | Object, retries = 3) => {
+/**
+ * executes SQL queries in MySQL db
+ *
+ * @param {string} query - provide a valid SQL query
+ * @param {string[] | Object} params - provide the parameterized values used
+ * in the query
+ */
+export const execute = async (query: string, params?: string[] | Object) => {
   if (!pool) {
-    await initializePool();
+    await init();
   }
 
   try {
-    if (pool) {
-      await pool.beginTransaction();
-      const [results] = await pool.execute(query, params);
-      return results;
-    } else {
-      throw new Error('Pool is not initialized');
-    }
+    await pool.beginTransaction();
+    const [results] = await pool.execute(query, params);
+
+    return results;
+
   } catch (error) {
     console.error('[mysql.connector][execute][Error]: ', error, query, params);
-    if (retries > 0 && error) {
-      console.log('Attempting to reconnect...');
-      pool = null; // Reset pool to force reconnection
-      await initializePool();
-      return executeQuery(query, params, retries - 1);
-    }
-    throw new Error('Failed to execute MySQL query');
+    throw new Error('failed to execute MySQL query');
   }
-};
-
-export const init = async () => {
-  await initializePool();
-};
-
-export const execute = async (query: string, params?: string[] | Object) => {
-  try {
-    return await executeQuery(query, params);
-  } catch (error) {
-    throw error;
-  }
-};
+}

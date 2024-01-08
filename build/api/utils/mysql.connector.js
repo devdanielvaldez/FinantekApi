@@ -13,10 +13,13 @@ exports.execute = exports.init = void 0;
 const promise_1 = require("mysql2/promise");
 const vars_confing_1 = require("../../config/vars.confing");
 const dataSource = vars_confing_1.DATA_SOURCES.mySqlDataSource;
-let pool = null;
-const initializePool = () => __awaiter(void 0, void 0, void 0, function* () {
+let pool;
+/**
+ * generates pool connection to be used throughout the app
+ */
+const init = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        pool = yield (0, promise_1.createPool)({
+        pool = yield (0, promise_1.createConnection)({
             connectionLimit: 10,
             host: dataSource.DB_HOST,
             user: dataSource.DB_USER,
@@ -24,49 +27,33 @@ const initializePool = () => __awaiter(void 0, void 0, void 0, function* () {
             database: dataSource.DB_DATABASE,
             port: Number(dataSource.DB_PORT)
         });
-        console.debug('MySQL Adapter Pool generated successfully');
+        console.debug('MySql Adapter Pool generated successfully');
     }
     catch (error) {
         console.error('[mysql.connector][init][Error]: ', error);
-        throw new Error('Failed to initialize pool');
+        throw new Error('failed to initialized pool');
     }
 });
-// @ts-ignore
-const executeQuery = (query, params, retries = 3) => __awaiter(void 0, void 0, void 0, function* () {
+exports.init = init;
+/**
+ * executes SQL queries in MySQL db
+ *
+ * @param {string} query - provide a valid SQL query
+ * @param {string[] | Object} params - provide the parameterized values used
+ * in the query
+ */
+const execute = (query, params) => __awaiter(void 0, void 0, void 0, function* () {
     if (!pool) {
-        yield initializePool();
+        yield (0, exports.init)();
     }
     try {
-        if (pool) {
-            yield pool.beginTransaction();
-            const [results] = yield pool.execute(query, params);
-            return results;
-        }
-        else {
-            throw new Error('Pool is not initialized');
-        }
+        yield pool.beginTransaction();
+        const [results] = yield pool.execute(query, params);
+        return results;
     }
     catch (error) {
         console.error('[mysql.connector][execute][Error]: ', error, query, params);
-        if (retries > 0 && error) {
-            console.log('Attempting to reconnect...');
-            pool = null; // Reset pool to force reconnection
-            yield initializePool();
-            return executeQuery(query, params, retries - 1);
-        }
-        throw new Error('Failed to execute MySQL query');
-    }
-});
-const init = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield initializePool();
-});
-exports.init = init;
-const execute = (query, params) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        return yield executeQuery(query, params);
-    }
-    catch (error) {
-        throw error;
+        throw new Error('failed to execute MySQL query');
     }
 });
 exports.execute = execute;
