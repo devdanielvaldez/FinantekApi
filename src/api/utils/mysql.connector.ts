@@ -1,51 +1,63 @@
-import { createPool, Pool, createConnection} from 'mysql2/promise';
+import { createPool, Pool, createConnection } from 'mysql2/promise';
 import { DATA_SOURCES } from '../../config/vars.confing';
 
 const dataSource = DATA_SOURCES.mySqlDataSource;
 
-let pool: any;
+let pool: Pool | null = null;
 
-/**
- * generates pool connection to be used throughout the app
- */
-export const init = async () => {
+const initializePool = async () => {
   try {
-    pool = await createConnection({
+    pool = await createPool({
       connectionLimit: 10,
-      host: dataSource.DB_HOST,
-      user: dataSource.DB_USER,
-      password: dataSource.DB_PASSWORD,
-      database: dataSource.DB_DATABASE,
+      host: "finantek-dev.cnp5ruig78hz.us-east-1.rds.amazonaws.com",
+      user: "dev",
+      password: "Prueba01*",
+      database: "finantek",
       port: Number(dataSource.DB_PORT)
     });
 
-    console.debug('MySql Adapter Pool generated successfully');
+    console.debug('MySQL Adapter Pool generated successfully');
   } catch (error) {
     console.error('[mysql.connector][init][Error]: ', error);
-    throw new Error('failed to initialized pool');
+    throw new Error('Failed to initialize pool');
   }
 };
 
-/**
- * executes SQL queries in MySQL db
- *
- * @param {string} query - provide a valid SQL query
- * @param {string[] | Object} params - provide the parameterized values used
- * in the query
- */
-export const execute = async (query: string, params?: string[] | Object) => {
+// @ts-ignore
+const executeQuery = async (query: string, params?: string[] | Object, retries = 3) => {
   if (!pool) {
-    await init();
+    await initializePool();
   }
 
   try {
-    await pool.beginTransaction();
-    const [results] = await pool.execute(query, params);
-
-    return results;
-
+    if (pool) {
+      await pool.beginTransaction();
+      const [results] = await pool.execute(query, params);
+      return results;
+    } else {
+      throw new Error('Pool is not initialized');
+    }
   } catch (error) {
     console.error('[mysql.connector][execute][Error]: ', error, query, params);
-    throw new Error('failed to execute MySQL query');
+    // @ts-ignore
+    if (retries > 0 && error?.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.log('Attempting to reconnect...');
+      pool = null; // Reset pool to force reconnection
+      await initializePool();
+      return executeQuery(query, params, retries - 1);
+    }
+    throw new Error('Failed to execute MySQL query');
   }
-}
+};
+
+export const init = async () => {
+  await initializePool();
+};
+
+export const execute = async (query: string, params?: string[] | Object) => {
+  try {
+    return await executeQuery(query, params);
+  } catch (error) {
+    throw error;
+  }
+};
